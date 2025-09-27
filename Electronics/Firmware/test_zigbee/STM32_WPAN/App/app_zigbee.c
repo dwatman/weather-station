@@ -30,6 +30,7 @@
 #include "dbg_trace.h"
 #include "ieee802154_enums.h"
 #include "mcp_enums.h"
+#include "app_zigbee_persistence_nvm.h"
 
 #include "stm32_rtos.h"
 #include "stm32_timer.h"
@@ -43,6 +44,7 @@
 /* Private includes -----------------------------------------------------------*/
 /* USER CODE BEGIN PI */
 #include "main.h"
+#include "stm32wbaxx_ll_gpio.h"
 /* USER CODE END PI */
 
 /* Public variables -----------------------------------------------------------*/
@@ -279,7 +281,7 @@ static void APP_ZIGBEE_WaitForCallback( uint32_t lTimeOut )
 static void APP_ZIGBEE_BlinckLedTimerCallback( void * arg )
 {
   /* USER CODE BEGIN APP_ZIGBEE_BlinckLedTimerCallback */
-	LL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);
+	LL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin); // Blink blue LED
   /* USER CODE END APP_ZIGBEE_BlinckLedTimerCallback */
 }
 
@@ -298,6 +300,16 @@ void APP_ZIGBEE_NwkFormOrJoin(void)
   {
     /* Application configure Startup */
     APP_ZIGBEE_GetStartupConfig( &stConfig );
+
+    /* Try to start Start Zigbee Stack with Persistence the first time */
+    if ( stZigbeeAppInfo.bPersistNotification != false )
+    {
+      if ( AppZbPersistence_Init( stZigbeeAppInfo.pstZigbee, &stConfig, APP_ZB_PERSISTENCE_TYPE_ENABLED ) == HAL_OK )
+      {
+        eStatus = ZB_STATUS_SUCCESS;
+      }
+      stZigbeeAppInfo.bPersistNotification = false;
+    }
 
     if ( eStatus != ZB_STATUS_SUCCESS )
     {
@@ -325,7 +337,7 @@ void APP_ZIGBEE_NwkFormOrJoin(void)
       UTIL_TIMER_Stop( &stBlinckLedTimer );
 
       /* USER CODE BEGIN APP_ZIGBEE_NwkFormOrJoin */
-
+      LL_GPIO_ResetOutputPin(LED_B_GPIO_Port, LED_B_Pin); // Solid blue LED
       /* USER CODE END APP_ZIGBEE_NwkFormOrJoin */
 
       /* Start Applications */
@@ -755,7 +767,10 @@ static void APP_ZIGBEE_TraceError( const char * pMess, uint32_t ErrCode )
   while (1U == 1U)
   {
     /* USER CODE BEGIN APP_ZIGBEE_TraceError */
-
+	  // Set red LED on, others off
+	  LL_GPIO_ResetOutputPin(LED_R_GPIO_Port, LED_R_Pin);
+	  LL_GPIO_SetOutputPin(LED_G_GPIO_Port, LED_G_Pin);
+	  LL_GPIO_SetOutputPin(LED_B_GPIO_Port, LED_B_Pin);
     /* USER CODE END APP_ZIGBEE_TraceError */
   }
 }

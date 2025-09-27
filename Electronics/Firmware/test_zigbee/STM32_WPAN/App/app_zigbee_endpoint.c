@@ -43,7 +43,7 @@
 #include "zcl/general/zcl.temp.meas.h"
 
 /* USER CODE BEGIN PI */
-
+#include "main.h"
 /* USER CODE END PI */
 
 /* Private defines -----------------------------------------------------------*/
@@ -62,8 +62,15 @@
 /* MeasTemperature specific defines ----------------------------------------------------*/
 #define APP_ZIGBEE_TEMP_MIN               -4000
 #define APP_ZIGBEE_TEMP_MAX               12500
-#define APP_ZIGBEE_TEMP_TOLERANCE         50
+#define APP_ZIGBEE_TEMP_TOLERANCE         10
 /* USER CODE BEGIN MeasTemperature defines */
+// -- Redefine task to better code read --
+#define APP_ZIGBEE_TEMP_START             2500                // +25C
+#define APP_ZIGBEE_TEMPMEAS_UPDATE_PERIOD (uint32_t)( 30000U ) // 30 s
+
+#define CFG_TASK_ZIGBEE_APP_SENSOR_READ         CFG_TASK_ZIGBEE_APP1
+#define TASK_ZIGBEE_APP_SENSOR_READ_PRIORITY    CFG_SEQ_PRIO_1
+
 /* USER CODE END MeasTemperature defines */
 
 /* USER CODE BEGIN PD */
@@ -86,13 +93,15 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+static UTIL_TIMER_Object_t      stTimerUpdateMeasure;
+static int16_t                  iTemperatureCurrent;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 
 /* USER CODE BEGIN PFP */
-
+static void APP_ZIGBEE_TempMeasAttributeUpdate    ( void );
+static void APP_ZIGBEE_TimerUpdateCallback        ( void * arg );
 /* USER CODE END PFP */
 
 /* Functions Definition ------------------------------------------------------*/
@@ -111,10 +120,15 @@ void APP_ZIGBEE_ApplicationInit(void)
 
   /* Configure Application Form/Join parameters : Startup, Persistence and Start with/without Form/Join */
   stZigbeeAppInfo.eStartupControl = ZbStartTypeJoin;
-  stZigbeeAppInfo.bPersistNotification = false;
+  stZigbeeAppInfo.bPersistNotification = true;
   stZigbeeAppInfo.bNwkStartup = true;
 
   /* USER CODE BEGIN APP_ZIGBEE_ApplicationInit */
+  // Task that Update Temperature AttributeValue
+    UTIL_SEQ_RegTask( 1U << CFG_TASK_ZIGBEE_APP_SENSOR_READ, UTIL_SEQ_RFU, APP_ZIGBEE_TempMeasAttributeUpdate );
+
+    // Create timer to get the measure of temperature sensor
+    UTIL_TIMER_Create( &stTimerUpdateMeasure, APP_ZIGBEE_TEMPMEAS_UPDATE_PERIOD, UTIL_TIMER_PERIODIC, APP_ZIGBEE_TimerUpdateCallback, NULL );
 
   /* USER CODE END APP_ZIGBEE_ApplicationInit */
 
@@ -130,7 +144,13 @@ void APP_ZIGBEE_ApplicationInit(void)
 void APP_ZIGBEE_ApplicationStart( void )
 {
   /* USER CODE BEGIN APP_ZIGBEE_ApplicationStart */
+	// Set default temperature
+	iTemperatureCurrent = APP_ZIGBEE_TEMP_START;
 
+	LOG_INFO_APP( "Started temperature measurement...");
+
+	// Start periodic Sensor Measure
+	UTIL_TIMER_Start( &stTimerUpdateMeasure );
   /* USER CODE END APP_ZIGBEE_ApplicationStart */
 
 #if ( CFG_LPM_LEVEL != 0)
@@ -272,5 +292,46 @@ void APP_ZIGBEE_PrintApplicationInfo(void)
 }
 
 /* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
+// Timer callback - start temperature measurement task
+static void APP_ZIGBEE_TimerUpdateCallback(void * arg) {
+	LOG_INFO_APP( "* APP_ZIGBEE_TimerUpdateCallback" );
+  UTIL_SEQ_SetTask( 1u << CFG_TASK_ZIGBEE_APP_SENSOR_READ, TASK_ZIGBEE_APP_SENSOR_READ_PRIORITY );
+}
 
+// Write locally Temp Measure attribute
+static void APP_ZIGBEE_TempMeasAttributeUpdate(void) {
+	uint8_t             cTempAP;
+	int16_t             iTempBP;
+	enum ZclStatusCodeT eStatus;
+	char                szText[10];
+
+	if ( iTemperatureCurrent > 4500u ) {
+		iTemperatureCurrent = 500;
+	}
+	else {
+		iTemperatureCurrent += 20; // +0.2 degC
+	}
+
+	// Verify if Temperature in limits
+	if (iTemperatureCurrent > APP_ZIGBEE_TEMP_MAX) {
+		iTemperatureCurrent = APP_ZIGBEE_TEMP_MAX;
+	}
+	else {
+		if (iTemperatureCurrent < APP_ZIGBEE_TEMP_MIN) {
+			iTemperatureCurrent = APP_ZIGBEE_TEMP_MIN;
+		}
+	}
+
+	iTempBP = (int16_t)(iTemperatureCurrent / 100);
+	cTempAP = (uint8_t)(iTemperatureCurrent % 100);
+	snprintf( szText, sizeof(szText), "%d.%02d", iTempBP, cTempAP );
+	LOG_INFO_APP( "[TEMP MEAS] Update TempMeasure : %s C", szText );
+	LL_GPIO_TogglePin(LED_G_GPIO_Port, LED_G_Pin);
+
+	eStatus = ZbZclAttrIntegerWrite( stZigbeeAppInfo.TempMeasServer, ZCL_TEMP_MEAS_ATTR_MEAS_VAL, iTemperatureCurrent);
+	if ( eStatus != ZCL_STATUS_SUCCESS )
+	{
+	LOG_ERROR_APP( "[TEMP MEAS] Attribute Write error (0x%02X)", eStatus );
+	}
+}
 /* USER CODE END FD_LOCAL_FUNCTIONS */
