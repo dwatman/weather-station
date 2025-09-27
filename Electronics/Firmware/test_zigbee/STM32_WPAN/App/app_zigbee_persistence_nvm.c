@@ -30,7 +30,7 @@
 
 #include "stm32_rtos.h"
 #include "stm32_timer.h"
-//#include "stm32wbaxx_nucleo.h"
+#include "stm32wbaxx_nucleo.h"
 
 #include "zigbee.h"
 

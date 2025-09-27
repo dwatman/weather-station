@@ -349,12 +349,12 @@ typedef enum
  * MEMORY MANAGER
  ******************************************************************************/
 
-#define CFG_MM_POOL_SIZE                                  (54000U)  /* bytes */
+#define CFG_MM_POOL_SIZE                                  (32000U)  /* bytes */
 #define CFG_AMM_VIRTUAL_MEMORY_NUMBER                     (2U)
 #define CFG_AMM_VIRTUAL_STACK_ZIGBEE_INIT                 (1U)
-#define CFG_AMM_VIRTUAL_STACK_ZIGBEE_INIT_BUFFER_SIZE     (10500U)  /* words (32 bits) */
+#define CFG_AMM_VIRTUAL_STACK_ZIGBEE_INIT_BUFFER_SIZE     (6000U)  /* words (32 bits) */
 #define CFG_AMM_VIRTUAL_STACK_ZIGBEE_HEAP                 (2U)
-#define CFG_AMM_VIRTUAL_STACK_ZIGBEE_HEAP_BUFFER_SIZE     (3000U)  /* words (32 bits) */
+#define CFG_AMM_VIRTUAL_STACK_ZIGBEE_HEAP_BUFFER_SIZE     (2000U)  /* words (32 bits) */
 #define CFG_AMM_POOL_SIZE                                 ( DIVC(CFG_MM_POOL_SIZE, sizeof (uint32_t)) \
                                                           + (AMM_VIRTUAL_INFO_ELEMENT_SIZE * CFG_AMM_VIRTUAL_MEMORY_NUMBER) )
 

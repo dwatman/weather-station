@@ -59,6 +59,8 @@
 #define APP_ZIGBEE_CLUSTER_ID             ZCL_CLUSTER_MEAS_TEMPERATURE
 #define APP_ZIGBEE_CLUSTER_NAME           "TempMeas Server"
 
+#define APP_ZIGBEE_ZED_SLEEP_TIME         1u            /* For a ZED, Sleep Time Unit is 30 seconds. */
+
 /* MeasTemperature specific defines ----------------------------------------------------*/
 #define APP_ZIGBEE_TEMP_MIN               -4000
 #define APP_ZIGBEE_TEMP_MAX               12500
@@ -236,6 +238,10 @@ void APP_ZIGBEE_GetStartupConfig( struct ZbStartupT * pstConfig )
   pstConfig->channelList.list[0].page = 0;
   pstConfig->channelList.list[0].channelMask = APP_ZIGBEE_CHANNEL_MASK;
 
+  /* Add End Device configuration */
+  pstConfig->capability &= ~( MCP_ASSOC_CAP_RXONIDLE | MCP_ASSOC_CAP_DEV_TYPE | MCP_ASSOC_CAP_ALT_COORD );
+  pstConfig->endDeviceTimeout = APP_ZIGBEE_ZED_SLEEP_TIME;
+
   /* Set the TX-Power */
   if ( APP_ZIGBEE_SetTxPower( APP_ZIGBEE_TX_POWER ) == false )
   {
@@ -272,7 +278,7 @@ void APP_ZIGBEE_SetNewDevice( uint16_t iShortAddress, uint64_t dlExtendedAddress
 void APP_ZIGBEE_PrintApplicationInfo(void)
 {
   LOG_INFO_APP( "**********************************************************" );
-  LOG_INFO_APP( "Network config : CENTRALIZED ROUTER" );
+  LOG_INFO_APP( "Network config : CENTRALIZED END DEVICE" );
 
   /* USER CODE BEGIN APP_ZIGBEE_PrintApplicationInfo1 */
 
