@@ -34,16 +34,15 @@ extern "C" {
 #include "app_debug.h"
 
 #include "stm32wbaxx_ll_tim.h"
+#include "stm32wbaxx_ll_system.h"
+#include "stm32wbaxx_ll_gpio.h"
+#include "stm32wbaxx_ll_exti.h"
 #include "stm32wbaxx_ll_bus.h"
 #include "stm32wbaxx_ll_cortex.h"
 #include "stm32wbaxx_ll_rcc.h"
-#include "stm32wbaxx_ll_system.h"
 #include "stm32wbaxx_ll_utils.h"
 #include "stm32wbaxx_ll_pwr.h"
-#include "stm32wbaxx_ll_gpio.h"
 #include "stm32wbaxx_ll_dma.h"
-
-#include "stm32wbaxx_ll_exti.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -78,6 +77,18 @@ void MX_USART1_UART_Init(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define LED_R_Pin LL_GPIO_PIN_8
+#define LED_R_GPIO_Port GPIOB
+#define BTN1_Pin LL_GPIO_PIN_13
+#define BTN1_GPIO_Port GPIOC
+#define BTN2_Pin LL_GPIO_PIN_6
+#define BTN2_GPIO_Port GPIOB
+#define LED_B_Pin LL_GPIO_PIN_4
+#define LED_B_GPIO_Port GPIOB
+#define BTN3_Pin LL_GPIO_PIN_3
+#define BTN3_GPIO_Port GPIOB
+#define LED_G_Pin LL_GPIO_PIN_9
+#define LED_G_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 

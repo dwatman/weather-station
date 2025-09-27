@@ -42,7 +42,7 @@
 
 /* Private includes -----------------------------------------------------------*/
 /* USER CODE BEGIN PI */
-
+#include "main.h"
 /* USER CODE END PI */
 
 /* Public variables -----------------------------------------------------------*/
@@ -279,7 +279,7 @@ static void APP_ZIGBEE_WaitForCallback( uint32_t lTimeOut )
 static void APP_ZIGBEE_BlinckLedTimerCallback( void * arg )
 {
   /* USER CODE BEGIN APP_ZIGBEE_BlinckLedTimerCallback */
-
+	LL_GPIO_TogglePin(LED_B_GPIO_Port, LED_B_Pin);
   /* USER CODE END APP_ZIGBEE_BlinckLedTimerCallback */
 }
 
