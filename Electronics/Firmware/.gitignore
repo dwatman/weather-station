@@ -1,0 +1,13 @@
+# Eclipse
+.metadata
+.settings
+[dD]ebug
+[rR]elease
+*.launch
+
+# Object files
+
+# Linker output
+
+# Output files
+.elf
