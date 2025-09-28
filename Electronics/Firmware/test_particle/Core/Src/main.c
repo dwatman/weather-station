@@ -47,7 +47,8 @@ LL_DMA_LinkNodeTypeDef Node_GPDMA1_Channel1;
 
 /* USER CODE BEGIN PV */
 volatile int trigger = 0;
-uart_dma_tx_t uart2_dma;
+uart_dma_tx_t uart2_dma_tx;
+uart_dma_rx_t uart2_dma_rx;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -102,7 +103,8 @@ int main(void)
   MX_ICACHE_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  uart_dma_init(&uart2_dma, USART2, GPDMA1, LL_DMA_CHANNEL_0, LL_GPDMA1_REQUEST_USART2_TX);
+  uart_dma_tx_init(&uart2_dma_tx, USART2, GPDMA1, LL_DMA_CHANNEL_0, LL_GPDMA1_REQUEST_USART2_TX);
+  uart_dma_rx_init(&uart2_dma_rx, USART2, GPDMA1, LL_DMA_CHANNEL_1, LL_GPDMA1_REQUEST_USART2_RX);
   /* USER CODE END 2 */
 
   /* Initialize leds */
@@ -129,14 +131,19 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   printf( "Start\n");
-
+  uart_dma_rx_start(&uart2_dma_rx);
+uint8_t tmpbuf[10];
   while (1)
   {
 	  if (trigger) {
 		  trigger = 0;
-		  BSP_LED_Toggle(B1);
-		  printf( "test VCP\n");
-		  uart_dma_send(&uart2_dma, "test DMA\n", 9);
+		  BSP_LED_Toggle(LD1);
+		  printf("VCP t: %lu  h: %lu\n", uart2_dma_rx.tail, uart2_dma_rx.head);
+		  uart_dma_tx_send(&uart2_dma_tx, (uint8_t *)"test DMA\n", 9);
+	  }
+	  if (uart_rx_available(&uart2_dma_rx) >= 4) {
+		  uart_rx_read(&uart2_dma_rx, tmpbuf, 4);
+		  printf("read %c %c %c %c\n", tmpbuf[0], tmpbuf[1], tmpbuf[2], tmpbuf[3]);
 	  }
     /* USER CODE END WHILE */
 
@@ -350,6 +357,10 @@ static void MX_USART2_UART_Init(void)
   DMA_InitStruct.LinkedListBaseAddr = 0x00000000U;
   DMA_InitStruct.LinkedListAddrOffset = 0x00000000U;
   LL_DMA_Init(GPDMA1, LL_DMA_CHANNEL_0, &DMA_InitStruct);
+
+  /* USART2 interrupt Init */
+  NVIC_SetPriority(USART2_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),10, 0));
+  NVIC_EnableIRQ(USART2_IRQn);
 
   /* USER CODE BEGIN USART2_Init 1 */
 
