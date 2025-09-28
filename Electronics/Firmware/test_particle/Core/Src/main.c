@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "usart_dma.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -47,6 +47,7 @@ LL_DMA_LinkNodeTypeDef Node_GPDMA1_Channel1;
 
 /* USER CODE BEGIN PV */
 volatile int trigger = 0;
+uart_dma_tx_t uart2_dma;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -101,7 +102,7 @@ int main(void)
   MX_ICACHE_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  uart_dma_init(&uart2_dma, USART2, GPDMA1, LL_DMA_CHANNEL_0, LL_GPDMA1_REQUEST_USART2_TX);
   /* USER CODE END 2 */
 
   /* Initialize leds */
@@ -135,6 +136,7 @@ int main(void)
 		  trigger = 0;
 		  BSP_LED_Toggle(B1);
 		  printf( "test VCP\n");
+		  uart_dma_send(&uart2_dma, "test DMA\n", 9);
 	  }
     /* USER CODE END WHILE */
 
@@ -199,9 +201,9 @@ static void MX_GPDMA1_Init(void)
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPDMA1);
 
   /* GPDMA1 interrupt Init */
-  NVIC_SetPriority(GPDMA1_Channel0_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
+  NVIC_SetPriority(GPDMA1_Channel0_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),3, 0));
   NVIC_EnableIRQ(GPDMA1_Channel0_IRQn);
-  NVIC_SetPriority(GPDMA1_Channel1_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
+  NVIC_SetPriority(GPDMA1_Channel1_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),3, 0));
   NVIC_EnableIRQ(GPDMA1_Channel1_IRQn);
 
   /* USER CODE BEGIN GPDMA1_Init 1 */
@@ -348,10 +350,6 @@ static void MX_USART2_UART_Init(void)
   DMA_InitStruct.LinkedListBaseAddr = 0x00000000U;
   DMA_InitStruct.LinkedListAddrOffset = 0x00000000U;
   LL_DMA_Init(GPDMA1, LL_DMA_CHANNEL_0, &DMA_InitStruct);
-
-  /* USART2 interrupt Init */
-  NVIC_SetPriority(USART2_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),10, 0));
-  NVIC_EnableIRQ(USART2_IRQn);
 
   /* USER CODE BEGIN USART2_Init 1 */
 

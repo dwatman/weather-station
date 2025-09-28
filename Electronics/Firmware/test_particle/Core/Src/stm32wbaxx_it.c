@@ -22,6 +22,7 @@
 #include "stm32wbaxx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "usart_dma.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,6 +43,7 @@
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
 extern volatile int trigger;
+extern uart_dma_tx_t uart2_dma;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -205,7 +207,7 @@ void SysTick_Handler(void)
 void GPDMA1_Channel0_IRQHandler(void)
 {
   /* USER CODE BEGIN GPDMA1_Channel0_IRQn 0 */
-
+	uart_dma_irq_handler(&uart2_dma);
   /* USER CODE END GPDMA1_Channel0_IRQn 0 */
   /* USER CODE BEGIN GPDMA1_Channel0_IRQn 1 */
 
@@ -223,19 +225,6 @@ void GPDMA1_Channel1_IRQHandler(void)
   /* USER CODE BEGIN GPDMA1_Channel1_IRQn 1 */
 
   /* USER CODE END GPDMA1_Channel1_IRQn 1 */
-}
-
-/**
-  * @brief This function handles USART2 global interrupt.
-  */
-void USART2_IRQHandler(void)
-{
-  /* USER CODE BEGIN USART2_IRQn 0 */
-
-  /* USER CODE END USART2_IRQn 0 */
-  /* USER CODE BEGIN USART2_IRQn 1 */
-
-  /* USER CODE END USART2_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
