@@ -143,7 +143,7 @@ uint8_t tmpbuf[10];
 	  }
 	  if (uart_rx_available(&uart2_dma_rx) >= 4) {
 		  uart_rx_read(&uart2_dma_rx, tmpbuf, 4);
-		  printf("read %c %c %c %c\n", tmpbuf[0], tmpbuf[1], tmpbuf[2], tmpbuf[3]);
+		  printf("read: %c %c %c %c\n", tmpbuf[0], tmpbuf[1], tmpbuf[2], tmpbuf[3]);
 	  }
     /* USER CODE END WHILE */
 

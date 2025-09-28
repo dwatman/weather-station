@@ -20,30 +20,31 @@
 
 // TX structure to hold info for one USART channel
 typedef struct {
-    USART_TypeDef *usart;              // e.g. USART2
-    DMA_TypeDef *dma;                  // e.g. GPDMA1
-    uint32_t dma_channel;              // e.g. LL_DMA_CHANNEL_0
-    uint32_t dma_request;              // e.g. LL_GPDMA1_REQUEST_USART2_TX
+    USART_TypeDef *usart;  // e.g. USART2
+    DMA_TypeDef *dma;      // e.g. GPDMA1
+    uint32_t dma_channel;  // e.g. LL_DMA_CHANNEL_0
+    uint32_t dma_request;  // e.g. LL_GPDMA1_REQUEST_USART2_TX
 
-    volatile uint8_t busy;             // 0 = idle, 1 = busy
-    volatile uint8_t err;              // 0 = no error
-    volatile size_t len;               // active transfer length
+    volatile uint8_t busy; // 0 = idle, 1 = busy
+    volatile uint8_t err;  // 0 = no error
+    volatile size_t len;   // active transfer length
     uint8_t buf[UART_TX_BUFFER_SIZE];  // pointer to preallocated DMA-safe buffer
 } uart_dma_tx_t;
 
 // RX structure: internal buffer, masked indexing, monotonic head/tail counters
 typedef struct {
-	USART_TypeDef *usart;      // USART instance
-	DMA_TypeDef *dma;          // DMA instance
-	uint32_t dma_channel;      // DMA channel identifier
-	uint32_t dma_request;      // DMA request mapping (if used)
+	USART_TypeDef *usart;       // USART instance
+	DMA_TypeDef *dma;           // DMA instance
+	uint32_t dma_channel;       // DMA channel identifier
+	uint32_t dma_request;       // DMA request mapping (if used)
 
-	volatile uint32_t head;    // monotonic write counter
-	volatile uint32_t tail;    // monotonic read counter
-	uint32_t last_raw;         // last raw DMA index (0..N-1)
+	volatile uint32_t head;     // monotonic write counter
+	volatile uint32_t tail;     // monotonic read counter
+	uint32_t last_raw;          // last raw DMA index (0..N-1)
 
-	volatile uint8_t new_data; // set when ISR/idle reports new data
-	volatile uint8_t overflow; // set on overwrite
+	volatile uint8_t new_data;  // set when ISR/idle reports new data
+	volatile uint8_t burst_end; // set on IDLE interrupt
+	volatile uint8_t overflow;  // set on overwrite
 
 	uint8_t buf[UART_RX_BUFFER_SIZE]; // internal circular buffer
 } uart_dma_rx_t;

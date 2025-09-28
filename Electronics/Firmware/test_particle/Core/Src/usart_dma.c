@@ -76,6 +76,7 @@ void uart_dma_rx_init(uart_dma_rx_t *h, USART_TypeDef *usart, DMA_TypeDef *dma, 
 	h->tail = 0;
 	h->last_raw = 0;
 	h->new_data = 0;
+	h->burst_end = 0;
 	h->overflow = 0;
 
 	// Ensure DMA channel is disabled before config
@@ -125,6 +126,7 @@ void uart_dma_rx_start(uart_dma_rx_t *h) {
 	h->tail = 0;
 	h->last_raw = 0;
 	h->new_data = 0;
+	h->burst_end = 0;
 	h->overflow = 0;
 
 	// Ensure DMA flags cleared
@@ -242,6 +244,9 @@ size_t uart_rx_read(uart_dma_rx_t *h, uint8_t *dst, size_t len) {
 
 	h->tail = tail + to_copy;
 
+	// Update new_data flag: clear if we've consumed everything
+	h->new_data = (h->head != h->tail) ? 1U : 0U;
+
 	__set_PRIMASK(prim);
 
 	uint32_t first_idx = tail & UART_RX_MASK;
@@ -273,6 +278,9 @@ void uart_rx_skip(uart_dma_rx_t *h, size_t n) {
 	if (to_skip > available) to_skip = available;
 
 	h->tail = tail + to_skip;
+
+	// update new_data flag: clear if we've consumed everything
+	h->new_data = (h->head != h->tail) ? 1U : 0U;
 
 	__set_PRIMASK(prim);
 }
@@ -366,4 +374,5 @@ void uart_dma_rx_idle_irq_handler(uart_dma_rx_t *h) {
 
 	uint32_t raw = uart_dma_rx_hw_pos(h);
 	uart_dma_rx_update_head_by_delta(h, raw);
+	h->burst_end = 1U;
 }
