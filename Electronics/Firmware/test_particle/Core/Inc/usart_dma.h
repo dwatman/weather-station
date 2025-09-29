@@ -7,7 +7,7 @@
 #include "stm32wbaxx_ll_dma.h"
 
 #define UART_TX_BUFFER_SIZE 256
-#define UART_RX_BUFFER_SIZE 512
+#define UART_RX_BUFFER_SIZE 256 // TODO: increase after testing
 
 // mask for indexing (power of two buffer size)
 #define UART_RX_MASK (UART_RX_BUFFER_SIZE - 1U)

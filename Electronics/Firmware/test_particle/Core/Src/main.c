@@ -147,12 +147,14 @@ int num;
 		last_tick = current_tick;
 		BSP_LED_Toggle(LD1);
 		printf("VCP t: %lu  h: %lu\n", uart2_dma_rx.tail, uart2_dma_rx.head);
-		//sps30_device_reset();
+		sps30_device_reset();
 		//uart_dma_tx_send(&uart2_dma_tx, (uint8_t *)"test DMA\n", 9);
 		//sps30_start_measurement(SPS30_OUTPUT_FORMAT_OUTPUT_FORMAT_FLOAT);
 	}
-	num = uart_rx_available(&uart2_dma_rx);
-	if (num) {
+	if (uart2_dma_rx.burst_end) {
+		uart2_dma_rx.burst_end = 0;
+		num = uart_rx_available(&uart2_dma_rx);
+		printf("num %u\n", num);
 		uart_rx_read(&uart2_dma_rx, tmpbuf, num);
 		for (int i=0; i<num; i++)
 			printf("RX: %02X\n", tmpbuf[i]);

@@ -1,4 +1,5 @@
-#include <string.h>
+#include <stdio.h> // for printf
+#include <string.h> // for memcpy
 
 #include "usart_dma.h"
 
@@ -291,7 +292,7 @@ void uart_rx_skip(uart_dma_rx_t *h, size_t n) {
 void uart_dma_tx_irq_handler(uart_dma_tx_t *h) {
 	if (h == NULL) return;
 
-	// transfer complete?
+	// transfer complete
 	if (LL_DMA_IsActiveFlag_TC(h->dma, h->dma_channel)) {
 		LL_DMA_ClearFlag_TC(h->dma, h->dma_channel);
 
@@ -313,6 +314,7 @@ void uart_dma_tx_irq_handler(uart_dma_tx_t *h) {
 		h->busy = 0;
 		h->len = 0;
 		h->err = 1;
+		printf("INT TX USE\n");
 	}
 	if (LL_DMA_IsActiveFlag_ULE(h->dma, h->dma_channel)) {
 		LL_DMA_ClearFlag_ULE(h->dma, h->dma_channel);
@@ -321,6 +323,7 @@ void uart_dma_tx_irq_handler(uart_dma_tx_t *h) {
 		h->busy = 0;
 		h->len = 0;
 		h->err = 2;
+		printf("INT TX ULE\n");
 	}
 	if (LL_DMA_IsActiveFlag_DTE(h->dma, h->dma_channel)) {
 		LL_DMA_ClearFlag_DTE(h->dma, h->dma_channel);
@@ -329,42 +332,48 @@ void uart_dma_tx_irq_handler(uart_dma_tx_t *h) {
 		h->busy = 0;
 		h->len = 0;
 		h->err = 3;
+		printf("INT TX DTE\n");
 	}
 }
 
 void uart_dma_rx_irq_handler(uart_dma_rx_t *h) {
-
+	// Transfer half complete
 	if (LL_DMA_IsActiveFlag_HT(h->dma, h->dma_channel)) {
 		LL_DMA_ClearFlag_HT(h->dma, h->dma_channel);
 		uint32_t raw = UART_RX_BUFFER_SIZE / 2U;
 		uart_dma_rx_update_head_by_delta(h, raw);
+		printf("INT RX HT\n");
 	}
-
+	// Transfer complete
 	if (LL_DMA_IsActiveFlag_TC(h->dma, h->dma_channel)) {
 		LL_DMA_ClearFlag_TC(h->dma, h->dma_channel);
 		uint32_t raw = 0U;
 		uart_dma_rx_update_head_by_delta(h, raw);
+		printf("INT RX TC\n");
 	}
-
+	// User setting error
 	if (LL_DMA_IsActiveFlag_USE(h->dma, h->dma_channel)) {
 		LL_DMA_ClearFlag_USE(h->dma, h->dma_channel);
 		h->overflow = 1U;
 		LL_DMA_DisableChannel(h->dma, h->dma_channel);
 		LL_USART_DisableDMAReq_RX(h->usart);
+		printf("INT RX USE\n");
 	}
-
+	// Link transfer error
 	if (LL_DMA_IsActiveFlag_ULE(h->dma, h->dma_channel)) {
 		LL_DMA_ClearFlag_ULE(h->dma, h->dma_channel);
 		h->overflow = 1U;
 		LL_DMA_DisableChannel(h->dma, h->dma_channel);
 		LL_USART_DisableDMAReq_RX(h->usart);
+		printf("INT RX ULE\n");
 	}
-
+	// Data transfer error
 	if (LL_DMA_IsActiveFlag_DTE(h->dma, h->dma_channel)) {
 		LL_DMA_ClearFlag_DTE(h->dma, h->dma_channel);
 		h->overflow = 1U;
 		LL_DMA_DisableChannel(h->dma, h->dma_channel);
 		LL_USART_DisableDMAReq_RX(h->usart);
+		printf("INT RX DTE\n");
 	}
 }
 

@@ -324,11 +324,15 @@ int16_t sps30_device_reset() {
     //sensirion_shdlc_begin_stream(&stream, buffer_ptr, 0xd3, SPS30_SHDLC_ADDR, 0);
     //local_error = sensirion_shdlc_write_request(&stream);
 
-    sensirion_shdlc_tx(SPS30_SHDLC_ADDR, SPS30_DEVICE_RESET_CMD_ID, 0, buf);
-
+    local_error = sensirion_shdlc_tx(SPS30_SHDLC_ADDR, SPS30_DEVICE_RESET_CMD_ID, 0, buf);
     if (local_error) {
         return local_error;
     }
+
+    timeout = 20; // 20ms timeout
+
+
+    //while ()
     //local_error = sensirion_shdlc_read_response(&stream, 0, &header, 50);
     return local_error;
 }
