@@ -42,7 +42,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-extern volatile int trigger;
+extern volatile uint32_t timeout;
 extern uart_dma_tx_t uart2_dma_tx;
 extern uart_dma_rx_t uart2_dma_rx;
 /* USER CODE END PV */
@@ -186,8 +186,7 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
-	if (HAL_GetTick() % 5000 == 0)
-		trigger = 1;
+	if (timeout > 0) timeout--;
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */

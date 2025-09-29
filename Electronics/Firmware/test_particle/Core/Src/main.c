@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "usart_dma.h"
+#include "sps30_uart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,7 +47,7 @@ COM_InitTypeDef BspCOMInit;
 LL_DMA_LinkNodeTypeDef Node_GPDMA1_Channel1;
 
 /* USER CODE BEGIN PV */
-volatile int trigger = 0;
+volatile uint32_t timeout = 0;
 uart_dma_tx_t uart2_dma_tx;
 uart_dma_rx_t uart2_dma_rx;
 /* USER CODE END PV */
@@ -132,19 +133,30 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   printf( "Start\n");
   uart_dma_rx_start(&uart2_dma_rx);
-uint8_t tmpbuf[10];
+  HAL_Delay(500);
+  sps30_device_reset();
+  HAL_Delay(500);
+
+  uint8_t tmpbuf[100];
+  uint32_t last_tick = 0;
+int num;
   while (1)
   {
-	  if (trigger) {
-		  trigger = 0;
-		  BSP_LED_Toggle(LD1);
-		  printf("VCP t: %lu  h: %lu\n", uart2_dma_rx.tail, uart2_dma_rx.head);
-		  uart_dma_tx_send(&uart2_dma_tx, (uint8_t *)"test DMA\n", 9);
-	  }
-	  if (uart_rx_available(&uart2_dma_rx) >= 4) {
-		  uart_rx_read(&uart2_dma_rx, tmpbuf, 4);
-		  printf("read: %c %c %c %c\n", tmpbuf[0], tmpbuf[1], tmpbuf[2], tmpbuf[3]);
-	  }
+	uint32_t current_tick = HAL_GetTick();
+	if ((current_tick - last_tick) >= 5000) {
+		last_tick = current_tick;
+		BSP_LED_Toggle(LD1);
+		printf("VCP t: %lu  h: %lu\n", uart2_dma_rx.tail, uart2_dma_rx.head);
+		//sps30_device_reset();
+		//uart_dma_tx_send(&uart2_dma_tx, (uint8_t *)"test DMA\n", 9);
+		//sps30_start_measurement(SPS30_OUTPUT_FORMAT_OUTPUT_FORMAT_FLOAT);
+	}
+	num = uart_rx_available(&uart2_dma_rx);
+	if (num) {
+		uart_rx_read(&uart2_dma_rx, tmpbuf, num);
+		for (int i=0; i<num; i++)
+			printf("RX: %02X\n", tmpbuf[i]);
+	}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

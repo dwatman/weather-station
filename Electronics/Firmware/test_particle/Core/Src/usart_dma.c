@@ -147,7 +147,7 @@ void uart_dma_rx_start(uart_dma_rx_t *h) {
 
 int uart_dma_tx_send(uart_dma_tx_t *h, const uint8_t *data, size_t len) {
     if (h == NULL || data == NULL) return UART_DMA_FAIL;
-    if (len == 0) return UART_DMA_OK;
+    if (len == 0) return 0;
 
     if (len > sizeof(h->buf)) return UART_DMA_TOO_LARGE;
 
@@ -182,7 +182,7 @@ int uart_dma_tx_send(uart_dma_tx_t *h, const uint8_t *data, size_t len) {
     // Enable DMA channel to start transfer
     LL_DMA_EnableChannel(h->dma, h->dma_channel);
 
-    return UART_DMA_OK;
+    return len;
 }
 
 // available bytes (snapshot)
