@@ -58,7 +58,7 @@ extern uart_dma_rx_t uart2_dma_rx;
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-extern LL_DMA_LinkNodeTypeDef Node_GPDMA1_Channel1;
+
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */

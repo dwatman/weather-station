@@ -7,7 +7,7 @@
 #include "stm32wbaxx_ll_dma.h"
 
 #define UART_TX_BUFFER_SIZE 256
-#define UART_RX_BUFFER_SIZE 256 // TODO: increase after testing
+#define UART_RX_BUFFER_SIZE 32 // TODO: increase after testing
 
 // mask for indexing (power of two buffer size)
 #define UART_RX_MASK (UART_RX_BUFFER_SIZE - 1U)
@@ -52,6 +52,7 @@ typedef struct {
 void uart_dma_tx_init(uart_dma_tx_t *h, USART_TypeDef *usart, DMA_TypeDef *dma, uint32_t dma_channel, uint32_t dma_request);
 void uart_dma_rx_init(uart_dma_rx_t *h, USART_TypeDef *usart, DMA_TypeDef *dma, uint32_t dma_channel, uint32_t dma_request);
 void uart_dma_rx_start(uart_dma_rx_t *h);
+void uart_dma_rx_rearm(uart_dma_rx_t *h);
 int uart_dma_tx_send(uart_dma_tx_t *h, const uint8_t *data, size_t len);
 
 size_t uart_rx_available(uart_dma_rx_t *h);
