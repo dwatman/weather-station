@@ -137,7 +137,7 @@ int main(void)
 
   uint8_t tmpbuf[100];
   uint32_t last_tick = 0;
-extern volatile int moo;
+
   while (1)
   {
 	uint32_t current_tick = HAL_GetTick();
@@ -158,10 +158,6 @@ extern volatile int moo;
 		uart_rx_read(&uart2_dma_rx, tmpbuf, num);
 		for (int i=0; i<num; i++)
 			printf("RX: %02X\n", tmpbuf[i]);
-	}
-	if (moo) {
-		moo=0;
-		uart_dma_rx_rearm(&uart2_dma_rx);
 	}
     /* USER CODE END WHILE */
 

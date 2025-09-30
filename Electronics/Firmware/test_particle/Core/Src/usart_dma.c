@@ -2,7 +2,7 @@
 #include <string.h> // for memcpy
 
 #include "usart_dma.h"
-volatile int moo=0;
+
 // helper: read DMA hardware written position (0..capacity-1)
 static inline uint32_t uart_dma_rx_hw_pos(uart_dma_rx_t *h) {
 	uint32_t rem = LL_DMA_GetBlkDataLength(h->dma, h->dma_channel);
@@ -146,68 +146,6 @@ void uart_dma_rx_start(uart_dma_rx_t *h) {
 
 	// enable DMA channel to start reception
 	LL_DMA_EnableChannel(h->dma, h->dma_channel);
-}
-
-// Rearm DMA on transfer complete to emulate circular mode
-void uart_dma_rx_rearm(uart_dma_rx_t *h) {
-	printf("uart_dma_rx_rearm\n");
-
-	//LL_DMA_ClearFlag_TO(h->dma, h->dma_channel);
-
-	printf("TC: %u\n", (unsigned)LL_DMA_IsActiveFlag_TC(h->dma, h->dma_channel));
-	printf("HT: %u\n", (unsigned)LL_DMA_IsActiveFlag_HT(h->dma, h->dma_channel));
-	printf("DTE: %u\n", (unsigned)LL_DMA_IsActiveFlag_DTE(h->dma, h->dma_channel));
-	printf("USE: %u\n", (unsigned)LL_DMA_IsActiveFlag_USE(h->dma, h->dma_channel));
-	printf("ULE: %u\n", (unsigned)LL_DMA_IsActiveFlag_ULE(h->dma, h->dma_channel));
-
-	printf("IDLE: %u\n", (unsigned)LL_DMA_IsActiveFlag_IDLE(h->dma, h->dma_channel));
-	printf("MIS: %u\n", (unsigned)LL_DMA_IsActiveFlag_MIS(h->dma, h->dma_channel));
-	printf("TO: %u\n", (unsigned)LL_DMA_IsActiveFlag_TO(h->dma, h->dma_channel));
-
-	printf("EN: %u\n", (unsigned)LL_DMA_IsEnabledChannel(h->dma, h->dma_channel));
-	printf("MISR: 0x%08X\n", (unsigned)h->dma->MISR);
-	printf("CNDTR: %lu\n", (unsigned long)LL_DMA_GetBlkDataLength(h->dma, h->dma_channel));
-
-    // Clear flags for this transfer
-    LL_DMA_ClearFlag_TC(h->dma, h->dma_channel);
-    LL_DMA_ClearFlag_HT(h->dma, h->dma_channel);
-    LL_DMA_ClearFlag_USE(h->dma, h->dma_channel);
-    LL_DMA_ClearFlag_ULE(h->dma, h->dma_channel);
-    LL_DMA_ClearFlag_DTE(h->dma, h->dma_channel);
-
-	// Temporarily disable DMA interrupts for this channel to avoid nested IRQs
-	LL_DMA_DisableIT_TC(h->dma, h->dma_channel);
-	LL_DMA_DisableIT_HT(h->dma, h->dma_channel);
-
-	// Ensure DMA channel is disabled before config
-	LL_DMA_DisableChannel(h->dma, h->dma_channel);
-	// Wait until HW clears the EN bit for the channel
-	while (LL_DMA_IsEnabledChannel(h->dma, h->dma_channel)) { }
-
-	// Set addresses and block length (re-arm)
-	LL_DMA_SetSrcAddress(h->dma, h->dma_channel, (uint32_t)&h->usart->RDR);
-	LL_DMA_SetDestAddress(h->dma, h->dma_channel, (uint32_t)h->buf);
-	LL_DMA_SetBlkDataLength(h->dma, h->dma_channel, (uint32_t)UART_RX_BUFFER_SIZE);
-
-	printf("EN2: %u\n", (unsigned)LL_DMA_IsEnabledChannel(h->dma, h->dma_channel));
-	printf("MISR2: 0x%08X\n", (unsigned)h->dma->MISR);
-	printf("CNDTR2: %lu\n", (unsigned long)LL_DMA_GetBlkDataLength(h->dma, h->dma_channel));
-
-	// Clear flags again to be safe
-	LL_DMA_ClearFlag_TC(h->dma, h->dma_channel);
-	LL_DMA_ClearFlag_HT(h->dma, h->dma_channel);
-
-	// Re-enable USART DMA request and the channel
-	LL_USART_EnableDMAReq_RX(h->usart);
-	LL_DMA_EnableChannel(h->dma, h->dma_channel);
-
-	printf("EN3: %u\n", (unsigned)LL_DMA_IsEnabledChannel(h->dma, h->dma_channel));
-	printf("MISR3: 0x%08X\n", (unsigned)h->dma->MISR);
-	printf("CNDTR3: %lu\n", (unsigned long)LL_DMA_GetBlkDataLength(h->dma, h->dma_channel));
-
-	// Re-enable HT/TC interrupts for the channel
-	LL_DMA_EnableIT_HT(h->dma, h->dma_channel);
-	LL_DMA_EnableIT_TC(h->dma, h->dma_channel);
 }
 
 int uart_dma_tx_send(uart_dma_tx_t *h, const uint8_t *data, size_t len) {
@@ -414,10 +352,6 @@ void uart_dma_rx_irq_handler(uart_dma_rx_t *h) {
 		uint32_t raw = 0U;
 		uart_dma_rx_update_head_by_delta(h, raw);
 		printf("INT RX TC\n");
-
-		// Re-arm DMA to emulate circular mode
-		//uart_dma_rx_rearm(h);
-		moo=1;
 	}
 	// User setting error
 	if (LL_DMA_IsActiveFlag_USE(h->dma, h->dma_channel)) {
