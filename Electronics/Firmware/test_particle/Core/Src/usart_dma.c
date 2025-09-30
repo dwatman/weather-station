@@ -2,6 +2,9 @@
 #include <string.h> // for memcpy
 
 #include "usart_dma.h"
+#include "linked_list.h"
+
+extern DMA_QListTypeDef UsartRxQueue;
 
 // helper: read DMA hardware written position (0..capacity-1)
 static inline uint32_t uart_dma_rx_hw_pos(uart_dma_rx_t *h) {
@@ -68,6 +71,9 @@ void uart_dma_tx_init(uart_dma_tx_t *h, USART_TypeDef *usart, DMA_TypeDef *dma, 
 }
 
 void uart_dma_rx_init(uart_dma_rx_t *h, USART_TypeDef *usart, DMA_TypeDef *dma, uint32_t dma_channel, uint32_t dma_request) {
+	uint32_t cllr_mask = 0UL;
+	DMA_NodeTypeDef *head;
+
 	h->usart = usart;
 	h->dma = dma;
 	h->dma_channel = dma_channel;
@@ -81,27 +87,35 @@ void uart_dma_rx_init(uart_dma_rx_t *h, USART_TypeDef *usart, DMA_TypeDef *dma, 
 	h->overflow = 0;
 
 	// Ensure DMA channel is disabled before config
-	LL_DMA_DisableChannel(h->dma, h->dma_channel);
-	// Wait until HW clears the EN bit for the channel
-	while (LL_DMA_IsEnabledChannel(h->dma, h->dma_channel)) { }
+	// Only required if re-initialising
+	//LL_DMA_DisableChannel(h->dma, h->dma_channel);
+	//while (LL_DMA_IsEnabledChannel(h->dma, h->dma_channel)) { }
 
-	// Program static DMA parameters that do not change per transfer (circular mode expected)
-	LL_DMA_SetDataTransferDirection(h->dma, h->dma_channel, LL_DMA_DIRECTION_PERIPH_TO_MEMORY);
-	LL_DMA_SetPeriphRequest(h->dma, h->dma_channel, h->dma_request);
-	LL_DMA_SetChannelPriorityLevel(h->dma, h->dma_channel, LL_DMA_LOW_PRIORITY_MID_WEIGHT);
+    // Build the queue
+	HAL_StatusTypeDef hal_ret = MX_UsartRxQueue_Config(); // Auto-generated function
+	if (hal_ret != HAL_OK) {
+		printf("FAILED: MX_UsartRxQueue_Config\n");
+		return;
+	}
 
-	// Source parameters
-	LL_DMA_SetSrcAddress(h->dma, h->dma_channel, (uint32_t)&h->usart->RDR);
-	LL_DMA_SetSrcIncMode(h->dma, h->dma_channel, LL_DMA_SRC_FIXED);
-	LL_DMA_SetSrcDataWidth(h->dma, h->dma_channel, LL_DMA_SRC_DATAWIDTH_BYTE);
+	head = UsartRxQueue.Head;
+	if (head == NULL) {
+		printf("FAILED: UsartRxQueue.Head is NULL\n");
+		return;
+	}
 
-	// Destination parameters
-	LL_DMA_SetDestAddress(h->dma, h->dma_channel, (uint32_t)h->buf);
-	LL_DMA_SetDestIncMode(h->dma, h->dma_channel, LL_DMA_DEST_INCREMENT);
-	LL_DMA_SetDestDataWidth(h->dma, h->dma_channel, LL_DMA_DEST_DATAWIDTH_BYTE);
+	// Compute CLLR mask
+	cllr_mask = DMA_CLLR_UT1 | DMA_CLLR_UT2 | DMA_CLLR_UB1 | DMA_CLLR_USA | DMA_CLLR_UDA | DMA_CLLR_ULL;
 
-	// set block length to buffer capacity
-	LL_DMA_SetBlkDataLength(h->dma, h->dma_channel, (uint32_t)UART_RX_BUFFER_SIZE);
+    // Program linked-list base address into CLBAR (LL wrapper)
+    LL_DMA_SetLinkedListBaseAddr(h->dma, h->dma_channel, (uint32_t)head);
+
+    // Program CLLR: include the mask and the low address bits (LL wrapper)
+    LL_DMA_ConfigLinkUpdate(h->dma, h->dma_channel, cllr_mask, ((uint32_t)head & DMA_CLLR_LA));
+
+    // Ensure memory writes complete before DMA starts (barriers)
+    __DSB();
+    __ISB();
 
 	// Clear interrupt flags
 	LL_DMA_ClearFlag_HT(h->dma, h->dma_channel); // Transfer half complete
@@ -120,31 +134,11 @@ void uart_dma_rx_init(uart_dma_rx_t *h, USART_TypeDef *usart, DMA_TypeDef *dma, 
 	// Enable USART IDLE interrupt so short bursts are detected
 	LL_USART_ClearFlag_IDLE(h->usart);
 	LL_USART_EnableIT_IDLE(h->usart);
-}
 
-// start circular RX by enabling DMA channel and USART DMA request
-void uart_dma_rx_start(uart_dma_rx_t *h) {
-	// reset state
-	h->head = 0;
-	h->tail = 0;
-	h->last_raw = 0;
-	h->new_data = 0;
-	h->burst_end = 0;
-	h->overflow = 0;
-
-	// Ensure DMA flags cleared
-	LL_DMA_ClearFlag_TC(h->dma, h->dma_channel);
-	LL_DMA_ClearFlag_HT(h->dma, h->dma_channel);
-
-	// Set addresses and block length
-	LL_DMA_SetSrcAddress(h->dma, h->dma_channel, (uint32_t)&h->usart->RDR);
-	LL_DMA_SetDestAddress(h->dma, h->dma_channel, (uint32_t)h->buf);
-	LL_DMA_SetBlkDataLength(h->dma, h->dma_channel, (uint32_t)UART_RX_BUFFER_SIZE);
-
-	// enable USART DMA request
+	// Enable USART DMA request
 	LL_USART_EnableDMAReq_RX(h->usart);
 
-	// enable DMA channel to start reception
+	// Enable DMA channel to start reception
 	LL_DMA_EnableChannel(h->dma, h->dma_channel);
 }
 

@@ -130,7 +130,6 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   printf( "Start\n");
-  uart_dma_rx_start(&uart2_dma_rx);
   HAL_Delay(500);
   sps30_device_reset();
   HAL_Delay(500);
