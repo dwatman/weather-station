@@ -218,6 +218,8 @@ static void MX_GPDMA1_Init(void)
 
   /* USER CODE END GPDMA1_Init 0 */
 
+  LL_DMA_InitLinkedListTypeDef DMA_InitLinkedListStruct = {0};
+
   /* Peripheral clock enable */
   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPDMA1);
 
@@ -230,6 +232,11 @@ static void MX_GPDMA1_Init(void)
   /* USER CODE BEGIN GPDMA1_Init 1 */
 
   /* USER CODE END GPDMA1_Init 1 */
+  DMA_InitLinkedListStruct.Priority = LL_DMA_LOW_PRIORITY_MID_WEIGHT;
+  DMA_InitLinkedListStruct.LinkStepMode = LL_DMA_LSM_FULL_EXECUTION;
+  DMA_InitLinkedListStruct.LinkAllocatedPort = LL_DMA_LINK_ALLOCATED_PORT0;
+  DMA_InitLinkedListStruct.TransferEventMode = LL_DMA_TCEM_LAST_LLITEM_TRANSFER;
+  LL_DMA_List_Init(GPDMA1, LL_DMA_CHANNEL_1, &DMA_InitLinkedListStruct);
   /* USER CODE BEGIN GPDMA1_Init 2 */
 
   /* USER CODE END GPDMA1_Init 2 */
@@ -306,33 +313,6 @@ static void MX_USART2_UART_Init(void)
   LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /* USART2 DMA Init */
-
-  /* GPDMA1_REQUEST_USART2_RX Init */
-  DMA_InitStruct.SrcAddress = 0x00000000U;
-  DMA_InitStruct.DestAddress = 0x00000000U;
-  DMA_InitStruct.Direction = LL_DMA_DIRECTION_PERIPH_TO_MEMORY;
-  DMA_InitStruct.BlkHWRequest = LL_DMA_HWREQUEST_SINGLEBURST;
-  DMA_InitStruct.DataAlignment = LL_DMA_DATA_ALIGN_ZEROPADD;
-  DMA_InitStruct.SrcBurstLength = 1;
-  DMA_InitStruct.DestBurstLength = 1;
-  DMA_InitStruct.SrcDataWidth = LL_DMA_SRC_DATAWIDTH_BYTE;
-  DMA_InitStruct.DestDataWidth = LL_DMA_DEST_DATAWIDTH_BYTE;
-  DMA_InitStruct.SrcIncMode = LL_DMA_SRC_FIXED;
-  DMA_InitStruct.DestIncMode = LL_DMA_DEST_INCREMENT;
-  DMA_InitStruct.Priority = LL_DMA_LOW_PRIORITY_MID_WEIGHT;
-  DMA_InitStruct.BlkDataLength = 0x00000000U;
-  DMA_InitStruct.TriggerMode = LL_DMA_TRIGM_BLK_TRANSFER;
-  DMA_InitStruct.TriggerPolarity = LL_DMA_TRIG_POLARITY_MASKED;
-  DMA_InitStruct.TriggerSelection = 0x00000000U;
-  DMA_InitStruct.Request = LL_GPDMA1_REQUEST_USART2_RX;
-  DMA_InitStruct.TransferEventMode = LL_DMA_TCEM_BLK_TRANSFER;
-  DMA_InitStruct.SrcAllocatedPort = LL_DMA_SRC_ALLOCATED_PORT0;
-  DMA_InitStruct.DestAllocatedPort = LL_DMA_DEST_ALLOCATED_PORT1;
-  DMA_InitStruct.LinkAllocatedPort = LL_DMA_LINK_ALLOCATED_PORT1;
-  DMA_InitStruct.LinkStepMode = LL_DMA_LSM_FULL_EXECUTION;
-  DMA_InitStruct.LinkedListBaseAddr = 0x00000000U;
-  DMA_InitStruct.LinkedListAddrOffset = 0x00000000U;
-  LL_DMA_Init(GPDMA1, LL_DMA_CHANNEL_1, &DMA_InitStruct);
 
   /* GPDMA1_REQUEST_USART2_TX Init */
   DMA_InitStruct.SrcAddress = 0x00000000U;
