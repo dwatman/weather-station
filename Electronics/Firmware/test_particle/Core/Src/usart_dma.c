@@ -12,7 +12,7 @@ static inline uint32_t uart_dma_rx_hw_pos(uart_dma_rx_t *h) {
 	return (uint32_t)(UART_RX_BUFFER_SIZE - rem) & UART_RX_MASK;
 }
 
-// update head by delta between raw and last_raw (masked)
+// Update head by delta between raw and last_raw (masked)
 static inline void uart_dma_rx_update_head_by_delta(uart_dma_rx_t *h, uint32_t raw) {
 	uint32_t delta = (raw - h->last_raw) & UART_RX_MASK;
 	if (delta != 0U) {
@@ -29,6 +29,15 @@ static inline void uart_dma_rx_update_head_by_delta(uart_dma_rx_t *h, uint32_t r
 
 		h->new_data = 1U;
 	}
+}
+
+// Safe snapshot of head/tail pointers
+static inline void snapshot_head_tail(uart_dma_rx_t *h, uint32_t *out_head, uint32_t *out_tail) {
+    uint32_t prim = __get_PRIMASK();
+    __disable_irq();
+    *out_head = h->head;
+    *out_tail = h->tail;
+    __set_PRIMASK(prim);
 }
 
 void uart_dma_tx_init(uart_dma_tx_t *h, USART_TypeDef *usart, DMA_TypeDef *dma, uint32_t dma_channel, uint32_t dma_request) {
@@ -70,6 +79,7 @@ void uart_dma_tx_init(uart_dma_tx_t *h, USART_TypeDef *usart, DMA_TypeDef *dma, 
 	LL_DMA_EnableIT_DTE(h->dma, h->dma_channel);
 }
 
+// Initialise circular DMA reception (using linked list)
 void uart_dma_rx_init(uart_dma_rx_t *h, USART_TypeDef *usart, DMA_TypeDef *dma, uint32_t dma_channel, uint32_t dma_request) {
 	uint32_t cllr_mask = 0UL;
 	DMA_NodeTypeDef *head;
@@ -142,6 +152,7 @@ void uart_dma_rx_init(uart_dma_rx_t *h, USART_TypeDef *usart, DMA_TypeDef *dma, 
 	LL_DMA_EnableChannel(h->dma, h->dma_channel);
 }
 
+// Initialise linear DMA transmission (standard DMA mode)
 int uart_dma_tx_send(uart_dma_tx_t *h, const uint8_t *data, size_t len) {
     if (h == NULL || data == NULL) return UART_DMA_FAIL;
     if (len == 0) return 0;
@@ -179,41 +190,22 @@ int uart_dma_tx_send(uart_dma_tx_t *h, const uint8_t *data, size_t len) {
     // Enable DMA channel to start transfer
     LL_DMA_EnableChannel(h->dma, h->dma_channel);
 
-    return len;
+    return UART_DMA_OK;
 }
 
-// available bytes (snapshot)
+// Available bytes (snapshot)
 size_t uart_rx_available(uart_dma_rx_t *h) {
-	uint32_t raw;
 	uint32_t head, tail;
 
-	uint32_t prim = __get_PRIMASK();
-	__disable_irq();
-
-	raw = uart_dma_rx_hw_pos(h);
-	uart_dma_rx_update_head_by_delta(h, raw);
-	head = h->head;
-	tail = h->tail;
-
-	__set_PRIMASK(prim);
+	snapshot_head_tail(h, &head, &tail);
 
 	return (size_t)(head - tail);
 }
 
-// peek single byte at offset from tail (returns 0 if empty)
+// Peek single byte at offset from tail (returns 0 if empty)
 uint8_t uart_rx_peek(uart_dma_rx_t *h, uint32_t offset) {
-	uint32_t raw;
 	uint32_t head, tail;
-
-	uint32_t prim = __get_PRIMASK();
-	__disable_irq();
-
-	raw = uart_dma_rx_hw_pos(h);
-	uart_dma_rx_update_head_by_delta(h, raw);
-	head = h->head;
-	tail = h->tail;
-
-	__set_PRIMASK(prim);
+	snapshot_head_tail(h, &head, &tail);
 
 	uint32_t available = head - tail;
 	if (offset >= available) return 0U;
@@ -222,16 +214,16 @@ uint8_t uart_rx_peek(uart_dma_rx_t *h, uint32_t offset) {
 	return h->buf[idx];
 }
 
-// read up to len bytes into dst, advance tail
+
+// Read up to len bytes into dst, advance tail
+// Returns number of bytes read
+// new_data flag is cleared if all data is read out
 size_t uart_rx_read(uart_dma_rx_t *h, uint8_t *dst, size_t len) {
-	uint32_t raw;
 	uint32_t head, tail;
 
 	uint32_t prim = __get_PRIMASK();
 	__disable_irq();
 
-	raw = uart_dma_rx_hw_pos(h);
-	uart_dma_rx_update_head_by_delta(h, raw);
 	head = h->head;
 	tail = h->tail;
 
@@ -241,7 +233,7 @@ size_t uart_rx_read(uart_dma_rx_t *h, uint8_t *dst, size_t len) {
 
 	h->tail = tail + to_copy;
 
-	// Update new_data flag: clear if we've consumed everything
+	// Update new_data flag: clear if buffer is now empty
 	h->new_data = (h->head != h->tail) ? 1U : 0U;
 
 	__set_PRIMASK(prim);
@@ -258,15 +250,13 @@ size_t uart_rx_read(uart_dma_rx_t *h, uint8_t *dst, size_t len) {
 	return (size_t)to_copy;
 }
 
+// Skip n bytes in the buffer
 void uart_rx_skip(uart_dma_rx_t *h, size_t n) {
-	uint32_t raw;
 	uint32_t head, tail;
 
 	uint32_t prim = __get_PRIMASK();
 	__disable_irq();
 
-	raw = uart_dma_rx_hw_pos(h);
-	uart_dma_rx_update_head_by_delta(h, raw);
 	head = h->head;
 	tail = h->tail;
 
@@ -276,7 +266,7 @@ void uart_rx_skip(uart_dma_rx_t *h, size_t n) {
 
 	h->tail = tail + to_skip;
 
-	// update new_data flag: clear if we've consumed everything
+	// Update new_data flag: clear if buffer is now empty
 	h->new_data = (h->head != h->tail) ? 1U : 0U;
 
 	__set_PRIMASK(prim);
