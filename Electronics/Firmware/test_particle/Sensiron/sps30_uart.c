@@ -56,36 +56,39 @@ int16_t sps30_wake_up_sequence() {
     }
     return local_error;
 }
+*/
 
 int16_t sps30_start_measurement(sps30_output_format measurement_output_format) {
-    struct sensirion_shdlc_rx_header header;
-    sensirion_streaming_state stream;
-    int16_t local_error = NO_ERROR;
-    uint8_t* buffer_ptr = communication_buffer;
-    sensirion_shdlc_begin_stream(&stream, buffer_ptr, 0x0, SPS30_SHDLC_ADDR, 2);
-    sensirion_add_uint16_t_argument(&stream, measurement_output_format);
-    local_error = sensirion_shdlc_write_request(&stream);
+	int16_t local_error = NO_ERROR;
+	uint8_t* buf = communication_buffer;
+
+	buf[0] = measurement_output_format >> 8;
+	buf[1] = measurement_output_format & 0xFF;
+
+    local_error = sensirion_shdlc_tx(SPS30_SHDLC_ADDR, SPS30_START_MEASUREMENT_CMD_ID, 2, buf);
     if (local_error) {
         return local_error;
     }
-    local_error = sensirion_shdlc_read_response(&stream, 0, &header, 50);
+
+    timeout = 20; // 20ms timeout
+    //local_error = sensirion_shdlc_read_response(&stream, 0, &header, 50);
     return local_error;
 }
 
 int16_t sps30_stop_measurement() {
-    struct sensirion_shdlc_rx_header header;
-    sensirion_streaming_state stream;
-    int16_t local_error = NO_ERROR;
-    uint8_t* buffer_ptr = communication_buffer;
-    sensirion_shdlc_begin_stream(&stream, buffer_ptr, 0x1, SPS30_SHDLC_ADDR, 0);
-    local_error = sensirion_shdlc_write_request(&stream);
+	int16_t local_error = NO_ERROR;
+	uint8_t* buf = communication_buffer;
+
+    local_error = sensirion_shdlc_tx(SPS30_SHDLC_ADDR, SPS30_STOP_MEASUREMENT_CMD_ID, 0, buf);
     if (local_error) {
         return local_error;
     }
-    local_error = sensirion_shdlc_read_response(&stream, 0, &header, 50);
+
+    timeout = 20; // 20ms timeout
+    //local_error = sensirion_shdlc_read_response(&stream, 0, &header, 50);
     return local_error;
 }
-
+/*
 int16_t sps30_read_measurement_values_uint16(
     uint16_t* mc_1p0, uint16_t* mc_2p5, uint16_t* mc_4p0, uint16_t* mc_10p0,
     uint16_t* nc_0p5, uint16_t* nc_1p0, uint16_t* nc_2p5, uint16_t* nc_4p0,
@@ -321,8 +324,6 @@ int16_t sps30_read_device_status_register(bool clear_status_register,
 int16_t sps30_device_reset() {
     int16_t local_error = NO_ERROR;
     uint8_t* buf = communication_buffer;
-    //sensirion_shdlc_begin_stream(&stream, buffer_ptr, 0xd3, SPS30_SHDLC_ADDR, 0);
-    //local_error = sensirion_shdlc_write_request(&stream);
 
     local_error = sensirion_shdlc_tx(SPS30_SHDLC_ADDR, SPS30_DEVICE_RESET_CMD_ID, 0, buf);
     if (local_error) {
@@ -330,8 +331,6 @@ int16_t sps30_device_reset() {
     }
 
     timeout = 20; // 20ms timeout
-
-
     //while ()
     //local_error = sensirion_shdlc_read_response(&stream, 0, &header, 50);
     return local_error;

@@ -34,6 +34,7 @@
 #include "usart_dma.h"
 
 extern uart_dma_tx_t uart2_dma_tx;
+extern uart_dma_rx_t uart2_dma_rx;
 
 #define SHDLC_START 0x7E
 #define SHDLC_STOP 0x7E
@@ -79,7 +80,7 @@ static uint16_t sensirion_shdlc_stuff_data(uint8_t data_len, const uint8_t* data
     }
     return output_data_len;
 }
-/*
+
 static uint8_t sensirion_shdlc_check_unstuff(uint8_t data) {
     return data == 0x7d;
 }
@@ -97,7 +98,7 @@ static uint8_t sensirion_shdlc_unstuff_byte(uint8_t data) {
         default:
             return data;
     }
-}*/
+}
 /*
 int16_t sensirion_shdlc_xcv(uint8_t addr, uint8_t cmd, uint8_t tx_data_len,
                             const uint8_t* tx_data, uint8_t max_rx_data_len,
@@ -136,7 +137,7 @@ int16_t sensirion_shdlc_tx(uint8_t addr, uint8_t cmd, uint8_t data_len, const ui
         return SENSIRION_SHDLC_ERR_TX_INCOMPLETE;
     return 0;
 }
-/*
+
 int16_t sensirion_shdlc_rx(uint8_t max_data_len, struct sensirion_shdlc_rx_header* rxh, uint8_t* data) {
     int16_t len;
     uint16_t i;
@@ -146,7 +147,7 @@ int16_t sensirion_shdlc_rx(uint8_t max_data_len, struct sensirion_shdlc_rx_heade
     uint8_t crc;
     uint8_t unstuff_next;
 
-    len = sensirion_uart_hal_rx(2 + (5 + (uint16_t)max_data_len) * 2, rx_frame);
+    //len = sensirion_uart_hal_rx(2 + (5 + (uint16_t)max_data_len) * 2, rx_frame);
     if (len < 1 || rx_frame[0] != SHDLC_START)
         return SENSIRION_SHDLC_ERR_MISSING_START;
 
@@ -166,7 +167,7 @@ int16_t sensirion_shdlc_rx(uint8_t max_data_len, struct sensirion_shdlc_rx_heade
     if (max_data_len < rxh->data_len)
         return SENSIRION_SHDLC_ERR_FRAME_TOO_LONG; // more data than expected
 
-    for (unstuff_next = 0, j = 0; j < rxh->data_len && i < len - 2; ++i) {
+    for (unstuff_next=0, j=0; (j < rxh->data_len) && (i < len - 2); ++i) {
         if (unstuff_next) {
             data[j++] = sensirion_shdlc_unstuff_byte(rx_frame[i]);
             unstuff_next = 0;
@@ -200,14 +201,14 @@ int16_t sensirion_shdlc_rx(uint8_t max_data_len, struct sensirion_shdlc_rx_heade
 
     return 0;
 }
-*/
+/*
 static void sensirion_shdlc_stuff_byte(struct sensirion_shdlc_buffer* tx_frame, uint8_t data) {
     switch (data) {
         case 0x11:
         case 0x13:
         case 0x7d:
         case 0x7e:
-            /* byte stuffing is done by inserting 0x7d and inverting bit 5 */
+            // byte stuffing is done by inserting 0x7d and inverting bit 5
             tx_frame->data[tx_frame->offset++] = 0x7d;
             tx_frame->data[tx_frame->offset++] = data ^ (1 << 5);
             return;
@@ -215,8 +216,8 @@ static void sensirion_shdlc_stuff_byte(struct sensirion_shdlc_buffer* tx_frame, 
             tx_frame->data[tx_frame->offset++] = data;
             return;
     }
-}
-
+}*/
+/*
 void sensirion_shdlc_add_uint8_t_to_frame(struct sensirion_shdlc_buffer* tx_frame, uint8_t data) {
     sensirion_shdlc_stuff_byte(tx_frame, data);
     tx_frame->checksum += data;
@@ -281,7 +282,7 @@ void sensirion_shdlc_add_bytes_to_frame(struct sensirion_shdlc_buffer* tx_frame,
 void sensirion_shdlc_finish_frame(struct sensirion_shdlc_buffer* tx_frame) {
     sensirion_shdlc_add_uint8_t_to_frame(tx_frame, ~(tx_frame->checksum));
     tx_frame->data[tx_frame->offset++] = SHDLC_STOP;
-}
+}*/
 /*
 int16_t sensirion_shdlc_tx_frame(struct sensirion_shdlc_buffer* tx_frame) {
     int16_t tx_length;
