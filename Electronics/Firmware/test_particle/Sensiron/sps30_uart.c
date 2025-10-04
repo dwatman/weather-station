@@ -43,6 +43,8 @@
 static uint8_t communication_buffer[44] = {0};
 extern volatile uint32_t timeout;
 
+static sensirion_shdlc_rx_t sensiron_rx;
+
 /*
 int16_t sps30_wake_up_sequence() {
     int16_t local_error = 0;

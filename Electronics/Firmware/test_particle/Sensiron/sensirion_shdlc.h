@@ -28,6 +28,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+// NOTE: Heavily modified
 
 #ifndef SENSIRION_SHDLC_H
 #define SENSIRION_SHDLC_H
@@ -48,18 +49,34 @@ extern "C" {
 #define SENSIRION_SHDLC_ERR_FRAME_TOO_LONG -7
 #define SENSIRION_SHDLC_ERR_EXECUTION_FAILURE -8
 
-struct sensirion_shdlc_buffer {
-    uint8_t* data;
-    uint16_t offset;
-    uint8_t checksum;
-};
+#define SHDLC_START 0x7E
+#define SHDLC_STOP 0x7E
 
-struct sensirion_shdlc_rx_header {
+#define SHDLC_MIN_TX_FRAME_SIZE 6 // start + header(3) + crc + stop
+#define SHDLC_MIN_RX_FRAME_SIZE 7 // start + header(4) + crc + stop
+
+// start/stop + (4 header + 255 data) * 2 because of byte stuffing
+#define SHDLC_FRAME_MAX_TX_FRAME_SIZE (2 + (4 + 255) * 2)
+
+// start/stop + (5 header + 255 data) * 2 because of byte stuffing
+#define SHDLC_FRAME_MAX_RX_FRAME_SIZE (2 + 5 + 255)
+#define SHDLC_FRAME_MAX_RX_STUFFED_FRAME_SIZE (2 + (5 + 255) * 2)
+
+#define RX_DELAY_MS 20
+
+//typedef struct {
+//    uint8_t* data;
+//    uint16_t offset;
+//    uint8_t checksum;
+//} sensirion_shdlc_buf_t;
+
+typedef struct {
     uint8_t addr;
     uint8_t cmd;
     uint8_t state;
-    uint8_t data_len;
-};
+    uint8_t length;
+    uint8_t data[SHDLC_FRAME_MAX_RX_FRAME_SIZE];
+} sensirion_shdlc_rx_t;
 
 /**
  * sensirion_shdlc_tx() - transmit an SHDLC frame
@@ -84,9 +101,7 @@ int16_t sensirion_shdlc_tx(uint8_t addr, uint8_t cmd, uint8_t data_len,
  * @data:       Memory where received data is stored
  * Return:      0 on success, an error code otherwise
  */
-int16_t sensirion_shdlc_rx(uint8_t max_data_len,
-                           struct sensirion_shdlc_rx_header* header,
-                           uint8_t* data);
+int16_t sensirion_shdlc_rx(uint8_t max_data_len, sensirion_shdlc_rx_t *rx);
 
 /**
  * sensirion_shdlc_xcv() - transceive (transmit then receive) an SHDLC frame
@@ -102,10 +117,9 @@ int16_t sensirion_shdlc_rx(uint8_t max_data_len,
  * @rx_data:        Memory where the received data is stored
  * Return:          0 on success, an error code otherwise
  */
-int16_t sensirion_shdlc_xcv(uint8_t addr, uint8_t cmd, uint8_t tx_data_len,
-                            const uint8_t* tx_data, uint8_t max_rx_data_len,
-                            struct sensirion_shdlc_rx_header* rx_header,
-                            uint8_t* rx_data);
+//int16_t sensirion_shdlc_xcv(uint8_t addr, uint8_t cmd, uint8_t tx_data_len,
+//                            const uint8_t* tx_data, uint8_t max_rx_data_len,
+//							sensirion_shdlc_rx_t *rx);
 
 /**
  * sensirion_shdlc_add_uint8_t_to_frame() - Add a uint8_t to the frame at
@@ -117,8 +131,8 @@ int16_t sensirion_shdlc_xcv(uint8_t addr, uint8_t cmd, uint8_t tx_data_len,
  *                 tx_frame, to write the data.
  * @param data     uint8_t to be written into the frame.
  */
-void sensirion_shdlc_add_uint8_t_to_frame(
-    struct sensirion_shdlc_buffer* tx_frame, uint8_t data);
+//void sensirion_shdlc_add_uint8_t_to_frame(
+//    struct sensirion_shdlc_buffer* tx_frame, uint8_t data);
 
 /**
  * sensirion_shdlc_begin_frame() - Initialize buffer and add the first three
@@ -133,9 +147,9 @@ void sensirion_shdlc_add_uint8_t_to_frame(
  * @param data_length Number of bytes of data to be written into the frame after
  *                    this method.
  */
-void sensirion_shdlc_begin_frame(struct sensirion_shdlc_buffer* tx_frame,
-                                 uint8_t* buffer, uint8_t command,
-                                 uint8_t address, uint8_t data_length);
+//void sensirion_shdlc_begin_frame(struct sensirion_shdlc_buffer* tx_frame,
+//                                 uint8_t* buffer, uint8_t command,
+//                                 uint8_t address, uint8_t data_length);
 
 /**
  * sensirion_shdlc_add_bool_to_frame() - Add a bool to the frame at offset.
@@ -146,8 +160,8 @@ void sensirion_shdlc_begin_frame(struct sensirion_shdlc_buffer* tx_frame,
  *                 tx_frame, to write the data.
  * @param data     bool to be written into the frame.
  */
-void sensirion_shdlc_add_bool_to_frame(struct sensirion_shdlc_buffer* tx_frame,
-                                       bool data);
+//void sensirion_shdlc_add_bool_to_frame(struct sensirion_shdlc_buffer* tx_frame,
+//                                       bool data);
 
 /**
  * sensirion_shdlc_add_uint32_t_to_frame() - Add a uint32_t to the frame at
@@ -159,8 +173,8 @@ void sensirion_shdlc_add_bool_to_frame(struct sensirion_shdlc_buffer* tx_frame,
  *                 tx_frame, to write the data.
  * @param data     uint32_t to be written into the frame.
  */
-void sensirion_shdlc_add_uint32_t_to_frame(
-    struct sensirion_shdlc_buffer* tx_frame, uint32_t data);
+//void sensirion_shdlc_add_uint32_t_to_frame(
+//    struct sensirion_shdlc_buffer* tx_frame, uint32_t data);
 
 /**
  * sensirion_shdlc_add_int32_t_to_frame() - Add a int32_t to the frame at
@@ -172,8 +186,8 @@ void sensirion_shdlc_add_uint32_t_to_frame(
  *                 tx_frame, to write the data.
  * @param data     int32_t to be written into the frame.
  */
-void sensirion_shdlc_add_int32_t_to_frame(
-    struct sensirion_shdlc_buffer* tx_frame, int32_t data);
+//void sensirion_shdlc_add_int32_t_to_frame(
+//    struct sensirion_shdlc_buffer* tx_frame, int32_t data);
 
 /**
  * sensirion_shdlc_add_uint16_t_to_frame() - Add a uint16_t to the frame at
@@ -185,8 +199,8 @@ void sensirion_shdlc_add_int32_t_to_frame(
  *                 tx_frame, to write the data.
  * @param data     uint16_t to be written into the frame.
  */
-void sensirion_shdlc_add_uint16_t_to_frame(
-    struct sensirion_shdlc_buffer* tx_frame, uint16_t data);
+//void sensirion_shdlc_add_uint16_t_to_frame(
+//    struct sensirion_shdlc_buffer* tx_frame, uint16_t data);
 
 /**
  * sensirion_shdlc_add_int16_t_to_frame() - Add a int16_t to the frame at
@@ -198,8 +212,8 @@ void sensirion_shdlc_add_uint16_t_to_frame(
  *                 tx_frame, to write the data.
  * @param data     int16_t to be written into the frame.
  */
-void sensirion_shdlc_add_int16_t_to_frame(
-    struct sensirion_shdlc_buffer* tx_frame, int16_t data);
+//void sensirion_shdlc_add_int16_t_to_frame(
+//    struct sensirion_shdlc_buffer* tx_frame, int16_t data);
 
 /**
  * sensirion_shdlc_add_float_to_frame() - Add a float to the frame at offset.
@@ -210,8 +224,8 @@ void sensirion_shdlc_add_int16_t_to_frame(
  *                 tx_frame, to write the data.
  * @param data     float to be written into the frame.
  */
-void sensirion_shdlc_add_float_to_frame(struct sensirion_shdlc_buffer* tx_frame,
-                                        float data);
+//void sensirion_shdlc_add_float_to_frame(struct sensirion_shdlc_buffer* tx_frame,
+//                                        float data);
 
 /**
  * sensirion_shdlc_add_bytes_to_frame() - Add a byte array to the frame at
@@ -224,9 +238,9 @@ void sensirion_shdlc_add_float_to_frame(struct sensirion_shdlc_buffer* tx_frame,
  * @param data        Pointer to data to be written into the frame.
  * @param data_length Number of bytes to be written into the frame.
  */
-void sensirion_shdlc_add_bytes_to_frame(struct sensirion_shdlc_buffer* tx_frame,
-                                        const uint8_t* data,
-                                        uint16_t data_length);
+//void sensirion_shdlc_add_bytes_to_frame(struct sensirion_shdlc_buffer* tx_frame,
+//                                        const uint8_t* data,
+//                                        uint16_t data_length);
 
 /**
  * sensirion_shdlc_finish_frame() - Write closing part of the frame.
@@ -236,7 +250,7 @@ void sensirion_shdlc_add_bytes_to_frame(struct sensirion_shdlc_buffer* tx_frame,
  *                 in the buffer pointed to by the data member after offset
  *                 in tx_frame, to write 3 bytes.
  */
-void sensirion_shdlc_finish_frame(struct sensirion_shdlc_buffer* tx_frame);
+//void sensirion_shdlc_finish_frame(struct sensirion_shdlc_buffer* tx_frame);
 
 /**
  * sensirion_shdlc_tx_frame() - Transmit the SHDLC frame.
@@ -247,7 +261,7 @@ void sensirion_shdlc_finish_frame(struct sensirion_shdlc_buffer* tx_frame);
  * @deprecated        This function should not be used with new drivers. Use the
  *                    function sensirion_shdlc_write_request instead!
  */
-int16_t sensirion_shdlc_tx_frame(struct sensirion_shdlc_buffer* tx_frame);
+//int16_t sensirion_shdlc_tx_frame(struct sensirion_shdlc_buffer* tx_frame);
 
 /**
  * sensirion_shdlc_rx_inplace() - Receive an SHDLC frame in a prepared buffer.
@@ -269,9 +283,9 @@ int16_t sensirion_shdlc_tx_frame(struct sensirion_shdlc_buffer* tx_frame);
  * @deprecated        This function should not be used with new drivers. Use the
  *                    function sensirion_shdlc_read_response instead!
  */
-int16_t sensirion_shdlc_rx_inplace(struct sensirion_shdlc_buffer* rx_frame,
-                                   uint8_t expected_data_length,
-                                   struct sensirion_shdlc_rx_header* header);
+//int16_t sensirion_shdlc_rx_inplace(struct sensirion_shdlc_buffer* rx_frame,
+//                                   uint8_t expected_data_length,
+//                                   struct sensirion_shdlc_rx_header* header);
 
 #ifdef __cplusplus
 }

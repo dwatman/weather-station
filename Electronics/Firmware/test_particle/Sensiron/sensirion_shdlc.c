@@ -30,28 +30,12 @@
  */
 // NOTE: Heavily modified
 
-#include <string.h> // for memcpy
-
 #include "sensirion_shdlc.h"
 #include "sensirion_common.h"
 #include "usart_dma.h"
 
 extern uart_dma_tx_t uart2_dma_tx;
 extern uart_dma_rx_t uart2_dma_rx;
-
-#define SHDLC_START 0x7E
-#define SHDLC_STOP 0x7E
-
-#define SHDLC_MIN_TX_FRAME_SIZE 6 // start + header(3) + crc + stop
-#define SHDLC_MIN_RX_FRAME_SIZE 7 // start + header(4) + crc + stop
-
-// start/stop + (4 header + 255 data) * 2 because of byte stuffing
-#define SHDLC_FRAME_MAX_TX_FRAME_SIZE (2 + (4 + 255) * 2)
-
-// start/stop + (5 header + 255 data) * 2 because of byte stuffing
-#define SHDLC_FRAME_MAX_RX_FRAME_SIZE (2 + (5 + 255) * 2)
-
-#define RX_DELAY_MS 20
 
 static uint8_t sensirion_shdlc_checksum(uint8_t header_sum, uint8_t data_len, const uint8_t* data) {
     header_sum += data_len;
@@ -163,6 +147,7 @@ int16_t sensirion_shdlc_xcv(uint8_t addr, uint8_t cmd, uint8_t tx_data_len,
     return sensirion_shdlc_rx(max_rx_data_len, rx_header, rx_data);
 }*/
 
+// Transmit a data packet
 int16_t sensirion_shdlc_tx(uint8_t addr, uint8_t cmd, uint8_t data_len, const uint8_t* data) {
     uint16_t len = 0;
     int16_t ret;
@@ -187,7 +172,8 @@ int16_t sensirion_shdlc_tx(uint8_t addr, uint8_t cmd, uint8_t data_len, const ui
     return 0;
 }
 
-int16_t sensirion_shdlc_rx(uint8_t max_data_len, struct sensirion_shdlc_rx_header* rxh, uint8_t* data) {
+// Process a receive buffer looking for valid packets
+int16_t sensirion_shdlc_rx(uint8_t max_data_len, sensirion_shdlc_rx_t *rx) {
     uart_dma_rx_t *h = &uart2_dma_rx;
 
     // ensure we start at a marker: consume garbage before first start
@@ -199,8 +185,8 @@ int16_t sensirion_shdlc_rx(uint8_t max_data_len, struct sensirion_shdlc_rx_heade
     if (uart_rx_peek(h, 0) != SHDLC_START) return 0;
 
     // snapshot up to the frame max
-    uint8_t raw[SHDLC_FRAME_MAX_RX_FRAME_SIZE];
-    size_t raw_copied = uart_rx_snapshot(h, raw, SHDLC_FRAME_MAX_RX_FRAME_SIZE);
+    uint8_t raw[SHDLC_FRAME_MAX_RX_STUFFED_FRAME_SIZE];
+    size_t raw_copied = uart_rx_snapshot(h, raw, SHDLC_FRAME_MAX_RX_STUFFED_FRAME_SIZE);
     if (raw_copied == 0U) return 0;
 
     // scan raw[] once while un-stuffing into header and data buffers as we go
@@ -234,11 +220,14 @@ int16_t sensirion_shdlc_rx(uint8_t max_data_len, struct sensirion_shdlc_rx_heade
             hdr_tmp[hdr_i++] = b;
         }
     }
-    // copy header into rxh
-    memcpy(rxh, hdr_tmp, sizeof(hdr_tmp));
+    // Copy header into rx
+    rx->addr = hdr_tmp[0];
+    rx->cmd = hdr_tmp[1];
+    rx->state = hdr_tmp[2];
+    rx->length = hdr_tmp[3];
 
-    // check data_len
-    if (rxh->data_len > max_data_len) {
+    // Check data_len
+    if (rx->length > max_data_len) {
     	uart_rx_skip(h, 1);
         uart_rx_skip_to_next_marker(h);
         return SENSIRION_SHDLC_ERR_FRAME_TOO_LONG;
@@ -247,11 +236,11 @@ int16_t sensirion_shdlc_rx(uint8_t max_data_len, struct sensirion_shdlc_rx_heade
     // un-stuff data directly into 'data' buffer
     uint32_t data_collected = 0;
     un_next = 0;
-    while (data_collected < rxh->data_len) {
+    while (data_collected < rx->length) {
         if (ri >= raw_copied) return 0; // wait for more raw bytes
         uint8_t b = raw[ri++];
         if (un_next) {
-            data[data_collected++] = sensirion_shdlc_unstuff_byte(b);
+        	rx->data[data_collected++] = sensirion_shdlc_unstuff_byte(b);
             un_next = 0;
         } else if (sensirion_shdlc_check_unstuff(b)) {
             un_next = 1;
@@ -261,7 +250,7 @@ int16_t sensirion_shdlc_rx(uint8_t max_data_len, struct sensirion_shdlc_rx_heade
                 uart_rx_skip_to_next_marker(h);
                 return SENSIRION_SHDLC_ERR_ENCODING_ERROR;
             }
-            data[data_collected++] = b;
+            rx->data[data_collected++] = b;
         }
     }
 
@@ -285,8 +274,8 @@ int16_t sensirion_shdlc_rx(uint8_t max_data_len, struct sensirion_shdlc_rx_heade
     }
 
     // compute checksum and compare
-    uint8_t header_sum = (uint8_t)(rxh->addr + rxh->cmd + rxh->state);
-    uint8_t calc = sensirion_shdlc_checksum(header_sum, rxh->data_len, data);
+    uint8_t header_sum = (uint8_t)(rx->addr + rx->cmd + rx->state);
+    uint8_t calc = sensirion_shdlc_checksum(header_sum, rx->length, rx->data);
     if (calc != crc_frame) {
     	uart_rx_skip(h, 1);
         uart_rx_skip_to_next_marker(h);
