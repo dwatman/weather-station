@@ -35,6 +35,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#include <stdio.h> // for printf
 
 #include "sps30_uart.h"
 #include "sensirion_common.h"
@@ -45,6 +46,40 @@ extern volatile uint32_t timeout;
 
 //extern uart_dma_rx_t uart2_dma_rx;
 static sensirion_shdlc_rx_t sensiron_rx;
+
+int16_t sps30_receive(uart_dma_rx_t *rx, sensirion_sps30_data_t *spsdata) {
+	int16_t err = sensirion_shdlc_rx(rx, &sensiron_rx);
+
+	printf("SPS30 RX:\n");
+	if (err == 0) {
+		printf("    INCOMPLETE PKT\n");
+		return err;
+	}
+	if (err < 0) {
+		printf("    ERR %i\n", err);
+		return err;
+	}
+	printf("    ADDR: %X CMD: %X STATE: %X LEN: %u\n", sensiron_rx.addr, sensiron_rx.cmd, sensiron_rx.state, sensiron_rx.length);
+
+	// Get floating-point data
+	if ((sensiron_rx.cmd == SPS30_READ_MEASUREMENT_VALUES_FLOAT_CMD_ID) && (sensiron_rx.length == 40)) {
+		spsdata->mc_1p0 = sensirion_common_bytes_to_float(&sensiron_rx.data[0]);
+		spsdata->mc_2p5 = sensirion_common_bytes_to_float(&sensiron_rx.data[4]);
+		spsdata->mc_4p0 = sensirion_common_bytes_to_float(&sensiron_rx.data[8]);
+		spsdata->mc_10p0 = sensirion_common_bytes_to_float(&sensiron_rx.data[12]);
+		spsdata->nc_0p5 = sensirion_common_bytes_to_float(&sensiron_rx.data[16]);
+		spsdata->nc_1p0 = sensirion_common_bytes_to_float(&sensiron_rx.data[20]);
+		spsdata->nc_2p5 = sensirion_common_bytes_to_float(&sensiron_rx.data[24]);
+		spsdata->nc_4p0 = sensirion_common_bytes_to_float(&sensiron_rx.data[28]);
+		spsdata->nc_10p0 = sensirion_common_bytes_to_float(&sensiron_rx.data[32]);
+		spsdata->typ_sz = sensirion_common_bytes_to_float(&sensiron_rx.data[36]);
+	}
+	printf("    MC: %f %f %f %f\n", spsdata->mc_1p0, spsdata->mc_2p5, spsdata->mc_4p0, spsdata->mc_10p0);
+	printf("    NC: %f %f %f %f %f\n", spsdata->nc_0p5, spsdata->nc_1p0, spsdata->nc_2p5, spsdata->nc_4p0, spsdata->nc_10p0);
+	printf("    typ sz: %f\n ", spsdata->typ_sz);
+
+	return err;
+}
 
 /*
 int16_t sps30_wake_up_sequence() {
@@ -91,6 +126,21 @@ int16_t sps30_stop_measurement(uart_dma_tx_t *tx) {
     //local_error = sensirion_shdlc_read_response(&stream, 0, &header, 50);
     return local_error;
 }
+
+int16_t sps30_read_measurement_values(uart_dma_tx_t *tx) {
+	int16_t local_error = NO_ERROR;
+	uint8_t* buf = communication_buffer;
+
+    local_error = sensirion_shdlc_tx(tx, SPS30_SHDLC_ADDR, SPS30_READ_MEASUREMENT_VALUES_FLOAT_CMD_ID, 0, buf);
+    if (local_error) {
+        return local_error;
+    }
+
+    timeout = 20; // 20ms timeout
+    //local_error = sensirion_shdlc_read_response(&stream, 0, &header, 50);
+    return local_error;
+}
+
 /*
 int16_t sps30_read_measurement_values_uint16(
     uint16_t* mc_1p0, uint16_t* mc_2p5, uint16_t* mc_4p0, uint16_t* mc_10p0,

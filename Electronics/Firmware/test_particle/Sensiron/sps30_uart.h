@@ -73,6 +73,21 @@ typedef enum {
     SPS30_OUTPUT_FORMAT_OUTPUT_FORMAT_UINT16 = 261,
 } sps30_output_format;
 
+typedef struct {
+	float mc_1p0;
+	float mc_2p5;
+	float mc_4p0;
+	float mc_10p0;
+	float nc_0p5;
+	float nc_1p0;
+	float nc_2p5;
+	float nc_4p0;
+	float nc_10p0;
+	float typ_sz;
+} sensirion_sps30_data_t;
+
+int16_t sps30_receive(uart_dma_rx_t *rx, sensirion_sps30_data_t *spsdata);
+
 /**
  * @brief Fully wake up the device
  *
@@ -118,6 +133,8 @@ int16_t sps30_start_measurement(uart_dma_tx_t *tx, sps30_output_format measureme
  * @return error_code 0 on success, an error code otherwise.
  */
 int16_t sps30_stop_measurement(uart_dma_tx_t *tx);
+
+int16_t sps30_read_measurement_values(uart_dma_tx_t *tx);
 
 /**
  * @brief Read measurement values

@@ -48,6 +48,8 @@ COM_InitTypeDef BspCOMInit;
 volatile uint32_t timeout = 0;
 uart_dma_tx_t uart2_dma_tx;
 uart_dma_rx_t uart2_dma_rx;
+
+sensirion_sps30_data_t sps30_data;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -133,6 +135,8 @@ int main(void)
   HAL_Delay(500);
   sps30_device_reset(&uart2_dma_tx);
   HAL_Delay(500);
+  sps30_start_measurement(&uart2_dma_tx, SPS30_OUTPUT_FORMAT_OUTPUT_FORMAT_FLOAT);
+  HAL_Delay(500);
 
   uint8_t tmpbuf[100];
   uint32_t last_tick = 0;
@@ -144,7 +148,7 @@ int main(void)
 		last_tick = current_tick;
 		BSP_LED_Toggle(LD1);
 		printf("VCP t: %lu  h: %lu\n", uart2_dma_rx.tail, uart2_dma_rx.head);
-		sps30_device_reset(&uart2_dma_tx);
+		sps30_read_measurement_values(&uart2_dma_tx);
 		//uart_dma_tx_send(&uart2_dma_tx, (uint8_t *)"test DMA\n", 9);
 		//sps30_start_measurement(SPS30_OUTPUT_FORMAT_OUTPUT_FORMAT_FLOAT);
 	}
@@ -158,7 +162,9 @@ int main(void)
 		for (int i=0; i<num; i++)
 			printf(" %02X", tmpbuf[i]);
 		printf("\n");
-		uart_rx_read(&uart2_dma_rx, tmpbuf, num);
+		//uart_rx_read(&uart2_dma_rx, tmpbuf, num);
+		sps30_receive(&uart2_dma_rx, &sps30_data);
+
 	}
     /* USER CODE END WHILE */
 
