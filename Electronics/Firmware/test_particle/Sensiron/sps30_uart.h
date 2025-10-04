@@ -84,6 +84,7 @@ typedef struct {
 	float nc_4p0;
 	float nc_10p0;
 	float typ_sz;
+	char new_data;
 } sensirion_sps30_data_t;
 
 int16_t sps30_receive(uart_dma_rx_t *rx, sensirion_sps30_data_t *spsdata);

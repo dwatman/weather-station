@@ -23,6 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include "usart_dma.h"
 #include "sps30_uart.h"
+#include "average.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,6 +51,11 @@ uart_dma_tx_t uart2_dma_tx;
 uart_dma_rx_t uart2_dma_rx;
 
 sensirion_sps30_data_t sps30_data;
+avg_60_t avg_PM_1;
+avg_60_t avg_PM_2p5;
+avg_60_t avg_PM_4;
+avg_60_t avg_PM_10;
+avg_60_t avg_psize;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -132,6 +138,14 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   printf( "Start\n");
+
+  AvgInit(&avg_PM_1);
+  AvgInit(&avg_PM_2p5);
+  AvgInit(&avg_PM_4);
+  AvgInit(&avg_PM_10);
+  AvgInit(&avg_psize);
+  sps30_data.new_data = 0;
+
   HAL_Delay(500);
   sps30_device_reset(&uart2_dma_tx);
   HAL_Delay(500);
@@ -144,7 +158,7 @@ int main(void)
   while (1)
   {
 	uint32_t current_tick = HAL_GetTick();
-	if ((current_tick - last_tick) >= 5000) {
+	if ((current_tick - last_tick) >= 1000) {
 		last_tick = current_tick;
 		BSP_LED_Toggle(LD1);
 		printf("VCP t: %lu  h: %lu\n", uart2_dma_rx.tail, uart2_dma_rx.head);
@@ -164,6 +178,31 @@ int main(void)
 		printf("\n");
 		//uart_rx_read(&uart2_dma_rx, tmpbuf, num);
 		sps30_receive(&uart2_dma_rx, &sps30_data);
+
+		if (sps30_data.new_data == 1) {
+			AvgAdd(&avg_PM_1,   sps30_data.mc_1p0);
+			AvgAdd(&avg_PM_2p5, sps30_data.mc_2p5);
+			AvgAdd(&avg_PM_4,   sps30_data.mc_4p0);
+			AvgAdd(&avg_PM_10,  sps30_data.mc_10p0);
+			AvgAdd(&avg_psize,  sps30_data.typ_sz);
+			sps30_data.new_data = 0;
+			printf("index: %u\n", avg_psize.index);
+		}
+	}
+	if (avg_psize.full) {
+		AvgCalc(&avg_PM_1);
+		AvgCalc(&avg_PM_2p5);
+		AvgCalc(&avg_PM_4);
+		AvgCalc(&avg_PM_10);
+		AvgCalc(&avg_psize);
+
+		printf("Cumulative: PM1 %.3f, PM2.5 %.3f, PM4 %.3f, PM10 %.3f, size %f\n", avg_PM_1.avg, avg_PM_2p5.avg, avg_PM_4.avg, avg_PM_10.avg, avg_psize.avg);
+
+		float pm10 = avg_PM_10.avg - avg_PM_4.avg;
+		float pm4 = avg_PM_4.avg - avg_PM_2p5.avg;
+		float pm2p5 = avg_PM_2p5.avg - avg_PM_1.avg;
+
+		printf("Average:    PM1 %.3f, PM2.5 %.3f, PM4 %.3f, PM10 %.3f, size %f\n", avg_PM_1.avg, pm2p5, pm4, pm10, avg_psize.avg);
 
 	}
     /* USER CODE END WHILE */

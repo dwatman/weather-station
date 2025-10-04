@@ -73,6 +73,7 @@ int16_t sps30_receive(uart_dma_rx_t *rx, sensirion_sps30_data_t *spsdata) {
 		spsdata->nc_4p0 = sensirion_common_bytes_to_float(&sensiron_rx.data[28]);
 		spsdata->nc_10p0 = sensirion_common_bytes_to_float(&sensiron_rx.data[32]);
 		spsdata->typ_sz = sensirion_common_bytes_to_float(&sensiron_rx.data[36]);
+		spsdata->new_data = 1;
 	}
 	printf("    MC: %f %f %f %f\n", spsdata->mc_1p0, spsdata->mc_2p5, spsdata->mc_4p0, spsdata->mc_10p0);
 	printf("    NC: %f %f %f %f %f\n", spsdata->nc_0p5, spsdata->nc_1p0, spsdata->nc_2p5, spsdata->nc_4p0, spsdata->nc_10p0);
