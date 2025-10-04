@@ -148,7 +148,7 @@ int16_t sensirion_shdlc_xcv(uint8_t addr, uint8_t cmd, uint8_t tx_data_len,
 }*/
 
 // Transmit a data packet
-int16_t sensirion_shdlc_tx(uint8_t addr, uint8_t cmd, uint8_t data_len, const uint8_t* data) {
+int16_t sensirion_shdlc_tx(uart_dma_tx_t *h, uint8_t addr, uint8_t cmd, uint8_t data_len, const uint8_t* data) {
     uint16_t len = 0;
     int16_t ret;
     uint8_t crc;
@@ -164,7 +164,7 @@ int16_t sensirion_shdlc_tx(uint8_t addr, uint8_t cmd, uint8_t data_len, const ui
     len += sensirion_shdlc_stuff_data(1, &crc, tx_frame_buf + len);
     tx_frame_buf[len++] = SHDLC_STOP;
 
-    ret = uart_dma_tx_send(&uart2_dma_tx, tx_frame_buf, len);
+    ret = uart_dma_tx_send(h, tx_frame_buf, len);
     if (ret < 0)
         return ret;
     if (ret != len)
@@ -173,9 +173,7 @@ int16_t sensirion_shdlc_tx(uint8_t addr, uint8_t cmd, uint8_t data_len, const ui
 }
 
 // Process a receive buffer looking for valid packets
-int16_t sensirion_shdlc_rx(uint8_t max_data_len, sensirion_shdlc_rx_t *rx) {
-    uart_dma_rx_t *h = &uart2_dma_rx;
-
+int16_t sensirion_shdlc_rx(uart_dma_rx_t *h, uint8_t max_data_len, sensirion_shdlc_rx_t *rx) {
     // ensure we start at a marker: consume garbage before first start
     uart_rx_skip_to_next_marker(h);
 

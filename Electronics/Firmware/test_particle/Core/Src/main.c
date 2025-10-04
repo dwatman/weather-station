@@ -131,7 +131,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   printf( "Start\n");
   HAL_Delay(500);
-  sps30_device_reset();
+  sps30_device_reset(&uart2_dma_tx);
   HAL_Delay(500);
 
   uint8_t tmpbuf[100];
@@ -144,7 +144,7 @@ int main(void)
 		last_tick = current_tick;
 		BSP_LED_Toggle(LD1);
 		printf("VCP t: %lu  h: %lu\n", uart2_dma_rx.tail, uart2_dma_rx.head);
-		sps30_device_reset();
+		sps30_device_reset(&uart2_dma_tx);
 		//uart_dma_tx_send(&uart2_dma_tx, (uint8_t *)"test DMA\n", 9);
 		//sps30_start_measurement(SPS30_OUTPUT_FORMAT_OUTPUT_FORMAT_FLOAT);
 	}

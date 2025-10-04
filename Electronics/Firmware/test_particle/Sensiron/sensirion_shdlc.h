@@ -36,6 +36,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "usart_dma.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -87,7 +89,7 @@ typedef struct {
  * @data:       data to send
  * Return:      0 on success, an error code otherwise
  */
-int16_t sensirion_shdlc_tx(uint8_t addr, uint8_t cmd, uint8_t data_len,
+int16_t sensirion_shdlc_tx(uart_dma_tx_t *h, uint8_t addr, uint8_t cmd, uint8_t data_len,
                            const uint8_t* data);
 
 /**
@@ -101,7 +103,7 @@ int16_t sensirion_shdlc_tx(uint8_t addr, uint8_t cmd, uint8_t data_len,
  * @data:       Memory where received data is stored
  * Return:      0 on success, an error code otherwise
  */
-int16_t sensirion_shdlc_rx(uint8_t max_data_len, sensirion_shdlc_rx_t *rx);
+int16_t sensirion_shdlc_rx(uart_dma_rx_t *h, uint8_t max_data_len, sensirion_shdlc_rx_t *rx);
 
 /**
  * sensirion_shdlc_xcv() - transceive (transmit then receive) an SHDLC frame

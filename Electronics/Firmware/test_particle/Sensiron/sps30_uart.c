@@ -43,6 +43,7 @@
 static uint8_t communication_buffer[44] = {0};
 extern volatile uint32_t timeout;
 
+//extern uart_dma_rx_t uart2_dma_rx;
 static sensirion_shdlc_rx_t sensiron_rx;
 
 /*
@@ -60,14 +61,14 @@ int16_t sps30_wake_up_sequence() {
 }
 */
 
-int16_t sps30_start_measurement(sps30_output_format measurement_output_format) {
+int16_t sps30_start_measurement(uart_dma_tx_t *tx, sps30_output_format measurement_output_format) {
 	int16_t local_error = NO_ERROR;
 	uint8_t* buf = communication_buffer;
 
 	buf[0] = measurement_output_format >> 8;
 	buf[1] = measurement_output_format & 0xFF;
 
-    local_error = sensirion_shdlc_tx(SPS30_SHDLC_ADDR, SPS30_START_MEASUREMENT_CMD_ID, 2, buf);
+    local_error = sensirion_shdlc_tx(tx, SPS30_SHDLC_ADDR, SPS30_START_MEASUREMENT_CMD_ID, 2, buf);
     if (local_error) {
         return local_error;
     }
@@ -77,11 +78,11 @@ int16_t sps30_start_measurement(sps30_output_format measurement_output_format) {
     return local_error;
 }
 
-int16_t sps30_stop_measurement() {
+int16_t sps30_stop_measurement(uart_dma_tx_t *tx) {
 	int16_t local_error = NO_ERROR;
 	uint8_t* buf = communication_buffer;
 
-    local_error = sensirion_shdlc_tx(SPS30_SHDLC_ADDR, SPS30_STOP_MEASUREMENT_CMD_ID, 0, buf);
+    local_error = sensirion_shdlc_tx(tx, SPS30_SHDLC_ADDR, SPS30_STOP_MEASUREMENT_CMD_ID, 0, buf);
     if (local_error) {
         return local_error;
     }
@@ -323,11 +324,11 @@ int16_t sps30_read_device_status_register(bool clear_status_register,
     return local_error;
 }
 */
-int16_t sps30_device_reset() {
+int16_t sps30_device_reset(uart_dma_tx_t *tx) {
     int16_t local_error = NO_ERROR;
     uint8_t* buf = communication_buffer;
 
-    local_error = sensirion_shdlc_tx(SPS30_SHDLC_ADDR, SPS30_DEVICE_RESET_CMD_ID, 0, buf);
+    local_error = sensirion_shdlc_tx(tx, SPS30_SHDLC_ADDR, SPS30_DEVICE_RESET_CMD_ID, 0, buf);
     if (local_error) {
         return local_error;
     }

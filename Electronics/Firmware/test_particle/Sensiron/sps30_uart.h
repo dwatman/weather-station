@@ -42,6 +42,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "usart_dma.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -106,7 +108,7 @@ int16_t sps30_wake_up_sequence();
  * @endcode
  *
  */
-int16_t sps30_start_measurement(sps30_output_format measurement_output_format);
+int16_t sps30_start_measurement(uart_dma_tx_t *tx, sps30_output_format measurement_output_format);
 
 /**
  * @brief Stop measurement
@@ -115,7 +117,7 @@ int16_t sps30_start_measurement(sps30_output_format measurement_output_format);
  *
  * @return error_code 0 on success, an error code otherwise.
  */
-int16_t sps30_stop_measurement();
+int16_t sps30_stop_measurement(uart_dma_tx_t *tx);
 
 /**
  * @brief Read measurement values
@@ -320,7 +322,7 @@ int16_t sps30_read_device_status_register(bool clear_status_register,
  *
  * @return error_code 0 on success, an error code otherwise.
  */
-int16_t sps30_device_reset();
+int16_t sps30_device_reset(uart_dma_tx_t *tx);
 
 #ifdef __cplusplus
 }
