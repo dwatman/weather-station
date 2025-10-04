@@ -103,7 +103,7 @@ int16_t sensirion_shdlc_tx(uart_dma_tx_t *h, uint8_t addr, uint8_t cmd, uint8_t 
  * @data:       Memory where received data is stored
  * Return:      0 on success, an error code otherwise
  */
-int16_t sensirion_shdlc_rx(uart_dma_rx_t *h, uint8_t max_data_len, sensirion_shdlc_rx_t *rx);
+int16_t sensirion_shdlc_rx(uart_dma_rx_t *h, sensirion_shdlc_rx_t *rx);
 
 /**
  * sensirion_shdlc_xcv() - transceive (transmit then receive) an SHDLC frame

@@ -92,10 +92,10 @@ static uint8_t sensirion_shdlc_unstuff_byte(uint8_t data) {
 }
 
 
-// Efficient skip-to-next-marker: find next marker byte and advance tail up to (but not including) marker.
 // Because 0x7E is never present except as unescaped markers in SHDLC, we don't need to interpret escapes here.
-// Returns number of bytes skipped (0 if marker is already at tail or none present).
-static size_t uart_rx_skip_to_next_marker(uart_dma_rx_t *h) {
+// If skip_first is non-zero the first raw byte at tail is consumed before scanning. Returns number of bytes skipped
+// (including the optional consumed first byte).
+static size_t uart_rx_skip_to_next_marker(uart_dma_rx_t *h, int skip_first) {
     uint32_t prim = __get_PRIMASK();
     __disable_irq();
 
@@ -107,11 +107,31 @@ static size_t uart_rx_skip_to_next_marker(uart_dma_rx_t *h) {
         return 0U;
     }
 
-    // if first byte already marker, do not skip
+    // optionally consume the first byte (used when discarding an initial START)
+    size_t total_skipped = 0;
+    if (skip_first) {
+        // consume one byte if available
+        if (cnt > 0U) {
+            tail += 1U;
+            total_skipped = 1U;
+            cnt = head - tail;
+            h->tail = tail;
+            h->new_data = (h->head != h->tail) ? 1U : 0U;
+            if (cnt == 0U) {
+                __set_PRIMASK(prim);
+                return total_skipped;
+            }
+        } else {
+            __set_PRIMASK(prim);
+            return 0U;
+        }
+    }
+
+    // if first byte already marker, do not skip further
     uint8_t first = h->buf[tail & UART_RX_MASK];
     if (first == SHDLC_START) {
         __set_PRIMASK(prim);
-        return 0U;
+        return total_skipped;
     }
 
     size_t skip_count = 0;
@@ -121,17 +141,18 @@ static size_t uart_rx_skip_to_next_marker(uart_dma_rx_t *h) {
     }
 
     if (skip_count == 0) {
-        // either first was marker (handled above) or no marker found -> skip all
+        // no marker found -> skip all remaining
         skip_count = (size_t)cnt;
     }
 
     if (skip_count > 0) {
         h->tail = h->tail + (uint32_t)skip_count;
+        total_skipped += skip_count;
         h->new_data = (h->head != h->tail) ? 1U : 0U;
     }
 
     __set_PRIMASK(prim);
-    return skip_count;
+    return total_skipped;
 }
 
 /*
@@ -175,9 +196,9 @@ int16_t sensirion_shdlc_tx(uart_dma_tx_t *h, uint8_t addr, uint8_t cmd, uint8_t 
 }
 
 // Process a receive buffer looking for valid packets
-int16_t sensirion_shdlc_rx(uart_dma_rx_t *h, uint8_t max_data_len, sensirion_shdlc_rx_t *rx) {
+int16_t sensirion_shdlc_rx(uart_dma_rx_t *h, sensirion_shdlc_rx_t *rx) {
     // Ensure we start at a marker: consume garbage before first start
-    uart_rx_skip_to_next_marker(h);
+    uart_rx_skip_to_next_marker(h, 0);
 
     // Check availability and indicate no new data if the packet is too short
     size_t avail = uart_rx_available(h);
@@ -197,8 +218,7 @@ int16_t sensirion_shdlc_rx(uart_dma_rx_t *h, uint8_t max_data_len, sensirion_shd
     size_t ri = 0; // raw index
     if (rx_raw[ri] != SHDLC_START) {
         // recover: consume start and skip
-        uart_rx_skip(h, 1);
-        uart_rx_skip_to_next_marker(h);
+        uart_rx_skip_to_next_marker(h, 1);
         return SENSIRION_SHDLC_ERR_MISSING_START;
     }
     ri++; // Move past START
@@ -220,8 +240,7 @@ int16_t sensirion_shdlc_rx(uart_dma_rx_t *h, uint8_t max_data_len, sensirion_shd
             un_next = 1;
         } else {
             if (b == SHDLC_STOP) {
-            	uart_rx_skip(h, 1);
-                uart_rx_skip_to_next_marker(h);
+            	uart_rx_skip_to_next_marker(h, 1);
                 return SENSIRION_SHDLC_ERR_ENCODING_ERROR;
             }
             hdr_tmp[hdr_i++] = b;
@@ -233,11 +252,11 @@ int16_t sensirion_shdlc_rx(uart_dma_rx_t *h, uint8_t max_data_len, sensirion_shd
     rx->state = hdr_tmp[2];
     rx->length = hdr_tmp[3];
 
-    // Check data_len
-    if (rx->length > max_data_len) {
-    	uart_rx_skip(h, 1);
-        uart_rx_skip_to_next_marker(h);
-        return SENSIRION_SHDLC_ERR_FRAME_TOO_LONG;
+    // Exit early if the buffer doesn't contain enough bytes for the minimum expected length
+    size_t minimal_required = ri + (size_t)rx->length + 2U;
+    if (raw_copied < minimal_required) {
+        h->new_data = 0;
+        return 0;
     }
 
     // Un-stuff data directly into 'data' buffer
@@ -256,8 +275,7 @@ int16_t sensirion_shdlc_rx(uart_dma_rx_t *h, uint8_t max_data_len, sensirion_shd
             un_next = 1;
         } else {
             if (b == SHDLC_STOP) {
-            	uart_rx_skip(h, 1);
-                uart_rx_skip_to_next_marker(h);
+            	uart_rx_skip_to_next_marker(h, 1);
                 return SENSIRION_SHDLC_ERR_ENCODING_ERROR;
             }
             rx->data[data_collected++] = b;
@@ -287,8 +305,7 @@ int16_t sensirion_shdlc_rx(uart_dma_rx_t *h, uint8_t max_data_len, sensirion_shd
     	return 0; // Wait for more data
     }
     if (rx_raw[ri] != SHDLC_STOP) {
-    	uart_rx_skip(h, 1);
-        uart_rx_skip_to_next_marker(h);
+    	uart_rx_skip_to_next_marker(h, 1);
         return SENSIRION_SHDLC_ERR_MISSING_STOP;
     }
 
@@ -296,8 +313,7 @@ int16_t sensirion_shdlc_rx(uart_dma_rx_t *h, uint8_t max_data_len, sensirion_shd
     uint8_t header_sum = (uint8_t)(rx->addr + rx->cmd + rx->state);
     uint8_t calc = sensirion_shdlc_checksum(header_sum, rx->length, rx->data);
     if (calc != crc_frame) {
-    	uart_rx_skip(h, 1);
-        uart_rx_skip_to_next_marker(h);
+    	uart_rx_skip_to_next_marker(h, 1);
         return SENSIRION_SHDLC_ERR_CRC_MISMATCH;
     }
 
