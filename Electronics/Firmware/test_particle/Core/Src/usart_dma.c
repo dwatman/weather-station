@@ -174,6 +174,11 @@ int uart_dma_tx_send(uart_dma_tx_t *h, const uint8_t *data, size_t len) {
     memcpy(h->buf, data, len);
     h->len = len;
 
+	printf("TX %2u: ", len);
+	for (int i=0; i<len; i++)
+		printf(" %02X", data[i]);
+	printf("\n");
+
     // Clear flags for this transfer
     LL_DMA_ClearFlag_TC(h->dma, h->dma_channel);
     LL_DMA_ClearFlag_USE(h->dma, h->dma_channel);
@@ -272,6 +277,39 @@ void uart_rx_skip(uart_dma_rx_t *h, size_t n) {
 	__set_PRIMASK(prim);
 }
 
+// Efficient helper: snapshot raw bytes starting at tail into dst[] (no tail advance).
+// Disables IRQs once while copying contiguous memory slices to dst. Returns number of raw bytes copied.
+size_t uart_rx_snapshot(uart_dma_rx_t *h, uint8_t *dst, size_t len) {
+    if (h == NULL || dst == NULL || len == 0U) return 0U;
+
+    uint32_t prim = __get_PRIMASK();
+    __disable_irq();
+
+    uint32_t head = h->head;
+    uint32_t tail = h->tail;
+    uint32_t cnt = head - tail; // number of unread bytes
+    if (cnt == 0U) {
+        __set_PRIMASK(prim);
+        return 0U;
+    }
+
+    if (cnt > len) cnt = (uint32_t)len;
+
+    uint32_t first_idx = tail & UART_RX_MASK;
+    uint32_t first_chunk = UART_RX_BUFFER_SIZE - first_idx;
+    if (first_chunk > cnt) first_chunk = cnt;
+
+    // copy first chunk
+    memcpy(dst, &h->buf[first_idx], first_chunk);
+
+    // copy second chunk if wrap
+    if (cnt > first_chunk) {
+        memcpy(dst + first_chunk, &h->buf[0], cnt - first_chunk);
+    }
+
+    __set_PRIMASK(prim);
+    return (size_t)cnt;
+}
 
 // *** ISRs ***
 

@@ -153,10 +153,12 @@ int main(void)
 	if (uart2_dma_rx.new_data) {
 		//uart2_dma_rx.new_data = 0;
 		int num = uart_rx_available(&uart2_dma_rx);
-		printf("num %u\n", num);
-		uart_rx_read(&uart2_dma_rx, tmpbuf, num);
+		printf("RX %2u: ", num);
+		uart_rx_snapshot(&uart2_dma_rx, tmpbuf, num);
 		for (int i=0; i<num; i++)
-			printf("RX: %02X\n", tmpbuf[i]);
+			printf(" %02X", tmpbuf[i]);
+		printf("\n");
+		uart_rx_read(&uart2_dma_rx, tmpbuf, num);
 	}
     /* USER CODE END WHILE */
 

@@ -57,6 +57,7 @@ size_t uart_rx_available(uart_dma_rx_t *h);
 uint8_t uart_rx_peek(uart_dma_rx_t *h, uint32_t offset);
 size_t uart_rx_read(uart_dma_rx_t *h, uint8_t *dst, size_t len);
 void uart_rx_skip(uart_dma_rx_t *h, size_t n);
+size_t uart_rx_snapshot(uart_dma_rx_t *h, uint8_t *dst, size_t len);
 
 void uart_dma_tx_irq_handler(uart_dma_tx_t *h);
 void uart_dma_rx_irq_handler(uart_dma_rx_t *h);

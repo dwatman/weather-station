@@ -28,6 +28,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+// NOTE: Heavily modified
+
+#include <string.h> // for memcpy
 
 #include "sensirion_shdlc.h"
 #include "sensirion_common.h"
@@ -39,14 +42,16 @@ extern uart_dma_rx_t uart2_dma_rx;
 #define SHDLC_START 0x7E
 #define SHDLC_STOP 0x7E
 
-#define SHDLC_MIN_TX_FRAME_SIZE 6
-/** start/stop + (4 header + 255 data) * 2 because of byte stuffing */
+#define SHDLC_MIN_TX_FRAME_SIZE 6 // start + header(3) + crc + stop
+#define SHDLC_MIN_RX_FRAME_SIZE 7 // start + header(4) + crc + stop
+
+// start/stop + (4 header + 255 data) * 2 because of byte stuffing
 #define SHDLC_FRAME_MAX_TX_FRAME_SIZE (2 + (4 + 255) * 2)
 
-/** start/stop + (5 header + 255 data) * 2 because of byte stuffing */
+// start/stop + (5 header + 255 data) * 2 because of byte stuffing
 #define SHDLC_FRAME_MAX_RX_FRAME_SIZE (2 + (5 + 255) * 2)
 
-#define RX_DELAY_US 20000
+#define RX_DELAY_MS 20
 
 static uint8_t sensirion_shdlc_checksum(uint8_t header_sum, uint8_t data_len, const uint8_t* data) {
     header_sum += data_len;
@@ -81,7 +86,7 @@ static uint16_t sensirion_shdlc_stuff_data(uint8_t data_len, const uint8_t* data
     return output_data_len;
 }
 
-static uint8_t sensirion_shdlc_check_unstuff(uint8_t data) {
+static inline uint8_t sensirion_shdlc_check_unstuff(uint8_t data) {
     return data == 0x7d;
 }
 
@@ -99,6 +104,50 @@ static uint8_t sensirion_shdlc_unstuff_byte(uint8_t data) {
             return data;
     }
 }
+
+
+// Efficient skip-to-next-marker: find next marker byte and advance tail up to (but not including) marker.
+// Because 0x7E is never present except as unescaped markers in SHDLC, we don't need to interpret escapes here.
+// Returns number of bytes skipped (0 if marker is already at tail or none present).
+static size_t uart_rx_skip_to_next_marker(uart_dma_rx_t *h) {
+    uint32_t prim = __get_PRIMASK();
+    __disable_irq();
+
+    uint32_t head = h->head;
+    uint32_t tail = h->tail;
+    uint32_t cnt = head - tail;
+    if (cnt == 0U) {
+        __set_PRIMASK(prim);
+        return 0U;
+    }
+
+    // if first byte already marker, do not skip
+    uint8_t first = h->buf[tail & UART_RX_MASK];
+    if (first == SHDLC_START) {
+        __set_PRIMASK(prim);
+        return 0U;
+    }
+
+    size_t skip_count = 0;
+    for (uint32_t i = 0; i < cnt; ++i) {
+        uint8_t b = h->buf[(tail + i) & UART_RX_MASK];
+        if (b == SHDLC_START) { skip_count = (size_t)i; break; }
+    }
+
+    if (skip_count == 0) {
+        // either first was marker (handled above) or no marker found -> skip all
+        skip_count = (size_t)cnt;
+    }
+
+    if (skip_count > 0) {
+        h->tail = h->tail + (uint32_t)skip_count;
+        h->new_data = (h->head != h->tail) ? 1U : 0U;
+    }
+
+    __set_PRIMASK(prim);
+    return skip_count;
+}
+
 /*
 int16_t sensirion_shdlc_xcv(uint8_t addr, uint8_t cmd, uint8_t tx_data_len,
                             const uint8_t* tx_data, uint8_t max_rx_data_len,
@@ -138,6 +187,120 @@ int16_t sensirion_shdlc_tx(uint8_t addr, uint8_t cmd, uint8_t data_len, const ui
     return 0;
 }
 
+int16_t sensirion_shdlc_rx(uint8_t max_data_len, struct sensirion_shdlc_rx_header* rxh, uint8_t* data) {
+    uart_dma_rx_t *h = &uart2_dma_rx;
+
+    // ensure we start at a marker: consume garbage before first start
+    uart_rx_skip_to_next_marker(h);
+
+    // re-check availability and start marker
+    size_t avail = uart_rx_available(h);
+    if (avail < SHDLC_MIN_RX_FRAME_SIZE) return 0;
+    if (uart_rx_peek(h, 0) != SHDLC_START) return 0;
+
+    // snapshot up to the frame max
+    uint8_t raw[SHDLC_FRAME_MAX_RX_FRAME_SIZE];
+    size_t raw_copied = uart_rx_snapshot(h, raw, SHDLC_FRAME_MAX_RX_FRAME_SIZE);
+    if (raw_copied == 0U) return 0;
+
+    // scan raw[] once while un-stuffing into header and data buffers as we go
+    size_t ri = 0; // raw index
+    if (raw[ri] != SHDLC_START) {
+        // recover: consume start and skip
+        uart_rx_skip(h, 1);
+        uart_rx_skip_to_next_marker(h);
+        return SENSIRION_SHDLC_ERR_MISSING_START;
+    }
+    ri++; // move past START
+
+    // un-stuff header into a temporary array then memcpy to rxh (safer than aliasing)
+    uint8_t hdr_tmp[4];
+    uint8_t un_next = 0;
+    uint32_t hdr_i = 0;
+    while (hdr_i < sizeof(hdr_tmp)) {
+        if (ri >= raw_copied) return 0; // need more raw bytes
+        uint8_t b = raw[ri++];
+        if (un_next) {
+            hdr_tmp[hdr_i++] = sensirion_shdlc_unstuff_byte(b);
+            un_next = 0;
+        } else if (sensirion_shdlc_check_unstuff(b)) {
+            un_next = 1;
+        } else {
+            if (b == SHDLC_STOP) {
+            	uart_rx_skip(h, 1);
+                uart_rx_skip_to_next_marker(h);
+                return SENSIRION_SHDLC_ERR_ENCODING_ERROR;
+            }
+            hdr_tmp[hdr_i++] = b;
+        }
+    }
+    // copy header into rxh
+    memcpy(rxh, hdr_tmp, sizeof(hdr_tmp));
+
+    // check data_len
+    if (rxh->data_len > max_data_len) {
+    	uart_rx_skip(h, 1);
+        uart_rx_skip_to_next_marker(h);
+        return SENSIRION_SHDLC_ERR_FRAME_TOO_LONG;
+    }
+
+    // un-stuff data directly into 'data' buffer
+    uint32_t data_collected = 0;
+    un_next = 0;
+    while (data_collected < rxh->data_len) {
+        if (ri >= raw_copied) return 0; // wait for more raw bytes
+        uint8_t b = raw[ri++];
+        if (un_next) {
+            data[data_collected++] = sensirion_shdlc_unstuff_byte(b);
+            un_next = 0;
+        } else if (sensirion_shdlc_check_unstuff(b)) {
+            un_next = 1;
+        } else {
+            if (b == SHDLC_STOP) {
+            	uart_rx_skip(h, 1);
+                uart_rx_skip_to_next_marker(h);
+                return SENSIRION_SHDLC_ERR_ENCODING_ERROR;
+            }
+            data[data_collected++] = b;
+        }
+    }
+
+    // parse CRC (one unstuffed byte)
+    uint8_t crc_frame;
+    if (ri >= raw_copied) return 0; // wait
+    uint8_t b = raw[ri++];
+    if (sensirion_shdlc_check_unstuff(b)) {
+        if (ri >= raw_copied) return 0; // wait
+        crc_frame = sensirion_shdlc_unstuff_byte(raw[ri++]);
+    } else {
+        crc_frame = b;
+    }
+
+    // next raw must be STOP marker (unescaped)
+    if (ri >= raw_copied) return 0; // wait
+    if (raw[ri] != SHDLC_STOP) {
+    	uart_rx_skip(h, 1);
+        uart_rx_skip_to_next_marker(h);
+        return SENSIRION_SHDLC_ERR_MISSING_STOP;
+    }
+
+    // compute checksum and compare
+    uint8_t header_sum = (uint8_t)(rxh->addr + rxh->cmd + rxh->state);
+    uint8_t calc = sensirion_shdlc_checksum(header_sum, rxh->data_len, data);
+    if (calc != crc_frame) {
+    	uart_rx_skip(h, 1);
+        uart_rx_skip_to_next_marker(h);
+        return SENSIRION_SHDLC_ERR_CRC_MISMATCH;
+    }
+
+    // success: we have a valid frame and ri points to the STOP index; raw length = ri+1 (inclusive stop)
+    size_t raw_len = ri + 1U;
+    // advance tail by raw_len (consume frame)
+    uart_rx_skip(h, raw_len);
+
+    return 1;
+}
+/*
 int16_t sensirion_shdlc_rx(uint8_t max_data_len, struct sensirion_shdlc_rx_header* rxh, uint8_t* data) {
     int16_t len;
     uint16_t i;
@@ -200,7 +363,8 @@ int16_t sensirion_shdlc_rx(uint8_t max_data_len, struct sensirion_shdlc_rx_heade
     }
 
     return 0;
-}
+}*/
+
 /*
 static void sensirion_shdlc_stuff_byte(struct sensirion_shdlc_buffer* tx_frame, uint8_t data) {
     switch (data) {
