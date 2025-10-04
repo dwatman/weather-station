@@ -37,6 +37,8 @@
 extern uart_dma_tx_t uart2_dma_tx;
 extern uart_dma_rx_t uart2_dma_rx;
 
+static uint8_t rx_raw[SHDLC_FRAME_MAX_RX_STUFFED_FRAME_SIZE];
+
 static uint8_t sensirion_shdlc_checksum(uint8_t header_sum, uint8_t data_len, const uint8_t* data) {
     header_sum += data_len;
 
@@ -174,36 +176,43 @@ int16_t sensirion_shdlc_tx(uart_dma_tx_t *h, uint8_t addr, uint8_t cmd, uint8_t 
 
 // Process a receive buffer looking for valid packets
 int16_t sensirion_shdlc_rx(uart_dma_rx_t *h, uint8_t max_data_len, sensirion_shdlc_rx_t *rx) {
-    // ensure we start at a marker: consume garbage before first start
+    // Ensure we start at a marker: consume garbage before first start
     uart_rx_skip_to_next_marker(h);
 
-    // re-check availability and start marker
+    // Check availability and indicate no new data if the packet is too short
     size_t avail = uart_rx_available(h);
-    if (avail < SHDLC_MIN_RX_FRAME_SIZE) return 0;
-    if (uart_rx_peek(h, 0) != SHDLC_START) return 0;
+    if (avail < SHDLC_MIN_RX_FRAME_SIZE) {
+    	h->new_data = 0;
+    	return 0;
+    }
 
-    // snapshot up to the frame max
-    uint8_t raw[SHDLC_FRAME_MAX_RX_STUFFED_FRAME_SIZE];
-    size_t raw_copied = uart_rx_snapshot(h, raw, SHDLC_FRAME_MAX_RX_STUFFED_FRAME_SIZE);
-    if (raw_copied == 0U) return 0;
+    // Snapshot up to the frame max
+    size_t raw_copied = uart_rx_snapshot(h, rx_raw, SHDLC_FRAME_MAX_RX_STUFFED_FRAME_SIZE);
+    if (raw_copied == 0U) {
+    	h->new_data = 0;
+    	return 0;
+    }
 
-    // scan raw[] once while un-stuffing into header and data buffers as we go
+    // Scan raw[] once while un-stuffing into header and data buffers as we go
     size_t ri = 0; // raw index
-    if (raw[ri] != SHDLC_START) {
+    if (rx_raw[ri] != SHDLC_START) {
         // recover: consume start and skip
         uart_rx_skip(h, 1);
         uart_rx_skip_to_next_marker(h);
         return SENSIRION_SHDLC_ERR_MISSING_START;
     }
-    ri++; // move past START
+    ri++; // Move past START
 
-    // un-stuff header into a temporary array then memcpy to rxh (safer than aliasing)
+    // Un-stuff header into a temporary array then copy
     uint8_t hdr_tmp[4];
     uint8_t un_next = 0;
     uint32_t hdr_i = 0;
     while (hdr_i < sizeof(hdr_tmp)) {
-        if (ri >= raw_copied) return 0; // need more raw bytes
-        uint8_t b = raw[ri++];
+        if (ri >= raw_copied) {
+        	h->new_data = 0;
+        	return 0; // Need more raw bytes so indicate no new data
+        }
+        uint8_t b = rx_raw[ri++];
         if (un_next) {
             hdr_tmp[hdr_i++] = sensirion_shdlc_unstuff_byte(b);
             un_next = 0;
@@ -231,12 +240,15 @@ int16_t sensirion_shdlc_rx(uart_dma_rx_t *h, uint8_t max_data_len, sensirion_shd
         return SENSIRION_SHDLC_ERR_FRAME_TOO_LONG;
     }
 
-    // un-stuff data directly into 'data' buffer
+    // Un-stuff data directly into 'data' buffer
     uint32_t data_collected = 0;
     un_next = 0;
     while (data_collected < rx->length) {
-        if (ri >= raw_copied) return 0; // wait for more raw bytes
-        uint8_t b = raw[ri++];
+        if (ri >= raw_copied) {
+        	h->new_data = 0;
+        	return 0; // Wait for more raw bytes
+        }
+        uint8_t b = rx_raw[ri++];
         if (un_next) {
         	rx->data[data_collected++] = sensirion_shdlc_unstuff_byte(b);
             un_next = 0;
@@ -252,20 +264,29 @@ int16_t sensirion_shdlc_rx(uart_dma_rx_t *h, uint8_t max_data_len, sensirion_shd
         }
     }
 
-    // parse CRC (one unstuffed byte)
+    // Parse CRC (one unstuffed byte)
     uint8_t crc_frame;
-    if (ri >= raw_copied) return 0; // wait
-    uint8_t b = raw[ri++];
+    if (ri >= raw_copied) {
+    	h->new_data = 0;
+    	return 0; // Wait for more data
+    }
+    uint8_t b = rx_raw[ri++];
     if (sensirion_shdlc_check_unstuff(b)) {
-        if (ri >= raw_copied) return 0; // wait
-        crc_frame = sensirion_shdlc_unstuff_byte(raw[ri++]);
+        if (ri >= raw_copied) {
+        	h->new_data = 0;
+        	return 0; // Wait for more data
+        }
+        crc_frame = sensirion_shdlc_unstuff_byte(rx_raw[ri++]);
     } else {
         crc_frame = b;
     }
 
     // next raw must be STOP marker (unescaped)
-    if (ri >= raw_copied) return 0; // wait
-    if (raw[ri] != SHDLC_STOP) {
+    if (ri >= raw_copied) {
+    	h->new_data = 0;
+    	return 0; // Wait for more data
+    }
+    if (rx_raw[ri] != SHDLC_STOP) {
     	uart_rx_skip(h, 1);
         uart_rx_skip_to_next_marker(h);
         return SENSIRION_SHDLC_ERR_MISSING_STOP;
