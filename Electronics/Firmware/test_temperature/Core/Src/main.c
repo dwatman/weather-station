@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "i2c_util.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -31,7 +31,12 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define I2C_SHT40_ADDR 0x44
 
+#define I2C_SHT40_CMD_RESET 0x94
+#define I2C_SHT40_CMD_MEAS_HI 0xFD
+#define I2C_SHT40_CMD_MEAS_MED 0xF6
+#define I2C_SHT40_CMD_MEAS_LO 0xE0
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -44,7 +49,7 @@
 COM_InitTypeDef BspCOMInit;
 
 /* USER CODE BEGIN PV */
-
+i2c_t i2c_sht40;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -123,9 +128,24 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  printf( "Start\n");
+
+  i2c_init(&i2c_sht40, I2C1);
+  HAL_Delay(10);
+
+  uint32_t last_tick = 0;
   while (1)
   {
-
+	uint32_t current_tick = HAL_GetTick();
+	if ((current_tick - last_tick) >= 5000) {
+		last_tick = current_tick;
+		BSP_LED_Toggle(LD1);
+		printf( "Write\n");
+		i2c_sht40.address = (I2C_SHT40_ADDR << 1);
+		i2c_sht40.command = I2C_SHT40_CMD_RESET;
+		LL_I2C_HandleTransfer(i2c_sht40.i2c, i2c_sht40.address, LL_I2C_ADDRSLAVE_7BIT, 0, LL_I2C_MODE_AUTOEND, LL_I2C_GENERATE_START_WRITE);
+		LL_I2C_TransmitData8(i2c_sht40.i2c, i2c_sht40.command);
+	}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

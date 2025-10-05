@@ -204,10 +204,19 @@ void SysTick_Handler(void)
 void I2C1_EV_IRQHandler(void)
 {
   /* USER CODE BEGIN I2C1_EV_IRQn 0 */
-
+	printf("I2C1_EV_IRQ\n");
   /* USER CODE END I2C1_EV_IRQn 0 */
   /* USER CODE BEGIN I2C1_EV_IRQn 1 */
-
+	if (LL_I2C_IsActiveFlag_TC(I2C1)) {
+		printf("    TC\n");
+	}
+	if (LL_I2C_IsActiveFlag_TCR(I2C1)) {
+		printf("    TCR\n");
+	}
+	if (LL_I2C_IsActiveFlag_NACK(I2C1)) {
+		LL_I2C_ClearFlag_NACK(I2C1);
+		printf("    NACK\n");
+	}
   /* USER CODE END I2C1_EV_IRQn 1 */
 }
 
@@ -217,10 +226,18 @@ void I2C1_EV_IRQHandler(void)
 void I2C1_ER_IRQHandler(void)
 {
   /* USER CODE BEGIN I2C1_ER_IRQn 0 */
-
+	printf("I2C1_ER_IRQ\n");
   /* USER CODE END I2C1_ER_IRQn 0 */
   /* USER CODE BEGIN I2C1_ER_IRQn 1 */
-
+	if (LL_I2C_IsActiveFlag_BERR(I2C1)) {
+		printf("    BERR\n");
+	}
+	if (LL_I2C_IsActiveFlag_ARLO(I2C1)) {
+		printf("    ARLO\n");
+	}
+	if (LL_I2C_IsActiveFlag_OVR(I2C1)) {
+		printf("    OVR\n");
+	}
   /* USER CODE END I2C1_ER_IRQn 1 */
 }
 
