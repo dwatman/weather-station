@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "i2c_util.h"
+#include "sht40.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -31,12 +32,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define I2C_SHT40_ADDR 0x44
 
-#define I2C_SHT40_CMD_RESET 0x94
-#define I2C_SHT40_CMD_MEAS_HI 0xFD
-#define I2C_SHT40_CMD_MEAS_MED 0xF6
-#define I2C_SHT40_CMD_MEAS_LO 0xE0
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -132,6 +128,8 @@ int main(void)
 
   i2c_init(&i2c_sht40, I2C1);
   HAL_Delay(10);
+  sht40_reset(&i2c_sht40);
+  HAL_Delay(10);
 
   uint32_t last_tick = 0;
   while (1)
@@ -139,12 +137,31 @@ int main(void)
 	uint32_t current_tick = HAL_GetTick();
 	if ((current_tick - last_tick) >= 5000) {
 		last_tick = current_tick;
-		BSP_LED_Toggle(LD1);
-		printf( "Write\n");
-		i2c_sht40.address = (I2C_SHT40_ADDR << 1);
-		i2c_sht40.command = I2C_SHT40_CMD_RESET;
-		LL_I2C_HandleTransfer(i2c_sht40.i2c, i2c_sht40.address, LL_I2C_ADDRSLAVE_7BIT, 0, LL_I2C_MODE_AUTOEND, LL_I2C_GENERATE_START_WRITE);
-		LL_I2C_TransmitData8(i2c_sht40.i2c, i2c_sht40.command);
+		BSP_LED_On(LD1);
+		//printf( "Write\n");
+		sht40_start_measurement(&i2c_sht40, I2C_SHT40_CMD_MEAS_HI_ACC);
+		BSP_LED_Off(LD1);
+	}
+	if ((i2c_sht40.state == I2C_STATE_WRITING) && (i2c_sht40.timeout == 0)) {
+		BSP_LED_On(LD2);
+		//printf( "Read\n");
+		i2c_sht40.state = I2C_STATE_READING;
+		LL_I2C_HandleTransfer(i2c_sht40.i2c, (I2C_SHT40_ADDR << 1), LL_I2C_ADDRSLAVE_7BIT, 6, LL_I2C_MODE_AUTOEND, LL_I2C_GENERATE_START_READ);
+		BSP_LED_Off(LD2);
+	}
+	if (i2c_sht40.done == 1) {
+		i2c_sht40.done = 0;
+		//printf("Done\n");
+
+		uint16_t temp_raw = ((uint16_t)i2c_sht40.rxbuf[0] << 8) | (uint16_t)i2c_sht40.rxbuf[1];
+		uint16_t hum_raw = ((uint16_t)i2c_sht40.rxbuf[3] << 8) | (uint16_t)i2c_sht40.rxbuf[4];
+		// TODO: CRC check
+
+		uint32_t temperature = ((21875 * (int32_t)temp_raw) >> 13) - 45000;
+		uint32_t humidity = ((15625 * (int32_t)hum_raw) >> 13) - 6000;
+
+		printf("Temperature: %li   ", temperature);
+		printf("Humidity: %li\n", humidity);
 	}
     /* USER CODE END WHILE */
 
@@ -244,7 +261,7 @@ static void MX_I2C1_Init(void)
   LL_I2C_DisableGeneralCall(I2C1);
   LL_I2C_EnableClockStretching(I2C1);
   I2C_InitStruct.PeripheralMode = LL_I2C_MODE_I2C;
-  I2C_InitStruct.Timing = 0x00707CBB;
+  I2C_InitStruct.Timing = 0x00300F38;
   I2C_InitStruct.AnalogFilter = LL_I2C_ANALOGFILTER_ENABLE;
   I2C_InitStruct.DigitalFilter = 0;
   I2C_InitStruct.OwnAddress1 = 0;

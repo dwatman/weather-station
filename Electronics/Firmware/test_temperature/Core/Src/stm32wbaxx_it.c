@@ -22,6 +22,7 @@
 #include "stm32wbaxx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "i2c_util.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -41,7 +42,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+extern i2c_t i2c_sht40;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -183,7 +184,7 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
-
+	if (i2c_sht40.timeout > 0) i2c_sht40.timeout--;
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
@@ -204,19 +205,38 @@ void SysTick_Handler(void)
 void I2C1_EV_IRQHandler(void)
 {
   /* USER CODE BEGIN I2C1_EV_IRQn 0 */
-	printf("I2C1_EV_IRQ\n");
+	BSP_LED_On(LD3);
+	//printf("I2C1_EV_IRQ\n");
   /* USER CODE END I2C1_EV_IRQn 0 */
   /* USER CODE BEGIN I2C1_EV_IRQn 1 */
-	if (LL_I2C_IsActiveFlag_TC(I2C1)) {
-		printf("    TC\n");
-	}
-	if (LL_I2C_IsActiveFlag_TCR(I2C1)) {
-		printf("    TCR\n");
-	}
+//	if (LL_I2C_IsActiveFlag_TC(I2C1)) {
+//		printf("    TC\n");
+//	}
+//	if (LL_I2C_IsActiveFlag_TCR(I2C1)) {
+//		printf("    TCR\n");
+//	}
 	if (LL_I2C_IsActiveFlag_NACK(I2C1)) {
 		LL_I2C_ClearFlag_NACK(I2C1);
 		printf("    NACK\n");
 	}
+	if (LL_I2C_IsActiveFlag_RXNE(I2C1)) {
+		uint8_t data = LL_I2C_ReceiveData8(I2C1);
+		//printf("    RXNE: [%u] = %02X\n", i2c_sht40.index, data);
+		if (i2c_sht40.state == I2C_STATE_READING) {
+			i2c_sht40.rxbuf[i2c_sht40.index] = data;
+			i2c_sht40.index++;
+
+			if (i2c_sht40.index == 6) {
+				i2c_sht40.state = I2C_STATE_IDLE;
+				i2c_sht40.done = 1;
+			}
+		}
+	}
+	if (LL_I2C_IsActiveFlag_STOP(I2C1)) {
+		LL_I2C_ClearFlag_STOP(I2C1);
+		//printf("    STOP\n");
+	}
+	BSP_LED_Off(LD3);
   /* USER CODE END I2C1_EV_IRQn 1 */
 }
 
@@ -229,6 +249,8 @@ void I2C1_ER_IRQHandler(void)
 	printf("I2C1_ER_IRQ\n");
   /* USER CODE END I2C1_ER_IRQn 0 */
   /* USER CODE BEGIN I2C1_ER_IRQn 1 */
+	i2c_sht40.err = 1;
+	i2c_sht40.state = I2C_STATE_ERROR;
 	if (LL_I2C_IsActiveFlag_BERR(I2C1)) {
 		printf("    BERR\n");
 	}
