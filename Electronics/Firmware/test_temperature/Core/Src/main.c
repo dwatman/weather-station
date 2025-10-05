@@ -45,7 +45,8 @@
 COM_InitTypeDef BspCOMInit;
 
 /* USER CODE BEGIN PV */
-i2c_t i2c_sht40;
+i2c_t i2c1_info;
+sht40_t sht40_device;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -124,11 +125,12 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  printf( "Start\n");
+  printf("Start\n");
 
-  i2c_init(&i2c_sht40, I2C1);
+  i2c_init(&i2c1_info, I2C1);
+  sht40_init(&sht40_device, &i2c1_info);
   HAL_Delay(10);
-  sht40_reset(&i2c_sht40);
+  sht40_reset(&sht40_device);
   HAL_Delay(10);
 
   uint32_t last_tick = 0;
@@ -138,30 +140,29 @@ int main(void)
 	if ((current_tick - last_tick) >= 5000) {
 		last_tick = current_tick;
 		BSP_LED_On(LD1);
-		//printf( "Write\n");
-		sht40_start_measurement(&i2c_sht40, I2C_SHT40_CMD_MEAS_HI_ACC);
+		//printf("Write\n");
+		sht40_start_measurement(&sht40_device, I2C_SHT40_CMD_MEAS_HI_ACC);
 		BSP_LED_Off(LD1);
 	}
-	if ((i2c_sht40.state == I2C_STATE_WRITING) && (i2c_sht40.timeout == 0)) {
+	if ((sht40_device.i2c->state == I2C_STATE_WRITING) && (sht40_device.timeout == 0)) {
 		BSP_LED_On(LD2);
-		//printf( "Read\n");
-		i2c_sht40.state = I2C_STATE_READING;
-		LL_I2C_HandleTransfer(i2c_sht40.i2c, (I2C_SHT40_ADDR << 1), LL_I2C_ADDRSLAVE_7BIT, 6, LL_I2C_MODE_AUTOEND, LL_I2C_GENERATE_START_READ);
+		//printf("Read\n");
+		sht40_read_measurement(&sht40_device);
 		BSP_LED_Off(LD2);
 	}
-	if (i2c_sht40.done == 1) {
-		i2c_sht40.done = 0;
+	if (sht40_device.i2c->done == 1) {
+		sht40_device.i2c->done = 0;
 		//printf("Done\n");
+		sht40_process_measurement(&sht40_device);
+	}
+	if (sht40_device.new_data == 1) {
+		sht40_device.new_data = 0;
 
-		uint16_t temp_raw = ((uint16_t)i2c_sht40.rxbuf[0] << 8) | (uint16_t)i2c_sht40.rxbuf[1];
-		uint16_t hum_raw = ((uint16_t)i2c_sht40.rxbuf[3] << 8) | (uint16_t)i2c_sht40.rxbuf[4];
-		// TODO: CRC check
+		uint32_t temperature = ((21875 * (int32_t)sht40_device.temp_raw) >> 13) - 45000;
+		uint32_t humidity = ((15625 * (int32_t)sht40_device.humid_raw) >> 13) - 6000;
 
-		uint32_t temperature = ((21875 * (int32_t)temp_raw) >> 13) - 45000;
-		uint32_t humidity = ((15625 * (int32_t)hum_raw) >> 13) - 6000;
-
-		printf("Temperature: %li   ", temperature);
-		printf("Humidity: %li\n", humidity);
+		printf("Temperature: %.3f   ", (float)temperature/1000.0f);
+		printf("Humidity: %.3f\n", (float)humidity/1000.0f);
 	}
     /* USER CODE END WHILE */
 

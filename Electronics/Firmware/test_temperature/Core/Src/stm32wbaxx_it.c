@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "i2c_util.h"
+#include "sht40.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,7 +43,8 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-extern i2c_t i2c_sht40;
+extern i2c_t i2c1_info;
+extern sht40_t sht40_device;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -184,7 +186,7 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
-	if (i2c_sht40.timeout > 0) i2c_sht40.timeout--;
+	if (sht40_device.timeout > 0) sht40_device.timeout--;
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
@@ -221,14 +223,14 @@ void I2C1_EV_IRQHandler(void)
 	}
 	if (LL_I2C_IsActiveFlag_RXNE(I2C1)) {
 		uint8_t data = LL_I2C_ReceiveData8(I2C1);
-		//printf("    RXNE: [%u] = %02X\n", i2c_sht40.index, data);
-		if (i2c_sht40.state == I2C_STATE_READING) {
-			i2c_sht40.rxbuf[i2c_sht40.index] = data;
-			i2c_sht40.index++;
+		//printf("    RXNE: [%u] = %02X\n", i2c1_info.index, data);
+		if (i2c1_info.state == I2C_STATE_READING) {
+			i2c1_info.buf[i2c1_info.index] = data;
+			i2c1_info.index++;
 
-			if (i2c_sht40.index == 6) {
-				i2c_sht40.state = I2C_STATE_IDLE;
-				i2c_sht40.done = 1;
+			if (i2c1_info.index == i2c1_info.length) {
+				i2c1_info.state = I2C_STATE_IDLE;
+				i2c1_info.done = 1;
 			}
 		}
 	}
@@ -249,8 +251,7 @@ void I2C1_ER_IRQHandler(void)
 	printf("I2C1_ER_IRQ\n");
   /* USER CODE END I2C1_ER_IRQn 0 */
   /* USER CODE BEGIN I2C1_ER_IRQn 1 */
-	i2c_sht40.err = 1;
-	i2c_sht40.state = I2C_STATE_ERROR;
+	i2c1_info.state = I2C_STATE_ERROR;
 	if (LL_I2C_IsActiveFlag_BERR(I2C1)) {
 		printf("    BERR\n");
 	}
