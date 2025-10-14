@@ -1,6 +1,7 @@
 # KiCad
 
 *.bak
+*.kicad_sch-bak
 *.lck
 *.kicad_prl
 *-backups/
