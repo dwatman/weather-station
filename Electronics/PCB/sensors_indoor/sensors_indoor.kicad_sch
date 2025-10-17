@@ -2714,7 +2714,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "0b246529-1d60-4d3f-a159-1cca9d85e366")
-		(property "Reference" "C3"
+		(property "Reference" "C2"
 			(at 106.68 100.33 0)
 			(effects
 				(font
@@ -2768,7 +2768,7 @@
 		(instances
 			(project "sensors_indoor"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6"
-					(reference "C3")
+					(reference "C2")
 					(unit 1)
 				)
 			)
@@ -3075,7 +3075,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "3d62b194-8830-492a-a32b-2024b74acd9b")
-		(property "Reference" "C2"
+		(property "Reference" "C3"
 			(at 119.38 44.45 0)
 			(effects
 				(font
@@ -3129,7 +3129,7 @@
 		(instances
 			(project "sensors_indoor"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6"
-					(reference "C2")
+					(reference "C3")
 					(unit 1)
 				)
 			)
@@ -3209,7 +3209,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "4f7b2282-c859-442e-b983-a0881981e46b")
-		(property "Reference" "#PWR05"
+		(property "Reference" "#PWR06"
 			(at 83.82 55.88 0)
 			(effects
 				(font
@@ -3259,7 +3259,7 @@
 		(instances
 			(project "sensors_indoor"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6"
-					(reference "#PWR05")
+					(reference "#PWR06")
 					(unit 1)
 				)
 			)
@@ -3274,7 +3274,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "59040779-6ec9-4149-9704-29e1a9d0c6d6")
-		(property "Reference" "#PWR057"
+		(property "Reference" "#PWR05"
 			(at 71.12 55.88 0)
 			(effects
 				(font
@@ -3324,7 +3324,7 @@
 		(instances
 			(project "sensors_indoor"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6"
-					(reference "#PWR057")
+					(reference "#PWR05")
 					(unit 1)
 				)
 			)
@@ -3559,7 +3559,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "84668745-6c06-4c1a-bf15-5b035e82223e")
-		(property "Reference" "#PWR06"
+		(property "Reference" "#PWR08"
 			(at 116.84 55.88 0)
 			(effects
 				(font
@@ -3609,7 +3609,7 @@
 		(instances
 			(project "sensors_indoor"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6"
-					(reference "#PWR06")
+					(reference "#PWR08")
 					(unit 1)
 				)
 			)
@@ -3913,7 +3913,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "bbcff73d-3517-4b6e-a020-fc7282f3c5cb")
-		(property "Reference" "#PWR010"
+		(property "Reference" "#PWR011"
 			(at 139.7 99.06 0)
 			(effects
 				(font
@@ -3963,7 +3963,7 @@
 		(instances
 			(project "sensors_indoor"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6"
-					(reference "#PWR010")
+					(reference "#PWR011")
 					(unit 1)
 				)
 			)
@@ -4044,7 +4044,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "caf1b605-6a3e-4371-a9f6-3c79ce8c1030")
-		(property "Reference" "#PWR08"
+		(property "Reference" "#PWR09"
 			(at 118.11 44.45 0)
 			(effects
 				(font
@@ -4094,7 +4094,7 @@
 		(instances
 			(project "sensors_indoor"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6"
-					(reference "#PWR08")
+					(reference "#PWR09")
 					(unit 1)
 				)
 			)
@@ -4178,7 +4178,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "ea3ff080-d983-495d-9312-146882c8a8ee")
-		(property "Reference" "D2"
+		(property "Reference" "D1"
 			(at 72.39 45.72 90)
 			(effects
 				(font
@@ -4250,7 +4250,7 @@
 		(instances
 			(project ""
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6"
-					(reference "D2")
+					(reference "D1")
 					(unit 1)
 				)
 			)
@@ -4467,7 +4467,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f508f46d-9c83-43cc-a27f-088572b070a5")
-		(property "Reference" "#PWR09"
+		(property "Reference" "#PWR010"
 			(at 119.38 114.3 0)
 			(effects
 				(font
@@ -4517,7 +4517,7 @@
 		(instances
 			(project "sensors_indoor"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6"
-					(reference "#PWR09")
+					(reference "#PWR010")
 					(unit 1)
 				)
 			)
