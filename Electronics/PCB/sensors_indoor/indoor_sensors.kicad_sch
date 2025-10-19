@@ -7435,7 +7435,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Package_LGA:ST_HLGA-10_2x2mm_P0.5mm_LayoutBorder3x2y"
+		(property "Footprint" "DWlib:ST_HLGA-10L_2x2mm_P0.5mm_LayoutBorder3x2y"
 			(at 43.18 87.63 0)
 			(effects
 				(font
