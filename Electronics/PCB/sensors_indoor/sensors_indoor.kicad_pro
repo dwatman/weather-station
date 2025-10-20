@@ -48,7 +48,7 @@
         "silk_text_thickness": 0.15,
         "silk_text_upright": false,
         "zones": {
-          "min_clearance": 0.3
+          "min_clearance": 0.5
         }
       },
       "diff_pair_dimensions": [
@@ -58,7 +58,16 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        [
+          "hole_clearance|120640000|92440000|6969f649-9ba0-4bb9-a7bf-acef425b2f36|dc3c0fa6-024d-4611-81ad-98101e3df03a",
+          ""
+        ],
+        [
+          "solder_mask_bridge|120640000|92440000|6969f649-9ba0-4bb9-a7bf-acef425b2f36|dc3c0fa6-024d-4611-81ad-98101e3df03a",
+          ""
+        ]
+      ],
       "meta": {
         "version": 2
       },
@@ -246,24 +255,7 @@
     "equivalence_files": []
   },
   "erc": {
-    "erc_exclusions": [
-      [
-        "power_pin_not_driven|1041400|952500|11c23e94-6d3e-482b-9d03-7001c8638e58|00000000-0000-0000-0000-000000000000|/09bb465b-75b9-463f-b128-e813d3269ff6|/09bb465b-75b9-463f-b128-e813d3269ff6|",
-        ""
-      ],
-      [
-        "power_pin_not_driven|1498600|546100|1bddadb1-a5f6-4dfd-b457-3b9d6025d7b3|00000000-0000-0000-0000-000000000000|/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09|/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09|",
-        ""
-      ],
-      [
-        "power_pin_not_driven|228600|1016000|a49a335a-ec58-410c-a436-3a2748ee4de6|00000000-0000-0000-0000-000000000000|/09bb465b-75b9-463f-b128-e813d3269ff6|/09bb465b-75b9-463f-b128-e813d3269ff6|",
-        ""
-      ],
-      [
-        "power_pin_not_driven|584200|1524000|742d7bfc-1f03-4cc2-a76e-7a807324deaa|00000000-0000-0000-0000-000000000000|/09bb465b-75b9-463f-b128-e813d3269ff6/99494fb3-b5ed-4c1b-80f4-7f0e9ba989cd|/09bb465b-75b9-463f-b128-e813d3269ff6/99494fb3-b5ed-4c1b-80f4-7f0e9ba989cd|",
-        ""
-      ]
-    ],
+    "erc_exclusions": [],
     "meta": {
       "version": 0
     },
@@ -574,7 +566,7 @@
       "plot": "",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "sensors_indoor.step",
       "svg": "",
       "vrml": ""
     },
