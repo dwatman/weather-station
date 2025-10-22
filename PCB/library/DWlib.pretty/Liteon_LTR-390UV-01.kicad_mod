@@ -13,7 +13,7 @@
 		(effects
 			(font
 				(size 1 1)
-				(thickness 0.1)
+				(thickness 0.15)
 			)
 		)
 	)
@@ -117,6 +117,17 @@
 		(fill yes)
 		(layer "F.SilkS")
 		(uuid "e544b81a-cb1a-4221-958b-2488f33b7f0e")
+	)
+	(fp_rect
+		(start -1.4 -1.2)
+		(end 1.4 1.2)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+		(uuid "8eb8ee3d-c9ad-4ee6-be16-b861fd8e7081")
 	)
 	(fp_line
 		(start -0.5 -1)
