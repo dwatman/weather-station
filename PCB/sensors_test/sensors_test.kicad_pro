@@ -477,7 +477,7 @@
     ]
   },
   "meta": {
-    "filename": "sensors_indoor.kicad_pro",
+    "filename": "sensors_test.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -557,7 +557,7 @@
       "plot": "",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "sensors_indoor.step",
+      "step": "sensors_test.step",
       "svg": "",
       "vrml": ""
     },
@@ -713,11 +713,11 @@
     ],
     [
       "5392948c-5a35-4c1f-85ab-ec60577b6d09",
-      "indoor_MCU"
+      "MCU"
     ],
     [
       "99494fb3-b5ed-4c1b-80f4-7f0e9ba989cd",
-      "indoor_sensors"
+      "sensors"
     ]
   ],
   "text_variables": {}

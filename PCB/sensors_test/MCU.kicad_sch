@@ -4852,7 +4852,7 @@
 			(uuid "971e97f8-b976-49ee-a347-05362cc45820")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "#PWR025")
 					(unit 1)
@@ -4975,7 +4975,7 @@
 			(uuid "b72fd031-a5a1-4216-81b3-193162d6712b")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "J2")
 					(unit 1)
@@ -5045,7 +5045,7 @@
 			(uuid "b36bd4fe-f635-4ba8-b214-043d2885e8ce")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "C6")
 					(unit 1)
@@ -5110,7 +5110,7 @@
 			(uuid "467f683c-cc25-4cb6-bc66-7d3b2a579e7e")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "#PWR023")
 					(unit 1)
@@ -5175,7 +5175,7 @@
 			(uuid "abe620e9-df2c-4499-86ff-9909402c4d24")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "#PWR024")
 					(unit 1)
@@ -5240,7 +5240,7 @@
 			(uuid "42785907-30ac-4e49-ab3a-5d0a7da7f01c")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "#PWR018")
 					(unit 1)
@@ -5305,7 +5305,7 @@
 			(uuid "337b9bcc-1151-4466-aa0b-613b680fd167")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "#PWR019")
 					(unit 1)
@@ -5375,7 +5375,7 @@
 			(uuid "c48fca84-2247-434f-9ab1-37800eb6d06c")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "C8")
 					(unit 1)
@@ -5460,7 +5460,7 @@
 			(uuid "1a753ee6-a6ff-4740-a8e9-72e40fe12cc5")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "L2")
 					(unit 1)
@@ -5529,7 +5529,7 @@
 			(uuid "60c0fd45-c6dd-4d09-a448-5e96401fe1cc")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "R6")
 					(unit 1)
@@ -5596,7 +5596,7 @@
 			(uuid "6d1d26ab-e9d8-45da-a957-8e98eaacd656")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "R4")
 					(unit 1)
@@ -5661,7 +5661,7 @@
 			(uuid "3d01ddef-87db-4196-abdb-de66578498bb")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "#PWR015")
 					(unit 1)
@@ -5726,7 +5726,7 @@
 			(uuid "3c847f43-6904-4eaa-a8e2-3250f5fbbcfe")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "#PWR013")
 					(unit 1)
@@ -5791,7 +5791,7 @@
 			(uuid "4e32b545-1354-4e96-8e0f-b78aee0dbd77")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "#PWR016")
 					(unit 1)
@@ -5857,7 +5857,7 @@
 			(uuid "30a80fbf-c8c7-4ff5-b6f3-ecf77db9259c")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "#PWR020")
 					(unit 1)
@@ -5926,7 +5926,7 @@
 			(uuid "f6888a9a-9a3c-4d86-a80f-56db39b2c70b")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "R8")
 					(unit 1)
@@ -5991,7 +5991,7 @@
 			(uuid "c642953f-a423-44ee-9c6f-301628a416f9")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "#PWR012")
 					(unit 1)
@@ -6057,7 +6057,7 @@
 			(uuid "c45024e6-8aa6-4927-b39d-239dfcb6d02b")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "#PWR021")
 					(unit 1)
@@ -6126,7 +6126,7 @@
 			(uuid "37d16480-8076-4c62-a341-9cd00d4863b9")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "C23")
 					(unit 1)
@@ -6195,7 +6195,7 @@
 			(uuid "985eaff1-53ca-4509-9e48-7350937732d8")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "R7")
 					(unit 1)
@@ -6264,7 +6264,7 @@
 			(uuid "9608e390-6cd0-489e-aa57-8f4951bee3c9")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "R3")
 					(unit 1)
@@ -6334,7 +6334,7 @@
 			(uuid "4d77bf9f-5aee-4455-8fc5-5596066c4467")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "C7")
 					(unit 1)
@@ -6439,7 +6439,7 @@
 			(uuid "6301e3c3-e0f9-4de6-a0f3-00c9e872e671")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "U3")
 					(unit 1)
@@ -6504,7 +6504,7 @@
 			(uuid "3ee05507-27da-47dd-ae47-c829fb5bbf72")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "#PWR022")
 					(unit 1)
@@ -6592,7 +6592,7 @@
 			(uuid "d3602f3c-1af1-44ee-80f7-2534b8b201a8")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "SW1")
 					(unit 1)
@@ -6657,7 +6657,7 @@
 			(uuid "2547f6ba-dd3a-463c-adc8-b36a39e6bf4b")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "#PWR014")
 					(unit 1)
@@ -6726,7 +6726,7 @@
 			(uuid "4353b5a8-27b1-4755-9e3b-af146f092418")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "R5")
 					(unit 1)
@@ -6791,7 +6791,7 @@
 			(uuid "6e9990eb-1962-4b46-bb7c-39c5d5a62cef")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "#PWR017")
 					(unit 1)
@@ -7118,7 +7118,7 @@
 			(alternate "DEBUG_JTCK-SWCLK")
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6/5392948c-5a35-4c1f-85ab-ec60577b6d09"
 					(reference "U2")
 					(unit 1)

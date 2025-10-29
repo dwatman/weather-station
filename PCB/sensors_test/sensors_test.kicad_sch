@@ -4639,7 +4639,7 @@
 			(color 0 0 0 0.0000)
 		)
 		(uuid "5392948c-5a35-4c1f-85ab-ec60577b6d09")
-		(property "Sheetname" "indoor_MCU"
+		(property "Sheetname" "MCU"
 			(at 165.1 88.1884 0)
 			(effects
 				(font
@@ -4648,7 +4648,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "indoor_MCU.kicad_sch"
+		(property "Sheetfile" "MCU.kicad_sch"
 			(at 165.1 114.8846 0)
 			(effects
 				(font
@@ -4658,7 +4658,7 @@
 			)
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6"
 					(page "2")
 				)
@@ -4681,7 +4681,7 @@
 			(color 0 0 0 0.0000)
 		)
 		(uuid "99494fb3-b5ed-4c1b-80f4-7f0e9ba989cd")
-		(property "Sheetname" "indoor_sensors"
+		(property "Sheetname" "sensors"
 			(at 203.2 88.1884 0)
 			(effects
 				(font
@@ -4690,7 +4690,7 @@
 				(justify left bottom)
 			)
 		)
-		(property "Sheetfile" "indoor_sensors.kicad_sch"
+		(property "Sheetfile" "sensors.kicad_sch"
 			(at 203.2 114.8846 0)
 			(effects
 				(font
@@ -4700,7 +4700,7 @@
 			)
 		)
 		(instances
-			(project "sensors_indoor"
+			(project "sensors_test"
 				(path "/09bb465b-75b9-463f-b128-e813d3269ff6"
 					(page "3")
 				)
