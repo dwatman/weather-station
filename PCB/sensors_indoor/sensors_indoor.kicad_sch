@@ -2262,17 +2262,6 @@
 			(embedded_fonts no)
 		)
 	)
-	(text "Acceleration?"
-		(exclude_from_sim no)
-		(at 267.716 17.526 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "e057c892-1ed9-45d1-9b83-77d16269b10a")
-	)
 	(junction
 		(at 139.7 96.52)
 		(diameter 0)
@@ -3703,7 +3692,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Fuse:Fuse_0805_2012Metric"
+		(property "Footprint" "Fuse:Fuse_1206_3216Metric"
 			(at 101.6 40.64 0)
 			(effects
 				(font
@@ -3732,6 +3721,24 @@
 			)
 		)
 		(property "Sim.Pins" ""
+			(at 96.52 41.91 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "MF-NSMF050-2"
+			(at 96.52 41.91 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser PN" "652-MF-NSMF050-2"
 			(at 96.52 41.91 90)
 			(effects
 				(font
