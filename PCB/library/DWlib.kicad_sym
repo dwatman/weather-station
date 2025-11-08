@@ -421,23 +421,25 @@
 		(in_bom yes)
 		(on_board yes)
 		(property "Reference" "U"
-			(at 2.54 -66.04 0)
+			(at -22.86 29.21 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Value" "NINA-W13x"
-			(at 17.78 -60.96 0)
+			(at 10.16 -29.21 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify left)
 			)
 		)
 		(property "Footprint" "DWlib:ublox_NINA-W1x2"
-			(at 0 0 0)
+			(at 0 -2.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -455,7 +457,7 @@
 			)
 		)
 		(property "Description" "u-blox stand-alone Wi-Fi module"
-			(at 0 0 0)
+			(at 0 -2.54 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -474,8 +476,8 @@
 		)
 		(symbol "NINA-W13_1_1"
 			(rectangle
-				(start -22.86 114.3)
-				(end 22.86 58.42)
+				(start -22.86 27.94)
+				(end 22.86 -27.94)
 				(stroke
 					(width 0)
 					(type solid)
@@ -485,7 +487,7 @@
 				)
 			)
 			(pin input line
-				(at -26.67 111.76 0)
+				(at -26.67 25.4 0)
 				(length 3.81)
 				(name "RESET_N"
 					(effects
@@ -503,7 +505,7 @@
 				)
 			)
 			(pin input line
-				(at -26.67 106.68 0)
+				(at -26.67 20.32 0)
 				(length 3.81)
 				(name "SWITCH_2/RMII_CRSDV"
 					(effects
@@ -521,7 +523,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -26.67 101.6 0)
+				(at -26.67 15.24 0)
 				(length 3.81)
 				(name "SYS_BOOT/RMII_CLK"
 					(effects
@@ -539,7 +541,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -26.67 96.52 0)
+				(at -26.67 10.16 0)
 				(length 3.81)
 				(name "RMII_MDIO"
 					(effects
@@ -557,7 +559,7 @@
 				)
 			)
 			(pin input line
-				(at -26.67 91.44 0)
+				(at -26.67 5.08 0)
 				(length 3.81)
 				(name "SPI_SCLK"
 					(effects
@@ -575,7 +577,7 @@
 				)
 			)
 			(pin input line
-				(at -26.67 88.9 0)
+				(at -26.67 2.54 0)
 				(length 3.81)
 				(name "SPI_MOSI"
 					(effects
@@ -593,7 +595,7 @@
 				)
 			)
 			(pin output line
-				(at -26.67 86.36 0)
+				(at -26.67 0 0)
 				(length 3.81)
 				(name "SPI_MISO"
 					(effects
@@ -611,7 +613,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -26.67 83.82 0)
+				(at -26.67 -2.54 0)
 				(length 3.81)
 				(name "LOG_BOOT/SPI_CS"
 					(effects
@@ -629,7 +631,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at -26.67 81.28 0)
+				(at -26.67 -5.08 0)
 				(length 3.81)
 				(name "SPI_DRDY"
 					(effects
@@ -648,7 +650,7 @@
 				(alternate "RMII_MDCLK" bidirectional line)
 			)
 			(pin input line
-				(at -26.67 76.2 0)
+				(at -26.67 -10.16 0)
 				(length 3.81)
 				(name "GPI_2"
 					(effects
@@ -666,7 +668,7 @@
 				)
 			)
 			(pin input line
-				(at -26.67 73.66 0)
+				(at -26.67 -12.7 0)
 				(length 3.81)
 				(name "GPI_3"
 					(effects
@@ -684,7 +686,7 @@
 				)
 			)
 			(pin input line
-				(at -26.67 71.12 0)
+				(at -26.67 -15.24 0)
 				(length 3.81)
 				(name "GPI_4"
 					(effects
@@ -702,7 +704,7 @@
 				)
 			)
 			(pin input line
-				(at -26.67 68.58 0)
+				(at -26.67 -17.78 0)
 				(length 3.81)
 				(name "GPI_34"
 					(effects
@@ -720,7 +722,7 @@
 				)
 			)
 			(pin power_in line
-				(at -5.08 54.61 90)
+				(at -5.08 -31.75 90)
 				(length 3.81)
 				(name "GND"
 					(effects
@@ -738,7 +740,7 @@
 				)
 			)
 			(pin power_in line
-				(at -2.54 118.11 270)
+				(at -2.54 31.75 270)
 				(length 3.81)
 				(name "VCC"
 					(effects
@@ -756,7 +758,7 @@
 				)
 			)
 			(pin power_in line
-				(at -2.54 54.61 90)
+				(at -2.54 -31.75 90)
 				(length 3.81)
 				(name "GND"
 					(effects
@@ -774,7 +776,7 @@
 				)
 			)
 			(pin power_in line
-				(at 0 54.61 90)
+				(at 0 -31.75 90)
 				(length 3.81)
 				(name "GND"
 					(effects
@@ -792,7 +794,7 @@
 				)
 			)
 			(pin power_in line
-				(at 2.54 118.11 270)
+				(at 2.54 31.75 270)
 				(length 3.81)
 				(name "VCC_IO"
 					(effects
@@ -810,7 +812,7 @@
 				)
 			)
 			(pin power_in line
-				(at 2.54 54.61 90)
+				(at 2.54 -31.75 90)
 				(length 3.81)
 				(name "GND"
 					(effects
@@ -828,7 +830,7 @@
 				)
 			)
 			(pin power_in line
-				(at 5.08 54.61 90)
+				(at 5.08 -31.75 90)
 				(length 3.81)
 				(name "GND"
 					(effects
@@ -846,7 +848,7 @@
 				)
 			)
 			(pin power_in line
-				(at 7.62 54.61 90)
+				(at 7.62 -31.75 90)
 				(length 3.81)
 				(name "GND_PADS"
 					(effects
@@ -864,7 +866,7 @@
 				)
 			)
 			(pin no_connect line
-				(at 22.86 66.04 180)
+				(at 22.86 -20.32 180)
 				(length 3.81)
 				(hide yes)
 				(name "RSVD"
@@ -883,7 +885,7 @@
 				)
 			)
 			(pin no_connect line
-				(at 22.86 63.5 180)
+				(at 22.86 -22.86 180)
 				(length 3.81)
 				(hide yes)
 				(name "RSVD"
@@ -902,7 +904,7 @@
 				)
 			)
 			(pin no_connect line
-				(at 22.86 60.96 180)
+				(at 22.86 -25.4 180)
 				(length 3.81)
 				(hide yes)
 				(name "RSVD"
@@ -921,7 +923,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at 26.67 111.76 180)
+				(at 26.67 25.4 180)
 				(length 3.81)
 				(name "ANT"
 					(effects
@@ -939,7 +941,7 @@
 				)
 			)
 			(pin output line
-				(at 26.67 106.68 180)
+				(at 26.67 20.32 180)
 				(length 3.81)
 				(name "RED"
 					(effects
@@ -957,7 +959,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at 26.67 104.14 180)
+				(at 26.67 17.78 180)
 				(length 3.81)
 				(name "GREEN/SWITCH_1"
 					(effects
@@ -975,7 +977,7 @@
 				)
 			)
 			(pin output line
-				(at 26.67 101.6 180)
+				(at 26.67 15.24 180)
 				(length 3.81)
 				(name "BLUE/RMII_TXEN"
 					(effects
@@ -993,7 +995,7 @@
 				)
 			)
 			(pin input line
-				(at 26.67 96.52 180)
+				(at 26.67 10.16 180)
 				(length 3.81)
 				(name "UART_CTS"
 					(effects
@@ -1012,7 +1014,7 @@
 				(alternate "RMII_TXD0" bidirectional line)
 			)
 			(pin output line
-				(at 26.67 93.98 180)
+				(at 26.67 7.62 180)
 				(length 3.81)
 				(name "UART_RTS"
 					(effects
@@ -1031,7 +1033,7 @@
 				(alternate "RMII_TXD1" output line)
 			)
 			(pin input line
-				(at 26.67 91.44 180)
+				(at 26.67 5.08 180)
 				(length 3.81)
 				(name "UART_RXD"
 					(effects
@@ -1049,7 +1051,7 @@
 				)
 			)
 			(pin output line
-				(at 26.67 88.9 180)
+				(at 26.67 2.54 180)
 				(length 3.81)
 				(name "UART_TXD"
 					(effects
@@ -1067,7 +1069,7 @@
 				)
 			)
 			(pin input line
-				(at 26.67 83.82 180)
+				(at 26.67 -2.54 180)
 				(length 3.81)
 				(name "UART_DSR"
 					(effects
@@ -1086,7 +1088,7 @@
 				(alternate "RMII_RXD1" input line)
 			)
 			(pin output line
-				(at 26.67 81.28 180)
+				(at 26.67 -5.08 180)
 				(length 3.81)
 				(name "UART_DTR"
 					(effects
@@ -1105,7 +1107,7 @@
 				(alternate "RMII_RXD0" bidirectional line)
 			)
 			(pin bidirectional line
-				(at 26.67 76.2 180)
+				(at 26.67 -10.16 180)
 				(length 3.81)
 				(name "GPIO_5"
 					(effects
@@ -1123,7 +1125,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at 26.67 73.66 180)
+				(at 26.67 -12.7 180)
 				(length 3.81)
 				(name "GPIO_28"
 					(effects
@@ -1141,7 +1143,7 @@
 				)
 			)
 			(pin bidirectional line
-				(at 26.67 71.12 180)
+				(at 26.67 -15.24 180)
 				(length 3.81)
 				(name "GPIO_29"
 					(effects
