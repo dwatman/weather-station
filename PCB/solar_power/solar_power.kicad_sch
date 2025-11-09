@@ -469,6 +469,397 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Connector_Generic_MountingPin:Conn_01x02_MountingPin"
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at 0 2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Conn_01x02_MountingPin"
+				(at 1.27 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Generic connectable mounting pin connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "connector"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "Connector*:*_1x??-1MP*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "Conn_01x02_MountingPin_1_1"
+				(rectangle
+					(start -1.27 1.27)
+					(end 1.27 -3.81)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(rectangle
+					(start -1.27 0.127)
+					(end 0 -0.127)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 -2.413)
+					(end 0 -2.667)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.016 -4.572) (xy 1.016 -4.572)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(text "Mounting"
+					(at 0 -4.191 0)
+					(effects
+						(font
+							(size 0.381 0.381)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 0 0)
+					(length 3.81)
+					(name "Pin_1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -2.54 0)
+					(length 3.81)
+					(name "Pin_2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -7.62 90)
+					(length 3.048)
+					(name "MountPin"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "MP"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Connector_Generic_MountingPin:Conn_01x03_MountingPin"
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at 0 5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Conn_01x03_MountingPin"
+				(at 1.27 -5.08 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Generic connectable mounting pin connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "connector"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "Connector*:*_1x??-1MP*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "Conn_01x03_MountingPin_1_1"
+				(rectangle
+					(start -1.27 3.81)
+					(end 1.27 -3.81)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(rectangle
+					(start -1.27 2.667)
+					(end 0 2.413)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 0.127)
+					(end 0 -0.127)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start -1.27 -2.413)
+					(end 0 -2.667)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.016 -4.572) (xy 1.016 -4.572)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(text "Mounting"
+					(at 0 -4.191 0)
+					(effects
+						(font
+							(size 0.381 0.381)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 2.54 0)
+					(length 3.81)
+					(name "Pin_1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 0 0)
+					(length 3.81)
+					(name "Pin_2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -5.08 -2.54 0)
+					(length 3.81)
+					(name "Pin_3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "3"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -7.62 90)
+					(length 3.048)
+					(name "MountPin"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "MP"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Device:Battery_Cell"
 			(pin_numbers
 				(hide yes)
@@ -767,6 +1158,157 @@
 				(pin passive line
 					(at 0 -3.81 90)
 					(length 2.794)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "Device:FerriteBead_Small"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "FB"
+				(at 1.905 1.27 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Value" "FerriteBead_Small"
+				(at 1.905 -1.27 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(justify left)
+				)
+			)
+			(property "Footprint" ""
+				(at -1.778 0 90)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Ferrite bead, small symbol"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "L ferrite bead inductor filter"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "Inductor_* L_* *Ferrite*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "FerriteBead_Small_0_1"
+				(polyline
+					(pts
+						(xy -1.8288 0.2794) (xy -1.1176 1.4986) (xy 1.8288 -0.2032) (xy 1.1176 -1.4224) (xy -1.8288 0.2794)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 0.889) (xy 0 1.2954)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 -1.27) (xy 0 -0.7874)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "FerriteBead_Small_1_1"
+				(pin passive line
+					(at 0 2.54 270)
+					(length 1.27)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -2.54 90)
+					(length 1.27)
 					(name "~"
 						(effects
 							(font
@@ -1371,6 +1913,113 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Mechanical:MountingHole_Pad"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom no)
+			(on_board yes)
+			(property "Reference" "H"
+				(at 0 6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "MountingHole_Pad"
+				(at 0 4.445 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Mounting Hole with connection"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "mounting hole"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "MountingHole*Pad*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "MountingHole_Pad_0_1"
+				(circle
+					(center 0 1.27)
+					(radius 1.27)
+					(stroke
+						(width 1.27)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "MountingHole_Pad_1_1"
+				(pin input line
+					(at 0 -2.54 90)
+					(length 2.54)
+					(name "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "power:GND"
 			(power)
 			(pin_numbers
@@ -1486,7 +2135,7 @@
 	)
 	(text "0.6-5.1 V"
 		(exclude_from_sim no)
-		(at 85.09 80.01 0)
+		(at 81.28 67.31 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1529,7 +2178,7 @@
 	)
 	(text "< 510 mW"
 		(exclude_from_sim no)
-		(at 83.82 82.55 0)
+		(at 80.01 69.85 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -1548,6 +2197,18 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "2064066b-029f-4f2d-a9e1-8f2fe8801b67")
+	)
+	(junction
+		(at 189.23 76.2)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "25b8a671-da39-4884-9fee-3785b453114f")
+	)
+	(junction
+		(at 38.1 55.88)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "27528b97-172c-4abc-80b4-a147c150996b")
 	)
 	(junction
 		(at 106.68 137.16)
@@ -1580,6 +2241,12 @@
 		(uuid "70777c5e-49a7-42c5-b5b4-268b1a4bcabf")
 	)
 	(junction
+		(at 25.4 55.88)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "805ec861-ab78-41c5-9186-445f7a4924bb")
+	)
+	(junction
 		(at 101.6 76.2)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1592,10 +2259,34 @@
 		(uuid "b92d811e-fe9e-4e71-bb10-5a43b8fdd88b")
 	)
 	(junction
+		(at 31.75 55.88)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "d0235ce0-fba2-4138-9a73-399b25dafc56")
+	)
+	(junction
 		(at 118.11 60.96)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "e970097a-c029-4861-bfe1-1cff638c65e4")
+	)
+	(no_connect
+		(at 213.36 86.36)
+		(uuid "3515e7f3-f469-4870-af19-4928761fbd59")
+	)
+	(no_connect
+		(at 80.01 83.82)
+		(uuid "78387081-a29e-48df-ac04-be4e286b2ad3")
+	)
+	(wire
+		(pts
+			(xy 31.75 55.88) (xy 31.75 54.61)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "01bc2c3b-05e5-4acb-bb76-d70d967d861f")
 	)
 	(wire
 		(pts
@@ -1669,6 +2360,36 @@
 	)
 	(wire
 		(pts
+			(xy 25.4 55.88) (xy 31.75 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "10312522-4c20-491f-8bf1-5a1f0c6d05d8")
+	)
+	(wire
+		(pts
+			(xy 85.09 76.2) (xy 101.6 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "10d90f60-b230-4ab5-a59a-ad336ef3675b")
+	)
+	(wire
+		(pts
+			(xy 31.75 55.88) (xy 38.1 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "10f92bcf-b3d4-4d0d-92c9-a7556f8285c4")
+	)
+	(wire
+		(pts
 			(xy 116.84 76.2) (xy 121.92 76.2)
 		)
 		(stroke
@@ -1699,6 +2420,16 @@
 	)
 	(wire
 		(pts
+			(xy 182.88 76.2) (xy 189.23 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1e4c43e9-08fe-465b-a64d-11e2563179c2")
+	)
+	(wire
+		(pts
 			(xy 144.78 128.27) (xy 144.78 127)
 		)
 		(stroke
@@ -1706,6 +2437,16 @@
 			(type default)
 		)
 		(uuid "2401a275-4109-46ad-871e-61e2897292b5")
+	)
+	(wire
+		(pts
+			(xy 113.03 93.98) (xy 121.92 93.98)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2c7e812e-b9a1-438c-b0fa-3a09fe6d43ff")
 	)
 	(wire
 		(pts
@@ -1789,16 +2530,6 @@
 	)
 	(wire
 		(pts
-			(xy 88.9 76.2) (xy 101.6 76.2)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "55ec5075-2438-4cda-b3ad-1d9ccda1f16a")
-	)
-	(wire
-		(pts
 			(xy 165.1 76.2) (xy 170.18 76.2)
 		)
 		(stroke
@@ -1816,6 +2547,26 @@
 			(type default)
 		)
 		(uuid "58520375-0b00-4033-9829-1e306eaac0ff")
+	)
+	(wire
+		(pts
+			(xy 152.4 86.36) (xy 162.56 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6917909c-1fe8-4c6a-9ab4-3fb1cb3f07b3")
+	)
+	(wire
+		(pts
+			(xy 38.1 55.88) (xy 44.45 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6a7135a6-8e3c-499b-ac54-71bcba47d4d2")
 	)
 	(wire
 		(pts
@@ -1846,6 +2597,16 @@
 			(type default)
 		)
 		(uuid "7b59da66-5e59-4f92-94f8-0b4d81b11a8b")
+	)
+	(wire
+		(pts
+			(xy 189.23 76.2) (xy 189.23 77.47)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7e211e20-7be6-4bc9-a7a9-14b3c0fdb554")
 	)
 	(wire
 		(pts
@@ -1909,6 +2670,16 @@
 	)
 	(wire
 		(pts
+			(xy 199.39 78.74) (xy 208.28 78.74)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9842d6a2-85b8-41e6-936c-a2853e4d3375")
+	)
+	(wire
+		(pts
 			(xy 134.62 67.31) (xy 104.14 67.31)
 		)
 		(stroke
@@ -1969,6 +2740,16 @@
 	)
 	(wire
 		(pts
+			(xy 38.1 55.88) (xy 38.1 54.61)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a8897106-b9f7-4c2c-a8b3-cae229de72e7")
+	)
+	(wire
+		(pts
 			(xy 104.14 67.31) (xy 104.14 76.2)
 		)
 		(stroke
@@ -1976,6 +2757,16 @@
 			(type default)
 		)
 		(uuid "b313a302-0a6e-48b3-a4fe-a9119891016a")
+	)
+	(wire
+		(pts
+			(xy 44.45 55.88) (xy 44.45 54.61)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b4b273a6-ff04-4b1b-8599-a1fa1e9413f7")
 	)
 	(wire
 		(pts
@@ -1999,6 +2790,26 @@
 	)
 	(wire
 		(pts
+			(xy 86.36 78.74) (xy 85.09 78.74)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ba3ea59c-0d55-452d-a88a-23084311b889")
+	)
+	(wire
+		(pts
+			(xy 25.4 55.88) (xy 25.4 54.61)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bee052c4-9fa9-4058-af77-416957dcb657")
+	)
+	(wire
+		(pts
 			(xy 106.68 137.16) (xy 106.68 139.7)
 		)
 		(stroke
@@ -2016,6 +2827,16 @@
 			(type default)
 		)
 		(uuid "c5b72d8c-605c-4f66-a823-dc963332f715")
+	)
+	(wire
+		(pts
+			(xy 189.23 76.2) (xy 208.28 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cb1c13fb-59fa-4d23-a4c6-255b198e6a3b")
 	)
 	(wire
 		(pts
@@ -2056,6 +2877,16 @@
 			(type default)
 		)
 		(uuid "ddf4bb8a-22cf-4a8f-858e-76dd4a4e96c6")
+	)
+	(wire
+		(pts
+			(xy 207.01 81.28) (xy 208.28 81.28)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "de4ccf3c-0c54-42f4-b52c-65812968707d")
 	)
 	(wire
 		(pts
@@ -2198,7 +3029,7 @@
 		(uuid "4adeed97-1ddf-4412-b802-afff38626b4a")
 	)
 	(label "VOUT"
-		(at 172.72 76.2 0)
+		(at 199.39 76.2 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -2206,6 +3037,16 @@
 			(justify left bottom)
 		)
 		(uuid "5102d6c0-05a3-499b-b872-aef882578402")
+	)
+	(label "VOUT_EN"
+		(at 113.03 93.98 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "5334d261-7216-45c7-b997-09f47597b43c")
 	)
 	(label "VRDIV"
 		(at 101.6 127 0)
@@ -2227,6 +3068,16 @@
 		)
 		(uuid "84fbe8ae-5db3-491b-867e-908ee65027cd")
 	)
+	(label "VBAT_OK"
+		(at 199.39 78.74 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "9e93672d-ddf8-4231-9bc3-0e4f0c4ad269")
+	)
 	(label "OK_PROG"
 		(at 156.21 147.32 180)
 		(effects
@@ -2236,6 +3087,16 @@
 			(justify right bottom)
 		)
 		(uuid "a468544c-e79e-4725-94d4-61ef5d8d3329")
+	)
+	(label "VBAT_OK"
+		(at 162.56 86.36 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "a7c37304-0604-483d-bced-5535ddc78939")
 	)
 	(label "VSTOR"
 		(at 114.3 86.36 0)
@@ -2605,7 +3466,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "10n"
+		(property "Value" "0.1u"
 			(at 130.81 58.42 0)
 			(effects
 				(font
@@ -2836,7 +3697,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "31763a55-1677-40c9-85e3-b45f18db1823")
-		(property "Reference" "#PWR010"
+		(property "Reference" "#PWR012"
 			(at 182.88 151.13 0)
 			(effects
 				(font
@@ -2886,7 +3747,7 @@
 		(instances
 			(project "solar_power"
 				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
-					(reference "#PWR010")
+					(reference "#PWR012")
 					(unit 1)
 				)
 			)
@@ -2980,6 +3841,90 @@
 		)
 	)
 	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 31.75 52.07 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "331f0af6-0acc-499a-82c3-b884810db3f2")
+		(property "Reference" "H2"
+			(at 30.48 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "M3"
+			(at 33.02 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3_Pad"
+			(at 31.75 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 31.75 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 31.75 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" ""
+			(at 31.75 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser PN" ""
+			(at 31.75 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "40bdff48-cacf-4f7b-8b3b-23facd14e4ab")
+		)
+		(instances
+			(project "solar_power"
+				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
+					(reference "H2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 101.6 85.09 0)
 		(unit 1)
@@ -2988,7 +3933,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "343a707a-c642-4d4b-ab11-7d41bcc1cae1")
-		(property "Reference" "#PWR01"
+		(property "Reference" "#PWR03"
 			(at 101.6 91.44 0)
 			(effects
 				(font
@@ -3038,7 +3983,165 @@
 		(instances
 			(project "solar_power"
 				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
-					(reference "#PWR01")
+					(reference "#PWR03")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic_MountingPin:Conn_01x03_MountingPin")
+		(at 213.36 78.74 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "356cecb7-f537-47b1-a668-31d2020eda9f")
+		(property "Reference" "J2"
+			(at 212.09 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "SH_SM03B"
+			(at 215.9 82.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Connector_JST:JST_SH_SM03B-SRSS-TB_1x03-1MP_P1.00mm_Horizontal"
+			(at 213.36 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 213.36 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connectable mounting pin connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 213.36 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "SM03B-SRSS-TB(LF)(SN)"
+			(at 213.36 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser PN" "306-SM03BSRSSTBLFSNP"
+			(at 213.36 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "c3b42561-4fb2-453c-b7f2-7d55c2796dec")
+		)
+		(pin "3"
+			(uuid "8c037d3d-aa23-4437-9240-abe973a08fa4")
+		)
+		(pin "2"
+			(uuid "d95376ad-cce9-4e33-90f3-d11394a9ed53")
+		)
+		(pin "MP"
+			(uuid "cc424914-5fce-4f05-a158-bb129256f936")
+		)
+		(instances
+			(project ""
+				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
+					(reference "J2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 189.23 85.09 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "5088ae38-8e3a-405c-bd64-7e28a7435b99")
+		(property "Reference" "#PWR014"
+			(at 189.23 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 189.23 88.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 189.23 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 189.23 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 189.23 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "04694aa1-b50f-4c17-9602-8123c144eb3f")
+		)
+		(instances
+			(project "solar_power"
+				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
+					(reference "#PWR014")
 					(unit 1)
 				)
 			)
@@ -3140,7 +4243,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "52890627-f6a2-4316-be01-5b574b09c4ff")
-		(property "Reference" "#PWR02"
+		(property "Reference" "#PWR04"
 			(at 104.14 104.14 0)
 			(effects
 				(font
@@ -3190,7 +4293,7 @@
 		(instances
 			(project "solar_power"
 				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
-					(reference "#PWR02")
+					(reference "#PWR04")
 					(unit 1)
 				)
 			)
@@ -3205,7 +4308,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "52f80b52-7215-4a79-9e36-eaf155d90f27")
-		(property "Reference" "#PWR05"
+		(property "Reference" "#PWR07"
 			(at 118.11 67.31 0)
 			(effects
 				(font
@@ -3255,7 +4358,7 @@
 		(instances
 			(project "solar_power"
 				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
-					(reference "#PWR05")
+					(reference "#PWR07")
 					(unit 1)
 				)
 			)
@@ -3355,7 +4458,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "6a942962-0e3d-4bf6-a64d-ec76ba7f47e0")
-		(property "Reference" "#PWR06"
+		(property "Reference" "#PWR08"
 			(at 137.16 113.03 0)
 			(effects
 				(font
@@ -3405,7 +4508,7 @@
 		(instances
 			(project ""
 				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
-					(reference "#PWR06")
+					(reference "#PWR08")
 					(unit 1)
 				)
 			)
@@ -3420,7 +4523,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "7176014a-8099-48ee-ab50-ace9db95c151")
-		(property "Reference" "#PWR09"
+		(property "Reference" "#PWR011"
 			(at 170.18 91.44 0)
 			(effects
 				(font
@@ -3470,7 +4573,7 @@
 		(instances
 			(project "solar_power"
 				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
-					(reference "#PWR09")
+					(reference "#PWR011")
 					(unit 1)
 				)
 			)
@@ -3556,7 +4659,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "82c8a535-a7bc-4a57-baf7-a523ee113e71")
-		(property "Reference" "#PWR07"
+		(property "Reference" "#PWR09"
 			(at 144.78 160.02 0)
 			(effects
 				(font
@@ -3606,7 +4709,247 @@
 		(instances
 			(project "solar_power"
 				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
-					(reference "#PWR07")
+					(reference "#PWR09")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 38.1 52.07 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "84c86699-214e-4efc-9779-4ef2f8ac1344")
+		(property "Reference" "H3"
+			(at 36.83 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "M3"
+			(at 39.37 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3_Pad"
+			(at 38.1 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 38.1 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 38.1 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" ""
+			(at 38.1 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser PN" ""
+			(at 38.1 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7f0e316a-6cd4-497d-956c-f310729ae46d")
+		)
+		(instances
+			(project "solar_power"
+				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
+					(reference "H3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 86.36 78.74 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "85975323-c9c8-4820-84d9-6552e905a7e3")
+		(property "Reference" "#PWR02"
+			(at 86.36 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 86.36 82.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 86.36 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 86.36 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 86.36 78.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "f6b4fa47-4936-4b7c-947e-d068294a544e")
+		)
+		(instances
+			(project "solar_power"
+				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
+					(reference "#PWR02")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic_MountingPin:Conn_01x02_MountingPin")
+		(at 80.01 76.2 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "8affcf84-46e0-4ad1-ad7e-cabf5b909786")
+		(property "Reference" "J1"
+			(at 81.28 73.66 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "SH_SM02B"
+			(at 77.47 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Connector_JST:JST_SH_SM02B-SRSS-TB_1x02-1MP_P1.00mm_Horizontal"
+			(at 80.01 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 80.01 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connectable mounting pin connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 80.01 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "SM02B-SRSS-TB(LF)(SN)"
+			(at 80.01 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser PN" "306-SM02BSRSSTBLFSN"
+			(at 80.01 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "b82f76f9-56d4-4255-bc41-a796e705d3c5")
+		)
+		(pin "2"
+			(uuid "8aca63ec-c6b7-463d-a855-6e15a3336073")
+		)
+		(pin "MP"
+			(uuid "57c8eb8d-158e-4eef-a06f-f36fa4988f75")
+		)
+		(instances
+			(project "solar_power"
+				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
+					(reference "J1")
 					(unit 1)
 				)
 			)
@@ -3621,7 +4964,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "8f6b7733-6bfd-4a45-a8da-53729c1da08b")
-		(property "Reference" "#PWR03"
+		(property "Reference" "#PWR05"
 			(at 106.68 151.13 0)
 			(effects
 				(font
@@ -3671,7 +5014,7 @@
 		(instances
 			(project "solar_power"
 				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
-					(reference "#PWR03")
+					(reference "#PWR05")
 					(unit 1)
 				)
 			)
@@ -3686,7 +5029,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "95b58e63-42e6-4e65-9020-7a61c4140327")
-		(property "Reference" "#PWR04"
+		(property "Reference" "#PWR06"
 			(at 115.57 116.84 0)
 			(effects
 				(font
@@ -3736,7 +5079,91 @@
 		(instances
 			(project "solar_power"
 				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
-					(reference "#PWR04")
+					(reference "#PWR06")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 25.4 52.07 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "a1eaf0d6-3467-435f-b7c0-58af2b0396da")
+		(property "Reference" "H1"
+			(at 24.13 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "M3"
+			(at 26.67 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3_Pad"
+			(at 25.4 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 25.4 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 25.4 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" ""
+			(at 25.4 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser PN" ""
+			(at 25.4 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7f6ee333-f959-45de-b156-5d77f35357b6")
+		)
+		(instances
+			(project ""
+				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
+					(reference "H1")
 					(unit 1)
 				)
 			)
@@ -3915,6 +5342,71 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 25.4 55.88 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b526c31c-654a-42df-8396-91b0eb4afd3a")
+		(property "Reference" "#PWR01"
+			(at 25.4 62.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 25.4 59.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 25.4 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 25.4 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 25.4 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "d8b0b9f0-4ae3-4d96-b057-6e6ecaa96506")
+		)
+		(instances
+			(project "solar_power"
+				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
+					(reference "#PWR01")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:C")
 		(at 170.18 81.28 0)
 		(unit 1)
@@ -3996,6 +5488,91 @@
 			(project "solar_power"
 				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
 					(reference "C5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:FerriteBead_Small")
+		(at 180.34 76.2 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "c13fee75-e99c-4153-84de-0e52917c8b06")
+		(property "Reference" "FB1"
+			(at 180.34 72.39 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "1000R"
+			(at 180.34 78.74 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Inductor_SMD:L_0603_1608Metric"
+			(at 180.34 77.978 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 180.34 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Ferrite bead, small symbol"
+			(at 180.34 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "BLM18AG102SN1D"
+			(at 180.34 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser PN" "81-BLM11A102S"
+			(at 180.34 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "cdfc14ee-ed36-4b5c-b29d-99a54444e248")
+		)
+		(pin "2"
+			(uuid "70c2c6c3-5a12-42b4-879e-9252da8c8697")
+		)
+		(instances
+			(project ""
+				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
+					(reference "FB1")
 					(unit 1)
 				)
 			)
@@ -4140,6 +5717,93 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:C")
+		(at 189.23 81.28 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "cd935179-e26d-49b2-8818-fee2256c2c73")
+		(property "Reference" "C6"
+			(at 191.77 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "22u"
+			(at 191.77 82.55 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+			(at 190.1952 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 189.23 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor"
+			(at 189.23 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "CL21A226MAYNNNE"
+			(at 189.23 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser PN" "187-CL21A226MAYNNNE"
+			(at 189.23 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "6721a7d0-2a00-4d91-bd1e-b2c196889992")
+		)
+		(pin "2"
+			(uuid "7104753a-03d1-4669-8bd6-5322e57fdbf9")
+		)
+		(instances
+			(project "solar_power"
+				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
+					(reference "C6")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:R_Small")
 		(at 106.68 130.81 0)
 		(unit 1)
@@ -4221,6 +5885,90 @@
 			(project "solar_power"
 				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
 					(reference "R1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Mechanical:MountingHole_Pad")
+		(at 44.45 52.07 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(uuid "d2ea098f-3f27-4636-8df0-fabdccb9f765")
+		(property "Reference" "H4"
+			(at 43.18 46.99 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "M3"
+			(at 45.72 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "MountingHole:MountingHole_3.2mm_M3_Pad"
+			(at 44.45 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 44.45 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Mounting Hole with connection"
+			(at 44.45 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" ""
+			(at 44.45 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser PN" ""
+			(at 44.45 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "cc7dc323-31db-422c-93d3-a365cefbcc13")
+		)
+		(instances
+			(project "solar_power"
+				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
+					(reference "H4")
 					(unit 1)
 				)
 			)
@@ -4315,6 +6063,71 @@
 	)
 	(symbol
 		(lib_id "power:GND")
+		(at 207.01 81.28 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "ecb4864c-c10e-4186-abd2-00661d453177")
+		(property "Reference" "#PWR013"
+			(at 207.01 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 207.01 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 207.01 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 207.01 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 207.01 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "5898fcec-6123-4939-a206-7d02c554e0ed")
+		)
+		(instances
+			(project "solar_power"
+				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
+					(reference "#PWR013")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
 		(at 165.1 64.77 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -4322,7 +6135,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "f054fc24-2893-452e-8066-f6025fc7028f")
-		(property "Reference" "#PWR08"
+		(property "Reference" "#PWR010"
 			(at 165.1 71.12 0)
 			(effects
 				(font
@@ -4372,7 +6185,7 @@
 		(instances
 			(project "solar_power"
 				(path "/c0e374ec-c1ad-4ccf-acde-2ecdd23dc51b"
-					(reference "#PWR08")
+					(reference "#PWR010")
 					(unit 1)
 				)
 			)
