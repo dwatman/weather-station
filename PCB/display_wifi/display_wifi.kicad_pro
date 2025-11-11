@@ -139,7 +139,7 @@
         "min_track_width": 0.0,
         "min_via_annular_width": 0.1,
         "min_via_diameter": 0.5,
-        "solder_mask_to_copper_clearance": 0.0,
+        "solder_mask_to_copper_clearance": 0.005,
         "use_height_for_length_calcs": true
       },
       "teardrop_options": [
@@ -657,6 +657,10 @@
     [
       "c8a7c37e-85db-4c80-9732-f9406c6cc5f6",
       "Root"
+    ],
+    [
+      "e7bb56ec-bae5-49e7-bcf6-d179aa1ca995",
+      "Passthrough"
     ]
   ],
   "text_variables": {}
