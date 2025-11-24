@@ -6,7 +6,13 @@
 *.lck
 *.kicad_prl
 *-backups/
+**/backups/
 fp-info-cache
 \#auto_saved_files\#
 _autosave*
 .metadata/
+ibom.html
+
+# FreeCAD
+
+*.FCBak
