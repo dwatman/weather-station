@@ -26,6 +26,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "lvgl/lvgl.h"
+#include "ui.h"
+#include "ui_io.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -51,10 +53,9 @@ osThreadId defaultTaskHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-osThreadId lvgl_tickHandle;
 osThreadId lvgl_timerHandle;
 void LVGLTimer(void const * argument);
-void LGVLTick(void const * argument);
+void EEZTick(void const * argument);
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void const * argument);
@@ -138,11 +139,11 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
-  osThreadDef(lvgl_tick, LGVLTick, osPriorityNormal, 0, 1024);
-  lvgl_tickHandle = osThreadCreate(osThread(lvgl_tick), NULL);
-
   osThreadDef(lvgl_timer, LVGLTimer, osPriorityNormal, 0, 1024);
   lvgl_timerHandle = osThreadCreate(osThread(lvgl_timer), NULL);
+
+  osThreadDef(eez_tick, EEZTick, osPriorityNormal, 0, 1024);
+  osThreadCreate(osThread(eez_tick), NULL);
   /* USER CODE END RTOS_THREADS */
 
 }
@@ -173,16 +174,22 @@ void LVGLTimer(void const * argument)
   for(;;)
   {
     lv_timer_handler();
-    osDelay(20);
+    osDelay(1);
   }
 }
-/* LVGL tick source */
-void LGVLTick(void const * argument)
+
+// For data update
+void EEZTick(void const * argument)
 {
-  for(;;)
-  {
-    lv_tick_inc(10);
-    osDelay(10);
-  }
+	uint32_t tmp = 0;
+
+    for (;;) {
+    	set_var_test_bar(tmp);
+    	set_var_test_int(tmp);
+    	tmp = (tmp+1) & 0xFF;
+        ui_tick();       // Update EEZ UI variables
+        osDelay(1000);     // 5 Hz
+        HAL_GPIO_TogglePin(GPIOJ, GPIO_PIN_10); // User LED
+    }
 }
 /* USER CODE END Application */

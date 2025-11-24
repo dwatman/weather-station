@@ -47,6 +47,8 @@
 #include "lvgl_port_touch.h"
 #include "lvgl_port_display.h"
 
+#include "ui.h"
+#include "ui_io.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -201,6 +203,10 @@ Error_Handler();
   /* lvgl demo */
   //lv_demo_widgets();
   //lv_demo_music();
+  //lv_demo_benchmark();
+  set_var_test_int(0);
+  ui_init();
+  set_var_test_int(1);
 
   /* pwm */
   if (HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_1) != HAL_OK)
