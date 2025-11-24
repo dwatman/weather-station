@@ -1,0 +1,4 @@
+[submodule "Firmware/display/Middlewares/Third_Party/LVGL/lvgl"]
+	path = Firmware/display/Middlewares/Third_Party/LVGL/lvgl
+	url = https://github.com/lvgl/lvgl.git
+	branch = release/v9.4
