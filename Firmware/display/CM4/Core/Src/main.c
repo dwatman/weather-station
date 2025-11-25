@@ -18,7 +18,11 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "i2c.h"
 #include "mdma.h"
+#include "tim.h"
+#include "usart.h"
+#include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -101,14 +105,32 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_MDMA_Init();
+  MX_GPIO_Init();
+  MX_I2C4_Init();
+  MX_TIM15_Init();
+  MX_TIM1_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  // Backlight PWM
+  LL_TIM_OC_SetCompareCH1(TIM15, 500);
+  LL_TIM_CC_EnableChannel(TIM15, LL_TIM_CHANNEL_CH1);
+  LL_TIM_EnableAllOutputs(TIM15);
+  LL_TIM_EnableCounter(TIM15);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  uint16_t backlight = 0;
   while (1)
   {
+	  if (backlight < 500)
+		  backlight++;
+	  else
+		  backlight = 0;
+
+	  LL_TIM_OC_SetCompareCH1(TIM15, backlight);
+
+	  HAL_Delay(100);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

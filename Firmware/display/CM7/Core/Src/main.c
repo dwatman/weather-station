@@ -22,13 +22,11 @@
 #include "crc.h"
 #include "dma2d.h"
 #include "dsihost.h"
-#include "i2c.h"
 #include "jpeg.h"
 #include "ltdc.h"
 #include "mdma.h"
 #include "rng.h"
 #include "rtc.h"
-#include "tim.h"
 #include "gpio.h"
 #include "fmc.h"
 
@@ -150,11 +148,8 @@ Error_Handler();
   MX_GPIO_Init();
   MX_MDMA_Init();
   MX_LTDC_Init();
-  MX_I2C4_Init();
   MX_DMA2D_Init();
-  MX_TIM6_Init();
   MX_CRC_Init();
-  MX_TIM15_Init();
   MX_DSIHOST_DSI_Init();
   MX_RNG_Init();
   MX_FMC_Init();
@@ -166,9 +161,8 @@ Error_Handler();
   lv_init();
   lv_tick_set_cb(HAL_GetTick);
 
-  /* initialize display and touchscreen */
+  /* initialize display */
   lvgl_display_init();
-  //lvgl_touchscreen_init();
 
   /* lvgl demo */
   //lv_demo_widgets();
@@ -178,9 +172,6 @@ Error_Handler();
   ui_init();
   set_var_test_int(1);
 
-  /* pwm */
-  if (HAL_TIM_PWM_Start(&htim15, TIM_CHANNEL_1) != HAL_OK)
-    Error_Handler();
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in cmsis_os2.c) */

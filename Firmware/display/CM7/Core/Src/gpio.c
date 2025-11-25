@@ -63,7 +63,6 @@
      PA11   ------> FDCAN1_RX
      PC7   ------> S_TIM3_CH2
      PH0-OSC_IN (PH0)   ------> RCC_OSC_IN
-     PK1   ------> S_TIM1_CH1
      PC1   ------> ETH_MDC
      PC2   ------> SPI2_MISO
      PC3   ------> SPI2_MOSI
@@ -73,14 +72,10 @@
      PJ8   ------> UART8_TX
      PH4   ------> I2C2_SCL
      PB11   ------> I2C2_SDA
-     PC2_C   ------> ADC3_INN1
-     PC3_C   ------> ADC3_INP1
      PA7   ------> ETH_CRS_DV
-     PA5   ------> COMP_DAC12_group
      PC4   ------> ETH_RXD0
      PB15   ------> USB_OTG_HS_DP
      PA3   ------> S_TIM5_CH4
-     PA4   ------> COMP_DAC11_group
      PC5   ------> ETH_RXD1
      PB0   ------> S_CKOUTDFSDM1
      PB13   ------> FDCAN2_TX
@@ -101,7 +96,6 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOF_CLK_ENABLE();
-  __HAL_RCC_GPIOK_CLK_ENABLE();
   __HAL_RCC_GPIOJ_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
@@ -287,14 +281,6 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PK1 */
-  GPIO_InitStruct.Pin = GPIO_PIN_1;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  GPIO_InitStruct.Alternate = GPIO_AF1_TIM1;
-  HAL_GPIO_Init(GPIOK, &GPIO_InitStruct);
-
   /*Configure GPIO pin : USB1_EN_Pin */
   GPIO_InitStruct.Pin = USB1_EN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -370,12 +356,6 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LCD_DISP_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PA5 PA4 */
-  GPIO_InitStruct.Pin = GPIO_PIN_5|GPIO_PIN_4;
-  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
   /*Configure GPIO pins : PB15 PB14 */
   GPIO_InitStruct.Pin = GPIO_PIN_15|GPIO_PIN_14;
   GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -399,12 +379,6 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   GPIO_InitStruct.Alternate = GPIO_AF6_DFSDM1;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-  /*AnalogSwitch Config */
-  HAL_SYSCFG_AnalogSwitchConfig(SYSCFG_SWITCH_PC2, SYSCFG_SWITCH_PC2_OPEN);
-
-  /*AnalogSwitch Config */
-  HAL_SYSCFG_AnalogSwitchConfig(SYSCFG_SWITCH_PC3, SYSCFG_SWITCH_PC3_OPEN);
 
   /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI3_IRQn, 7, 0);

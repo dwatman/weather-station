@@ -29,6 +29,20 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "stm32h7xx_hal.h"
 
+#include "stm32h7xx_ll_i2c.h"
+#include "stm32h7xx_ll_tim.h"
+#include "stm32h7xx_ll_usart.h"
+#include "stm32h7xx_ll_rcc.h"
+#include "stm32h7xx_ll_bus.h"
+#include "stm32h7xx_ll_cortex.h"
+#include "stm32h7xx_ll_system.h"
+#include "stm32h7xx_ll_utils.h"
+#include "stm32h7xx_ll_pwr.h"
+#include "stm32h7xx_ll_gpio.h"
+#include "stm32h7xx_ll_dma.h"
+
+#include "stm32h7xx_ll_exti.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -57,10 +71,14 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define BACKLIGHT_PWM_Pin GPIO_PIN_5
+#define BACKLIGHT_PWM_GPIO_Port GPIOE
 #define MCO1_Pin GPIO_PIN_8
 #define MCO1_GPIO_Port GPIOA
 #define OSC_IN_Pin GPIO_PIN_0
 #define OSC_IN_GPIO_Port GPIOH
+#define IR_IN_Pin GPIO_PIN_1
+#define IR_IN_GPIO_Port GPIOK
 
 /* USER CODE BEGIN Private defines */
 

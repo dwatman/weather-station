@@ -29,6 +29,18 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "stm32h7xx_hal.h"
 
+#include "stm32h7xx_ll_i2c.h"
+#include "stm32h7xx_ll_tim.h"
+#include "stm32h7xx_ll_usart.h"
+#include "stm32h7xx_ll_rcc.h"
+#include "stm32h7xx_ll_bus.h"
+#include "stm32h7xx_ll_cortex.h"
+#include "stm32h7xx_ll_system.h"
+#include "stm32h7xx_ll_utils.h"
+#include "stm32h7xx_ll_pwr.h"
+#include "stm32h7xx_ll_gpio.h"
+#include "stm32h7xx_ll_dma.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -99,8 +111,6 @@ void Error_Handler(void);
 #define FMC_NBL0_GPIO_Port GPIOE
 #define D27__IS42S32800G_DQ27_Pin GPIO_PIN_3
 #define D27__IS42S32800G_DQ27_GPIO_Port GPIOI
-#define BACKLIGHT_PWM_Pin GPIO_PIN_5
-#define BACKLIGHT_PWM_GPIO_Port GPIOE
 #define SDNCAS_Pin GPIO_PIN_15
 #define SDNCAS_GPIO_Port GPIOG
 #define D2_Pin GPIO_PIN_0
