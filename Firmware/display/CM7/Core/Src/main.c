@@ -19,32 +19,24 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
-#include "adc.h"
 #include "crc.h"
-#include "dac.h"
 #include "dma2d.h"
 #include "dsihost.h"
-#include "fatfs.h"
-#include "fdcan.h"
 #include "i2c.h"
 #include "jpeg.h"
-#include "lptim.h"
 #include "ltdc.h"
 #include "mdma.h"
 #include "rng.h"
 #include "rtc.h"
-#include "spi.h"
 #include "tim.h"
-#include "usart.h"
-#include "usb_otg.h"
 #include "gpio.h"
 #include "fmc.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "lvgl/lvgl.h"
-#include "lvgl/demos/lv_demos.h"
-#include "lvgl_port_touch.h"
+//#include "lvgl/demos/lv_demos.h"
+//#include "lvgl_port_touch.h"
 #include "lvgl_port_display.h"
 
 #include "ui.h"
@@ -78,7 +70,6 @@
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-void PeriphCommonClock_Config(void);
 void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -133,9 +124,6 @@ int main(void)
 
   /* Configure the system clock */
   SystemClock_Config();
-
-  /* Configure the peripherals common clocks */
-  PeriphCommonClock_Config();
 /* USER CODE BEGIN Boot_Mode_Sequence_2 */
 /* When system initialization is finished, Cortex-M7 will release Cortex-M4 by means of
 HSEM notification */
@@ -161,35 +149,17 @@ Error_Handler();
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_MDMA_Init();
-  MX_I2C1_Init();
   MX_LTDC_Init();
   MX_I2C4_Init();
-  MX_DAC1_Init();
   MX_DMA2D_Init();
-  MX_FDCAN1_Init();
-  MX_FDCAN2_Init();
-  MX_SPI1_Init();
-  MX_TIM1_Init();
-  MX_TIM5_Init();
   MX_TIM6_Init();
-  MX_UART4_Init();
-  MX_UART8_Init();
-  MX_USART2_UART_Init();
   MX_CRC_Init();
-  MX_I2C2_Init();
-  MX_LPTIM2_Init();
-  MX_SPI2_Init();
-  MX_TIM3_Init();
   MX_TIM15_Init();
   MX_DSIHOST_DSI_Init();
   MX_RNG_Init();
-  MX_USB_OTG_HS_USB_Init();
   MX_FMC_Init();
   MX_JPEG_Init();
   MX_RTC_Init();
-  MX_ADC1_Init();
-  MX_ADC3_Init();
-  MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
 
   /* initialize LVGL framework */
@@ -293,43 +263,6 @@ void SystemClock_Config(void)
   }
   __HAL_RCC_PLLCLKOUT_ENABLE(RCC_PLL1_DIVQ);
   HAL_RCC_MCOConfig(RCC_MCO1, RCC_MCO1SOURCE_PLL1QCLK, RCC_MCODIV_1);
-}
-
-/**
-  * @brief Peripherals Common Clock Configuration
-  * @retval None
-  */
-void PeriphCommonClock_Config(void)
-{
-  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
-
-  /** Initializes the peripherals clock
-  */
-  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_FMC|RCC_PERIPHCLK_ADC
-                              |RCC_PERIPHCLK_SDMMC|RCC_PERIPHCLK_LTDC;
-  PeriphClkInitStruct.PLL2.PLL2M = 4;
-  PeriphClkInitStruct.PLL2.PLL2N = 180;
-  PeriphClkInitStruct.PLL2.PLL2P = 4;
-  PeriphClkInitStruct.PLL2.PLL2Q = 2;
-  PeriphClkInitStruct.PLL2.PLL2R = 3;
-  PeriphClkInitStruct.PLL2.PLL2RGE = RCC_PLL2VCIRANGE_2;
-  PeriphClkInitStruct.PLL2.PLL2VCOSEL = RCC_PLL2VCOWIDE;
-  PeriphClkInitStruct.PLL2.PLL2FRACN = 3072;
-  PeriphClkInitStruct.PLL3.PLL3M = 12;
-  PeriphClkInitStruct.PLL3.PLL3N = 231;
-  PeriphClkInitStruct.PLL3.PLL3P = 6;
-  PeriphClkInitStruct.PLL3.PLL3Q = 6;
-  PeriphClkInitStruct.PLL3.PLL3R = 6;
-  PeriphClkInitStruct.PLL3.PLL3RGE = RCC_PLL3VCIRANGE_0;
-  PeriphClkInitStruct.PLL3.PLL3VCOSEL = RCC_PLL3VCOWIDE;
-  PeriphClkInitStruct.PLL3.PLL3FRACN = 0;
-  PeriphClkInitStruct.FmcClockSelection = RCC_FMCCLKSOURCE_PLL2;
-  PeriphClkInitStruct.SdmmcClockSelection = RCC_SDMMCCLKSOURCE_PLL2;
-  PeriphClkInitStruct.AdcClockSelection = RCC_ADCCLKSOURCE_PLL3;
-  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
-  {
-    Error_Handler();
-  }
 }
 
 /* USER CODE BEGIN 4 */

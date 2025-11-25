@@ -51,16 +51,6 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal.c</locationURI>
 		</link>
 		<link>
-			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_adc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_adc.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_adc_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_adc_ex.c</locationURI>
-		</link>
-		<link>
 			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_cortex.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_cortex.c</locationURI>
@@ -74,21 +64,6 @@
 			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_crc_ex.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_crc_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_dac.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dac.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_dac_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dac_ex.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_dfsdm.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dfsdm.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_dma.c</name>
@@ -111,24 +86,9 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_dsi.c</locationURI>
 		</link>
 		<link>
-			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_eth.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_eth.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_eth_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_eth_ex.c</locationURI>
-		</link>
-		<link>
 			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_exti.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_exti.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_fdcan.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_fdcan.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_flash.c</name>
@@ -166,11 +126,6 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_jpeg.c</locationURI>
 		</link>
 		<link>
-			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_lptim.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_lptim.c</locationURI>
-		</link>
-		<link>
 			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_ltdc.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_ltdc.c</locationURI>
@@ -184,16 +139,6 @@
 			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_mdma.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_mdma.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_mmc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_mmc.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_mmc_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_mmc_ex.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_nand.c</name>
@@ -251,29 +196,9 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_rtc_ex.c</locationURI>
 		</link>
 		<link>
-			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_sd.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_sd.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_sd_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_sd_ex.c</locationURI>
-		</link>
-		<link>
 			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_sdram.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_sdram.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_spi.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_spi.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_spi_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_spi_ex.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_sram.c</name>
@@ -291,16 +216,6 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_tim_ex.c</locationURI>
 		</link>
 		<link>
-			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_uart.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_hal_uart_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart_ex.c</locationURI>
-		</link>
-		<link>
 			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_ll_delayblock.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_delayblock.c</locationURI>
@@ -309,31 +224,6 @@
 			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_ll_fmc.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_fmc.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32H7xx_HAL_Driver/stm32h7xx_ll_sdmmc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_sdmmc.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/FatFs/diskio.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Middlewares/Third_Party/FatFs/src/diskio.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/FatFs/ff.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Middlewares/Third_Party/FatFs/src/ff.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/FatFs/ff_gen_drv.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Middlewares/Third_Party/FatFs/src/ff_gen_drv.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/FatFs/syscall.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/Middlewares/Third_Party/FatFs/src/option/syscall.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/FreeRTOS/cmsis_os.c</name>
@@ -386,24 +276,9 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Middlewares/Third_Party/FreeRTOS/Source/timers.c</locationURI>
 		</link>
 		<link>
-			<name>Application/User/Core/adc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/CM7/Core/Src/adc.c</locationURI>
-		</link>
-		<link>
 			<name>Application/User/Core/crc.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/CM7/Core/Src/crc.c</locationURI>
-		</link>
-		<link>
-			<name>Application/User/Core/dac.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/CM7/Core/Src/dac.c</locationURI>
-		</link>
-		<link>
-			<name>Application/User/Core/dfsdm.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/CM7/Core/Src/dfsdm.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/Core/dma2d.c</name>
@@ -414,16 +289,6 @@
 			<name>Application/User/Core/dsihost.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/CM7/Core/Src/dsihost.c</locationURI>
-		</link>
-		<link>
-			<name>Application/User/Core/eth.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/CM7/Core/Src/eth.c</locationURI>
-		</link>
-		<link>
-			<name>Application/User/Core/fdcan.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/CM7/Core/Src/fdcan.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/Core/fmc.c</name>
@@ -449,11 +314,6 @@
 			<name>Application/User/Core/jpeg.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/CM7/Core/Src/jpeg.c</locationURI>
-		</link>
-		<link>
-			<name>Application/User/Core/lptim.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/CM7/Core/Src/lptim.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/Core/ltdc.c</name>
@@ -496,16 +356,6 @@
 			<locationURI>PARENT-2-PROJECT_LOC/CM7/Core/Src/rtc.c</locationURI>
 		</link>
 		<link>
-			<name>Application/User/Core/sdmmc.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/CM7/Core/Src/sdmmc.c</locationURI>
-		</link>
-		<link>
-			<name>Application/User/Core/spi.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/CM7/Core/Src/spi.c</locationURI>
-		</link>
-		<link>
 			<name>Application/User/Core/stm32h7xx_hal_msp.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/CM7/Core/Src/stm32h7xx_hal_msp.c</locationURI>
@@ -524,36 +374,6 @@
 			<name>Application/User/Core/tim.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/CM7/Core/Src/tim.c</locationURI>
-		</link>
-		<link>
-			<name>Application/User/Core/usart.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/CM7/Core/Src/usart.c</locationURI>
-		</link>
-		<link>
-			<name>Application/User/Core/usb_otg.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/CM7/Core/Src/usb_otg.c</locationURI>
-		</link>
-		<link>
-			<name>Application/User/FATFS/App/fatfs.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/CM7/FATFS/App/fatfs.c</locationURI>
-		</link>
-		<link>
-			<name>Application/User/FATFS/Target/bsp_driver_sd.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/CM7/FATFS/Target/bsp_driver_sd.c</locationURI>
-		</link>
-		<link>
-			<name>Application/User/FATFS/Target/fatfs_platform.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/CM7/FATFS/Target/fatfs_platform.c</locationURI>
-		</link>
-		<link>
-			<name>Application/User/FATFS/Target/sd_diskio.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/CM7/FATFS/Target/sd_diskio.c</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

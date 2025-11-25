@@ -27,15 +27,10 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "string.h"
 
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
-
-extern I2C_HandleTypeDef hi2c1;
-
-extern I2C_HandleTypeDef hi2c2;
 
 extern I2C_HandleTypeDef hi2c4;
 
@@ -43,8 +38,6 @@ extern I2C_HandleTypeDef hi2c4;
 
 /* USER CODE END Private defines */
 
-void MX_I2C1_Init(void);
-void MX_I2C2_Init(void);
 void MX_I2C4_Init(void);
 
 /* USER CODE BEGIN Prototypes */

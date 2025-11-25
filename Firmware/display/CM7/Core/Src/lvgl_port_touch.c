@@ -74,10 +74,10 @@ HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   if (GPIO_Pin == CTP_INT_Pin) {
 	  touch_irq = 1;
 
-	  HAL_StatusTypeDef status;
-	  uint8_t rx_buf[16] = {0};
+	  //HAL_StatusTypeDef status;
+	  //uint8_t rx_buf[16] = {0};
 	  /* read x/y coordinates */
-	  status = HAL_I2C_Mem_Read(&hi2c1, (0x41 << 1), 0x10, 1, rx_buf, sizeof(rx_buf), 100);
+	  /*status = HAL_I2C_Mem_Read(&hi2c1, (0x41 << 1), 0x10, 1, rx_buf, sizeof(rx_buf), 100);
 	  if (status == HAL_OK)
 	  {
 		  last_x = (rx_buf[3] & 0x0F) << 8 | rx_buf[2];
@@ -85,9 +85,9 @@ HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		  last_state = LV_INDEV_STATE_PRESSED;
 	  }
 	  else
-	  {
+	  {*/
 		  last_state = LV_INDEV_STATE_RELEASED;
-	  }
+	  //}
   }
 }
 
