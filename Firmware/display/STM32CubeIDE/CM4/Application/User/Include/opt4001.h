@@ -14,6 +14,12 @@
 #define OPT4001_REG_FLAGS   0x0C
 #define OPT4001_REG_ID      0x11
 
+#define OPT4001_OK           0
+#define OPT4001_ERR_NACK    -1
+#define OPT4001_ERR_BUS     -2
+
 int opt4001_init(void);
+void opt4001_StartRead(void);
+void opt4001_ISR(void);
 
 #endif

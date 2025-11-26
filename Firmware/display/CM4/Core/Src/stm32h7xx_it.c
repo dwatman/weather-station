@@ -22,6 +22,7 @@
 #include "stm32h7xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "opt4001.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -210,7 +211,7 @@ void EXTI4_IRQHandler(void)
   {
     LL_C2_EXTI_ClearFlag_0_31(LL_EXTI_LINE_4);
     /* USER CODE BEGIN LL_EXTI_LINE_4 */
-
+    opt4001_StartRead();
     /* USER CODE END LL_EXTI_LINE_4 */
   }
   /* USER CODE BEGIN EXTI4_IRQn 1 */
@@ -250,7 +251,7 @@ void UART4_IRQHandler(void)
 void I2C4_EV_IRQHandler(void)
 {
   /* USER CODE BEGIN I2C4_EV_IRQn 0 */
-
+	opt4001_ISR();
   /* USER CODE END I2C4_EV_IRQn 0 */
   /* USER CODE BEGIN I2C4_EV_IRQn 1 */
 

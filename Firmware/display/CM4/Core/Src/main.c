@@ -51,7 +51,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+extern volatile uint8_t opt4001_newdata;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -120,6 +120,9 @@ int main(void)
 
   // Initialise ambient light sensor
   opt4001_init();
+
+  // Enable ALS interrupt
+  LL_C2_EXTI_EnableIT_0_31(LL_EXTI_LINE_4); // _C2 for M4 core
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -133,6 +136,10 @@ int main(void)
 		backlight = 0;
 
 	LL_TIM_OC_SetCompareCH1(TIM15, backlight);
+
+	if (opt4001_newdata) {
+		opt4001_newdata = 0;
+	}
 
 	HAL_Delay(100);
     /* USER CODE END WHILE */
