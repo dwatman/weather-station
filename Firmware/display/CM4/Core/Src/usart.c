@@ -85,7 +85,6 @@ void MX_UART4_Init(void)
   }
   /* USER CODE BEGIN UART4_Init 2 */
   initCircBuffer(&txBuf);
-  LL_USART_EnableIT_TXFT(UART4);
   /* USER CODE END UART4_Init 2 */
 
 }
@@ -159,30 +158,31 @@ void MX_USART1_UART_Init(void)
 
 /* USER CODE BEGIN 1 */
 void UART4_ISR(void) {
-	if (LL_USART_IsActiveFlag_TXFT(UART4)) {
-		uint8_t ch;
-		while (LL_USART_IsActiveFlag_TXE_TXFNF(USART3) && !isCircBufEmpty(&txBuf)) {
-			if (readFromCircBuf(&txBuf, &ch) == 1)
-			LL_USART_TransmitData8(UART4, ch);
-		}
-		if (isCircBufEmpty(&txBuf))
-			LL_USART_DisableIT_TXFT(UART4);
-	}
-}
+	uint8_t ch;
 
-void UART4_StartTX(void) {
-	if (!isCircBufEmpty(&txBuf))
-	LL_USART_EnableIT_TXFT(UART4);
+	// Check TX FIFO threshold interrupt
+	if (LL_USART_IsActiveFlag_TXFE(UART4)) {
+		// Keep filling FIFO until full or buffer empty
+		while (LL_USART_IsActiveFlag_TXE_TXFNF(UART4) && !isCircBufEmpty(&txBuf)) {
+			if (readFromCircBuf(&txBuf, &ch))
+				LL_USART_TransmitData8(UART4, ch);
+		}
+
+		// Disable interrupt if buffer is empty
+		if (isCircBufEmpty(&txBuf))
+			LL_USART_DisableIT_TXFE(UART4);
+	}
 }
 
 // Redirect printf
 int _write(int file, char *ptr, int len) {
 	(void)file;
-	uint32_t primask = __get_PRIMASK();
-	__disable_irq();
-	uint32_t written = writeToCircBuf(&txBuf, (uint8_t *)ptr, len);
-	__set_PRIMASK(primask);  // restores original IRQ state
-	UART4_StartTX();
-	return (int)written;
+	int written = (int)writeToCircBuf(&txBuf, (uint8_t *)ptr, len);
+
+	// Make sure interrupt is enabled if there is data to send
+	if (!isCircBufEmpty(&txBuf))
+		LL_USART_EnableIT_TXFE(UART4);
+
+	return written;
 }
 /* USER CODE END 1 */
