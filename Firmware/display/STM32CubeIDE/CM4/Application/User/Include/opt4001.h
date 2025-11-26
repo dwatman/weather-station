@@ -20,6 +20,7 @@
 
 int opt4001_init(void);
 void opt4001_StartRead(void);
+float opt4001_Convert(void);
 void opt4001_ISR(void);
 
 #endif

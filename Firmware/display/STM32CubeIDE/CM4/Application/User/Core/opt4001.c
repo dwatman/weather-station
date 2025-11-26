@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "i2c.h"
 #include "opt4001.h"
 
@@ -100,6 +101,21 @@ void opt4001_StartRead(void) {
 	// Enable I2C interrupts for RX and STOP events
 	LL_I2C_EnableIT_RX(I2C4);
 	LL_I2C_EnableIT_STOP(I2C4);
+}
+
+// Convert raw data to lux
+float opt4001_Convert(void) {
+	uint8_t exponent = opt4001_data[0] >> 4;
+	//uint8_t count = opt4001_data[3] >> 4;
+	//uint8_t crc = opt4001_data[3] & 0x0F;
+
+	uint32_t mantissa = ((uint32_t)(opt4001_data[0] & 0x0F) << 16) |
+					((uint32_t)opt4001_data[1] << 8) |
+					opt4001_data[2];
+
+	float lux = 0.0004375 * (mantissa << exponent);
+
+	return lux;
 }
 
 // Handle interrupts for the read process

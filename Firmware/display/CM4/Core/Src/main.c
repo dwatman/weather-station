@@ -52,6 +52,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+extern volatile uint8_t opt4001_data[4];
 extern volatile uint8_t opt4001_newdata;
 /* USER CODE END PV */
 
@@ -131,6 +132,7 @@ int main(void)
   printf("\nStart\n");
 
   uint16_t backlight = 0;
+  float lux = 0.0f;
   while (1)
   {
 	if (backlight < 500)
@@ -142,7 +144,10 @@ int main(void)
 
 	if (opt4001_newdata) {
 		opt4001_newdata = 0;
-		printf("ND\n");
+
+		lux = opt4001_Convert();
+		printf("lux: %.3f\n", lux);
+
 	}
 
 	HAL_Delay(100);
