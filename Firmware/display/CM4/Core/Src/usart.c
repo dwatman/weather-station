@@ -21,7 +21,8 @@
 #include "usart.h"
 
 /* USER CODE BEGIN 0 */
-
+#include "circbuf.h"
+static CircularBuffer_t txBuf;
 /* USER CODE END 0 */
 
 /* UART4 init function */
@@ -47,8 +48,8 @@ void MX_UART4_Init(void)
   */
   GPIO_InitStruct.Pin = LL_GPIO_PIN_12;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
-  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
-  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_OPENDRAIN;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_MEDIUM;
+  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
   GPIO_InitStruct.Alternate = LL_GPIO_AF_6;
   LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
@@ -83,7 +84,8 @@ void MX_UART4_Init(void)
   {
   }
   /* USER CODE BEGIN UART4_Init 2 */
-
+  initCircBuffer(&txBuf);
+  LL_USART_EnableIT_TXFT(UART4);
   /* USER CODE END UART4_Init 2 */
 
 }
@@ -156,5 +158,31 @@ void MX_USART1_UART_Init(void)
 }
 
 /* USER CODE BEGIN 1 */
+void UART4_ISR(void) {
+	if (LL_USART_IsActiveFlag_TXFT(UART4)) {
+		uint8_t ch;
+		while (LL_USART_IsActiveFlag_TXE_TXFNF(USART3) && !isCircBufEmpty(&txBuf)) {
+			if (readFromCircBuf(&txBuf, &ch) == 1)
+			LL_USART_TransmitData8(UART4, ch);
+		}
+		if (isCircBufEmpty(&txBuf))
+			LL_USART_DisableIT_TXFT(UART4);
+	}
+}
 
+void UART4_StartTX(void) {
+	if (!isCircBufEmpty(&txBuf))
+	LL_USART_EnableIT_TXFT(UART4);
+}
+
+// Redirect printf
+int _write(int file, char *ptr, int len) {
+	(void)file;
+	uint32_t primask = __get_PRIMASK();
+	__disable_irq();
+	uint32_t written = writeToCircBuf(&txBuf, (uint8_t *)ptr, len);
+	__set_PRIMASK(primask);  // restores original IRQ state
+	UART4_StartTX();
+	return (int)written;
+}
 /* USER CODE END 1 */

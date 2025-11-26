@@ -26,6 +26,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdio.h>
 #include "opt4001.h"
 /* USER CODE END Includes */
 
@@ -127,6 +128,8 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  printf("\nStart\n");
+
   uint16_t backlight = 0;
   while (1)
   {
@@ -139,6 +142,7 @@ int main(void)
 
 	if (opt4001_newdata) {
 		opt4001_newdata = 0;
+		printf("ND\n");
 	}
 
 	HAL_Delay(100);
