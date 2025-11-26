@@ -26,7 +26,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "opt4001.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -117,6 +117,9 @@ int main(void)
   LL_TIM_CC_EnableChannel(TIM15, LL_TIM_CHANNEL_CH1);
   LL_TIM_EnableAllOutputs(TIM15);
   LL_TIM_EnableCounter(TIM15);
+
+  // Initialise ambient light sensor
+  opt4001_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -124,14 +127,14 @@ int main(void)
   uint16_t backlight = 0;
   while (1)
   {
-	  if (backlight < 500)
-		  backlight++;
-	  else
-		  backlight = 0;
+	if (backlight < 500)
+		backlight++;
+	else
+		backlight = 0;
 
-	  LL_TIM_OC_SetCompareCH1(TIM15, backlight);
+	LL_TIM_OC_SetCompareCH1(TIM15, backlight);
 
-	  HAL_Delay(100);
+	HAL_Delay(100);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
