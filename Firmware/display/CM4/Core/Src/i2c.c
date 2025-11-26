@@ -63,9 +63,9 @@ void MX_I2C4_Init(void)
   LL_APB4_GRP1_EnableClock(LL_APB4_GRP1_PERIPH_I2C4);
 
   /* I2C4 interrupt Init */
-  NVIC_SetPriority(I2C4_EV_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
+  NVIC_SetPriority(I2C4_EV_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),8, 0));
   NVIC_EnableIRQ(I2C4_EV_IRQn);
-  NVIC_SetPriority(I2C4_ER_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),0, 0));
+  NVIC_SetPriority(I2C4_ER_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),4, 0));
   NVIC_EnableIRQ(I2C4_ER_IRQn);
 
   /* USER CODE BEGIN I2C4_Init 1 */

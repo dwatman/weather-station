@@ -73,12 +73,20 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define BACKLIGHT_PWM_Pin GPIO_PIN_5
 #define BACKLIGHT_PWM_GPIO_Port GPIOE
+#define ALS_INT_Pin GPIO_PIN_4
+#define ALS_INT_GPIO_Port GPIOE
+#define WIFI_RTS_Pin GPIO_PIN_8
+#define WIFI_RTS_GPIO_Port GPIOI
 #define MCO1_Pin GPIO_PIN_8
 #define MCO1_GPIO_Port GPIOA
 #define OSC_IN_Pin GPIO_PIN_0
 #define OSC_IN_GPIO_Port GPIOH
 #define IR_IN_Pin GPIO_PIN_1
 #define IR_IN_GPIO_Port GPIOK
+#define WIFI_CTS_Pin GPIO_PIN_8
+#define WIFI_CTS_GPIO_Port GPIOJ
+#define WIFI_DTR_Pin GPIO_PIN_0
+#define WIFI_DTR_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

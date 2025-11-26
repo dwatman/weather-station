@@ -22,7 +22,6 @@
 #include "mdma.h"
 #include "tim.h"
 #include "usart.h"
-#include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -105,7 +104,6 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_MDMA_Init();
-  MX_GPIO_Init();
   MX_I2C4_Init();
   MX_TIM15_Init();
   MX_TIM1_Init();
