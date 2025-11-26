@@ -30,18 +30,19 @@ extern "C" {
 #include "stm32h7xx_hal.h"
 
 #include "stm32h7xx_ll_i2c.h"
-#include "stm32h7xx_ll_tim.h"
-#include "stm32h7xx_ll_usart.h"
 #include "stm32h7xx_ll_rcc.h"
+#include "stm32h7xx_ll_crs.h"
 #include "stm32h7xx_ll_bus.h"
-#include "stm32h7xx_ll_cortex.h"
 #include "stm32h7xx_ll_system.h"
+#include "stm32h7xx_ll_exti.h"
+#include "stm32h7xx_ll_cortex.h"
 #include "stm32h7xx_ll_utils.h"
 #include "stm32h7xx_ll_pwr.h"
-#include "stm32h7xx_ll_gpio.h"
 #include "stm32h7xx_ll_dma.h"
-
-#include "stm32h7xx_ll_exti.h"
+#include "stm32h7xx_ll_rtc.h"
+#include "stm32h7xx_ll_tim.h"
+#include "stm32h7xx_ll_usart.h"
+#include "stm32h7xx_ll_gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -71,21 +72,21 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define BACKLIGHT_PWM_Pin GPIO_PIN_5
+#define BACKLIGHT_PWM_Pin LL_GPIO_PIN_5
 #define BACKLIGHT_PWM_GPIO_Port GPIOE
-#define ALS_INT_Pin GPIO_PIN_4
+#define ALS_INT_Pin LL_GPIO_PIN_4
 #define ALS_INT_GPIO_Port GPIOE
-#define WIFI_RTS_Pin GPIO_PIN_8
+#define WIFI_RTS_Pin LL_GPIO_PIN_8
 #define WIFI_RTS_GPIO_Port GPIOI
-#define MCO1_Pin GPIO_PIN_8
+#define MCO1_Pin LL_GPIO_PIN_8
 #define MCO1_GPIO_Port GPIOA
-#define OSC_IN_Pin GPIO_PIN_0
+#define OSC_IN_Pin LL_GPIO_PIN_0
 #define OSC_IN_GPIO_Port GPIOH
-#define IR_IN_Pin GPIO_PIN_1
+#define IR_IN_Pin LL_GPIO_PIN_1
 #define IR_IN_GPIO_Port GPIOK
-#define WIFI_CTS_Pin GPIO_PIN_8
+#define WIFI_CTS_Pin LL_GPIO_PIN_8
 #define WIFI_CTS_GPIO_Port GPIOJ
-#define WIFI_DTR_Pin GPIO_PIN_0
+#define WIFI_DTR_Pin LL_GPIO_PIN_0
 #define WIFI_DTR_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */

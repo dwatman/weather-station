@@ -43,13 +43,13 @@ void MX_TIM1_Init(void)
   /**TIM1 GPIO Configuration
   PK1   ------> TIM1_CH1
   */
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_1;
+  GPIO_InitStruct.Pin = IR_IN_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   GPIO_InitStruct.Alternate = LL_GPIO_AF_1;
-  LL_GPIO_Init(GPIOK, &GPIO_InitStruct);
+  LL_GPIO_Init(IR_IN_GPIO_Port, &GPIO_InitStruct);
 
   /* USER CODE BEGIN TIM1_Init 1 */
 
@@ -128,13 +128,13 @@ void MX_TIM15_Init(void)
     /**TIM15 GPIO Configuration
     PE5     ------> TIM15_CH1
     */
-  GPIO_InitStruct.Pin = LL_GPIO_PIN_5;
+  GPIO_InitStruct.Pin = BACKLIGHT_PWM_Pin;
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   GPIO_InitStruct.Alternate = LL_GPIO_AF_4;
-  LL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+  LL_GPIO_Init(BACKLIGHT_PWM_GPIO_Port, &GPIO_InitStruct);
 
 }
 

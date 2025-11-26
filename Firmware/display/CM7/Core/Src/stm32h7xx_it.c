@@ -172,7 +172,13 @@ void EXTI3_IRQHandler(void)
   /* USER CODE BEGIN EXTI3_IRQn 0 */
 
   /* USER CODE END EXTI3_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(CTP_INT_Pin);
+  if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_3) != RESET)
+  {
+    LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_3);
+    /* USER CODE BEGIN LL_EXTI_LINE_3 */
+
+    /* USER CODE END LL_EXTI_LINE_3 */
+  }
   /* USER CODE BEGIN EXTI3_IRQn 1 */
 
   /* USER CODE END EXTI3_IRQn 1 */

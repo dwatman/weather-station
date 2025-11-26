@@ -213,21 +213,12 @@ void MX_DSIHOST_DSI_Init(void)
 void HAL_DSI_MspInit(DSI_HandleTypeDef* dsiHandle)
 {
 
-  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
   if(dsiHandle->Instance==DSI)
   {
   /* USER CODE BEGIN DSI_MspInit 0 */
 
   /* USER CODE END DSI_MspInit 0 */
-
-  /** Initializes the peripherals clock
-  */
-    PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_DSI;
-    PeriphClkInitStruct.DsiClockSelection = RCC_DSICLKSOURCE_PHY;
-    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
-    {
-      Error_Handler();
-    }
+    LL_RCC_SetDSIClockSource(LL_RCC_DSI_CLKSOURCE_PHY);
 
     /* DSI clock enable */
     __HAL_RCC_DSI_CLK_ENABLE();

@@ -32,91 +32,111 @@
 
 /* USER CODE END 1 */
 
-/** Configure pins
-     PA14 (JTCK/SWCLK)   ------> DEBUG_JTCK-SWCLK
-     PA13 (JTMS/SWDIO)   ------> DEBUG_JTMS-SWDIO
+/** Configure pins as
+        * Analog
+        * Input
+        * Output
+        * EVENT_OUT
+        * EXTI
      PA8   ------> RCC_MCO_1
-     PH0-OSC_IN (PH0)   ------> RCC_OSC_IN
 */
 void MX_GPIO_Init(void)
 {
 
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  LL_EXTI_InitTypeDef EXTI_InitStruct = {0};
+  LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOI_CLK_ENABLE();
-  __HAL_RCC_GPIOE_CLK_ENABLE();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOH_CLK_ENABLE();
-  __HAL_RCC_GPIOC_CLK_ENABLE();
-  __HAL_RCC_GPIOG_CLK_ENABLE();
-  __HAL_RCC_GPIOD_CLK_ENABLE();
-  __HAL_RCC_GPIOF_CLK_ENABLE();
-  __HAL_RCC_GPIOJ_CLK_ENABLE();
+  LL_AHB4_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_GPIOI);
+  LL_AHB4_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_GPIOE);
+  LL_AHB4_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_GPIOA);
+  LL_AHB4_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_GPIOH);
+  LL_AHB4_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_GPIOC);
+  LL_AHB4_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_GPIOG);
+  LL_AHB4_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_GPIOD);
+  LL_AHB4_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_GPIOF);
+  LL_AHB4_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_GPIOJ);
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(CTP_RST_GPIO_Port, CTP_RST_Pin, GPIO_PIN_RESET);
+  /**/
+  LL_GPIO_ResetOutputPin(CTP_RST_GPIO_Port, CTP_RST_Pin);
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(USB1_EN_GPIO_Port, USB1_EN_Pin, GPIO_PIN_RESET);
+  /**/
+  LL_GPIO_ResetOutputPin(USB1_EN_GPIO_Port, USB1_EN_Pin);
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(USR_LED_GPIO_Port, USR_LED_Pin, GPIO_PIN_RESET);
+  /**/
+  LL_GPIO_ResetOutputPin(USR_LED_GPIO_Port, USR_LED_Pin);
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LCD_DISP_GPIO_Port, LCD_DISP_Pin, GPIO_PIN_SET);
+  /**/
+  LL_GPIO_SetOutputPin(LCD_DISP_GPIO_Port, LCD_DISP_Pin);
 
-  /*Configure GPIO pins : USB1_OVERCURRENT_Pin USR_BTN_1_Pin */
+  /**/
   GPIO_InitStruct.Pin = USB1_OVERCURRENT_Pin|USR_BTN_1_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  LL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : CTP_RST_Pin */
+  /**/
   GPIO_InitStruct.Pin = CTP_RST_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(CTP_RST_GPIO_Port, &GPIO_InitStruct);
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  LL_GPIO_Init(CTP_RST_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : MCO1_Pin */
+  /**/
   GPIO_InitStruct.Pin = MCO1_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  GPIO_InitStruct.Alternate = GPIO_AF0_MCO;
-  HAL_GPIO_Init(MCO1_GPIO_Port, &GPIO_InitStruct);
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  GPIO_InitStruct.Alternate = LL_GPIO_AF_0;
+  LL_GPIO_Init(MCO1_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : USB1_EN_Pin */
+  /**/
   GPIO_InitStruct.Pin = USB1_EN_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(USB1_EN_GPIO_Port, &GPIO_InitStruct);
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  LL_GPIO_Init(USB1_EN_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : USR_LED_Pin */
+  /**/
   GPIO_InitStruct.Pin = USR_LED_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(USR_LED_GPIO_Port, &GPIO_InitStruct);
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  LL_GPIO_Init(USR_LED_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : CTP_INT_Pin */
-  GPIO_InitStruct.Pin = CTP_INT_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(CTP_INT_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : LCD_DISP_Pin */
+  /**/
   GPIO_InitStruct.Pin = LCD_DISP_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LCD_DISP_GPIO_Port, &GPIO_InitStruct);
+  GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
+  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  LL_GPIO_Init(LCD_DISP_GPIO_Port, &GPIO_InitStruct);
+
+  /**/
+  LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTH, LL_SYSCFG_EXTI_LINE3);
+
+  /**/
+  EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_3;
+  EXTI_InitStruct.Line_32_63 = LL_EXTI_LINE_NONE;
+  EXTI_InitStruct.Line_64_95 = LL_EXTI_LINE_NONE;
+  EXTI_InitStruct.LineCommand = ENABLE;
+  EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+  EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_FALLING;
+  LL_EXTI_Init(&EXTI_InitStruct);
+
+  /**/
+  LL_GPIO_SetPinPull(CTP_INT_GPIO_Port, CTP_INT_Pin, LL_GPIO_PULL_UP);
+
+  /**/
+  LL_GPIO_SetPinMode(CTP_INT_GPIO_Port, CTP_INT_Pin, LL_GPIO_MODE_INPUT);
 
   /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI3_IRQn, 7, 0);
-  HAL_NVIC_EnableIRQ(EXTI3_IRQn);
+  NVIC_SetPriority(EXTI3_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),7, 0));
+  NVIC_EnableIRQ(EXTI3_IRQn);
 
 }
 

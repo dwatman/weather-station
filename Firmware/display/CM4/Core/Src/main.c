@@ -22,6 +22,7 @@
 #include "mdma.h"
 #include "tim.h"
 #include "usart.h"
+#include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -104,6 +105,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_MDMA_Init();
+  MX_GPIO_Init();
   MX_I2C4_Init();
   MX_TIM15_Init();
   MX_TIM1_Init();
@@ -134,6 +136,46 @@ int main(void)
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
+}
+
+/**
+  * @brief Peripherals Common Clock Configuration
+  * @retval None
+  */
+void PeriphCommonClock_Config(void)
+{
+  LL_RCC_PLL2R_Enable();
+  LL_RCC_PLL2_SetVCOInputRange(LL_RCC_PLLINPUTRANGE_4_8);
+  LL_RCC_PLL2_SetVCOOutputRange(LL_RCC_PLLVCORANGE_WIDE);
+  LL_RCC_PLL2_SetM(4);
+  LL_RCC_PLL2_SetN(180);
+  LL_RCC_PLL2_SetP(4);
+  LL_RCC_PLL2_SetQ(2);
+  LL_RCC_PLL2_SetR(3);
+  LL_RCC_PLL2_SetFRACN(3072);
+  LL_RCC_PLL2FRACN_Enable();
+  LL_RCC_PLL2_Enable();
+
+   /* Wait till PLL is ready */
+  while(LL_RCC_PLL2_IsReady() != 1)
+  {
+  }
+
+  LL_RCC_PLL3R_Enable();
+  LL_RCC_PLL3_SetVCOInputRange(LL_RCC_PLLINPUTRANGE_1_2);
+  LL_RCC_PLL3_SetVCOOutputRange(LL_RCC_PLLVCORANGE_WIDE);
+  LL_RCC_PLL3_SetM(12);
+  LL_RCC_PLL3_SetN(231);
+  LL_RCC_PLL3_SetP(6);
+  LL_RCC_PLL3_SetQ(6);
+  LL_RCC_PLL3_SetR(6);
+  LL_RCC_PLL3_Enable();
+
+   /* Wait till PLL is ready */
+  while(LL_RCC_PLL3_IsReady() != 1)
+  {
+  }
+
 }
 
 /* USER CODE BEGIN 4 */

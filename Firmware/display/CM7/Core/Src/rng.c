@@ -52,21 +52,12 @@ void MX_RNG_Init(void)
 void HAL_RNG_MspInit(RNG_HandleTypeDef* rngHandle)
 {
 
-  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
   if(rngHandle->Instance==RNG)
   {
   /* USER CODE BEGIN RNG_MspInit 0 */
 
   /* USER CODE END RNG_MspInit 0 */
-
-  /** Initializes the peripherals clock
-  */
-    PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RNG;
-    PeriphClkInitStruct.RngClockSelection = RCC_RNGCLKSOURCE_HSI48;
-    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
-    {
-      Error_Handler();
-    }
+    LL_RCC_SetRNGClockSource(LL_RCC_RNG_CLKSOURCE_HSI48);
 
     /* RNG clock enable */
     __HAL_RCC_RNG_CLK_ENABLE();
