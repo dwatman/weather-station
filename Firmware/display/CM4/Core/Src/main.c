@@ -155,9 +155,6 @@ int main(void)
 
 		sharedMem->lux = lux;
 
-		// Clean DCache to ensure data visibility to M7
-		SCB_CleanDCache_by_Addr((uint32_t*)shared, sizeof(SharedData_t));
-
 		// Signal data ready via HSEM1
 		HAL_HSEM_FastTake(HSEM_ID_1);   // Take
 		HAL_HSEM_Release(HSEM_ID_1, 0); // Release to interrupt to M7

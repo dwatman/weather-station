@@ -64,7 +64,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+osMutexId lvgl_mutex;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -160,6 +160,13 @@ Error_Handler();
   MX_JPEG_Init();
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
+
+  // Create mutex to prevent LVGL from getting stuck
+  osMutexDef(lvgl_mutex_def);
+  lvgl_mutex = osMutexCreate(osMutex(lvgl_mutex_def));
+  if (lvgl_mutex == NULL) {
+      Error_Handler();
+  }
 
   /* initialize LVGL framework */
   lv_init();

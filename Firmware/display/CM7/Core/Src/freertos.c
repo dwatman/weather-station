@@ -48,7 +48,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-
+extern osMutexId lvgl_mutex;
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
 
@@ -174,8 +174,11 @@ void LVGLTimer(void const * argument)
 {
   for(;;)
   {
+	osMutexWait(lvgl_mutex, osWaitForever);
     lv_timer_handler();
-    osDelay(1);
+    osMutexRelease(lvgl_mutex);
+
+    osDelay(10);
   }
 }
 
@@ -187,13 +190,19 @@ void EEZTick(void const * argument)
 
     for (;;) {
     	// Invalidate DCache before reading shared data
-    	SCB_InvalidateDCache_by_Addr((uint32_t*)shared, sizeof(SharedData_t));
+    	SCB_InvalidateDCache_by_Addr((uint32_t*)sharedMem, sizeof(SharedData_t));
+
+    	osMutexWait(lvgl_mutex, osWaitForever);
+
     	set_lux(sharedMem->lux);
     	set_var_test_bar(tmp);
     	set_test(tmp);
     	tmp = (tmp+1) & 0xFF;
         ui_tick();       // Update EEZ UI variables
-        osDelay(1000);    // 1 Hz
+
+        osMutexRelease(lvgl_mutex);
+
+        osDelay(200);    // 5 Hz
         //HAL_GPIO_TogglePin(GPIOJ, GPIO_PIN_10); // User LED
     }
 }
