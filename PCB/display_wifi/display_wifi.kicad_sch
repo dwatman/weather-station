@@ -6,8 +6,8 @@
 	(paper "A4")
 	(title_block
 		(title "Wi-Fi Interface for Display")
-		(date "2025-11-08")
-		(rev "1.00")
+		(date "2025-11-26")
+		(rev "1.10")
 	)
 	(lib_symbols
 		(symbol "Connector_Generic:Conn_01x02"
@@ -5302,7 +5302,7 @@
 	)
 	(text "I2C address: 0x44"
 		(exclude_from_sim no)
-		(at 59.69 127 0)
+		(at 68.58 143.51 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -5311,18 +5311,7 @@
 		)
 		(uuid "6bda6278-26f0-47a2-ad50-7445415f6356")
 	)
-	(text "CHECK FREQ"
-		(exclude_from_sim no)
-		(at 71.12 173.99 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "c45e71eb-c268-4600-aae3-19dd2daebbe8")
-	)
-	(text "~5 mA"
+	(text "~1 mA"
 		(exclude_from_sim no)
 		(at 45.72 58.42 0)
 		(effects
@@ -5332,6 +5321,17 @@
 			(justify left)
 		)
 		(uuid "ca7d0aef-4298-48fe-a5eb-16def0407e63")
+	)
+	(text "FIXES"
+		(exclude_from_sim no)
+		(at 177.8 167.64 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "da93aaa8-9107-479d-90f7-760c18485114")
 	)
 	(junction
 		(at 43.18 114.3)
@@ -5364,6 +5364,12 @@
 		(uuid "183c16ba-3775-4eed-9293-0ac9ecb8e7d3")
 	)
 	(junction
+		(at 100.33 46.99)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "1aa1d703-50dc-401e-b514-7d886f635c27")
+	)
+	(junction
 		(at 41.91 31.75)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -5392,6 +5398,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "3c3e4d54-672d-4382-ada1-7b8cce6612e3")
+	)
+	(junction
+		(at 107.95 46.99)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "768ee787-55a1-4bcc-9af8-817c012202d5")
 	)
 	(junction
 		(at 234.95 30.48)
@@ -5424,10 +5436,10 @@
 		(uuid "7f88a4e7-caec-47ce-8887-a47ca780620b")
 	)
 	(junction
-		(at 107.95 46.99)
+		(at 77.47 124.46)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "85bc2b4e-fa34-4a15-b67c-9b016ca9494f")
+		(uuid "7fbf3fe4-58ab-4dff-afb0-cad1fa776429")
 	)
 	(junction
 		(at 60.96 160.02)
@@ -5621,6 +5633,16 @@
 	)
 	(wire
 		(pts
+			(xy 85.09 130.81) (xy 85.09 139.7)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "14fe9504-682a-475a-9792-4389c9a5ede6")
+	)
+	(wire
+		(pts
 			(xy 144.78 124.46) (xy 144.78 123.19)
 		)
 		(stroke
@@ -5641,7 +5663,7 @@
 	)
 	(wire
 		(pts
-			(xy 54.61 134.62) (xy 63.5 134.62)
+			(xy 54.61 134.62) (xy 77.47 134.62)
 		)
 		(stroke
 			(width 0)
@@ -5681,6 +5703,16 @@
 	)
 	(wire
 		(pts
+			(xy 100.33 52.07) (xy 107.95 52.07)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1e5ba3a4-73f0-4e62-877b-57c06e7cd758")
+	)
+	(wire
+		(pts
 			(xy 41.91 43.18) (xy 57.15 43.18)
 		)
 		(stroke
@@ -5708,6 +5740,16 @@
 			(type default)
 		)
 		(uuid "2464aa4d-dcfe-40e4-8a6c-63aa222f770d")
+	)
+	(wire
+		(pts
+			(xy 100.33 46.99) (xy 107.95 46.99)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "25d8a9a7-66a5-4692-8a0e-dd32c4d1ac4b")
 	)
 	(wire
 		(pts
@@ -5821,6 +5863,16 @@
 	)
 	(wire
 		(pts
+			(xy 85.09 124.46) (xy 85.09 125.73)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3b34e4da-cdf5-47b9-b7d0-af678497f56d")
+	)
+	(wire
+		(pts
 			(xy 86.36 38.1) (xy 86.36 43.18)
 		)
 		(stroke
@@ -5901,7 +5953,7 @@
 	)
 	(wire
 		(pts
-			(xy 54.61 139.7) (xy 63.5 139.7)
+			(xy 54.61 139.7) (xy 85.09 139.7)
 		)
 		(stroke
 			(width 0)
@@ -5971,6 +6023,36 @@
 	)
 	(wire
 		(pts
+			(xy 69.85 124.46) (xy 77.47 124.46)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4bc50da6-a1a3-4197-ad3f-4f42fa0b73aa")
+	)
+	(wire
+		(pts
+			(xy 69.85 130.81) (xy 69.85 132.08)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4c6a62e8-1070-4f47-a75d-1e4ff3672ca5")
+	)
+	(wire
+		(pts
+			(xy 251.46 73.66) (xy 250.19 73.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4d7eb6ce-8ab1-430d-9701-89c740ebee71")
+	)
+	(wire
+		(pts
 			(xy 166.37 86.36) (xy 172.72 86.36)
 		)
 		(stroke
@@ -5978,6 +6060,16 @@
 			(type default)
 		)
 		(uuid "4f8c25a6-03d2-40d9-83d6-ab25daa783b4")
+	)
+	(wire
+		(pts
+			(xy 77.47 124.46) (xy 77.47 125.73)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "52f2ff00-a890-4ce5-b33f-f9886176d4d0")
 	)
 	(wire
 		(pts
@@ -6091,7 +6183,7 @@
 	)
 	(wire
 		(pts
-			(xy 107.95 45.72) (xy 107.95 46.99)
+			(xy 100.33 45.72) (xy 100.33 46.99)
 		)
 		(stroke
 			(width 0)
@@ -6201,6 +6293,16 @@
 	)
 	(wire
 		(pts
+			(xy 236.22 58.42) (xy 237.49 58.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7e6ef685-92fa-430a-baa7-5890ef4de6da")
+	)
+	(wire
+		(pts
 			(xy 234.95 33.02) (xy 234.95 30.48)
 		)
 		(stroke
@@ -6218,6 +6320,16 @@
 			(type default)
 		)
 		(uuid "80a10b09-bace-41c2-b176-63a6a5795048")
+	)
+	(wire
+		(pts
+			(xy 69.85 125.73) (xy 69.85 124.46)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "823adc6f-cfa6-41be-ba4b-48e3b597e333")
 	)
 	(wire
 		(pts
@@ -6291,16 +6403,6 @@
 	)
 	(wire
 		(pts
-			(xy 236.22 71.12) (xy 237.49 71.12)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "92b73c07-ad66-4019-ae26-7bdd31b38947")
-	)
-	(wire
-		(pts
 			(xy 77.47 43.18) (xy 57.15 43.18)
 		)
 		(stroke
@@ -6338,6 +6440,16 @@
 			(type default)
 		)
 		(uuid "94f83746-21af-466e-adb8-4994fc42e1ea")
+	)
+	(wire
+		(pts
+			(xy 77.47 130.81) (xy 77.47 134.62)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "979f9ca5-8ec1-4d59-9c09-fa1d179bb906")
 	)
 	(wire
 		(pts
@@ -6741,7 +6853,17 @@
 	)
 	(wire
 		(pts
-			(xy 54.61 132.08) (xy 63.5 132.08)
+			(xy 77.47 124.46) (xy 85.09 124.46)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e2c3b040-16b6-4b9b-8c35-9136a2cf4bfa")
+	)
+	(wire
+		(pts
+			(xy 54.61 132.08) (xy 69.85 132.08)
 		)
 		(stroke
 			(width 0)
@@ -7299,22 +7421,22 @@
 	)
 	(global_label "UART_DTR"
 		(shape input)
-		(at 236.22 73.66 180)
+		(at 251.46 73.66 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
-			(justify right)
+			(justify left)
 		)
 		(uuid "5c74f112-7b07-431d-83d1-7b3894e11070")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 224.1029 73.66 0)
+			(at 263.5771 73.66 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify right)
+				(justify left)
 				(hide yes)
 			)
 		)
@@ -7341,9 +7463,31 @@
 			)
 		)
 	)
+	(global_label "DEBUG_TXD"
+		(shape output)
+		(at 236.22 58.42 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "6ae08ed6-afed-49ef-bd0e-6c4adda42da1")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 222.5306 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "UART_DSR"
 		(shape output)
-		(at 236.22 71.12 180)
+		(at 236.22 73.66 180)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -7353,7 +7497,7 @@
 		)
 		(uuid "7958dc08-c3d4-43b7-97d4-26d5dff1290b")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 223.861 71.12 0)
+			(at 223.861 73.66 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7766,7 +7910,7 @@
 				)
 			)
 		)
-		(property "Value" "360R"
+		(property "Value" "1.8k"
 			(at 40.64 79.375 90)
 			(effects
 				(font
@@ -8114,6 +8258,71 @@
 			(project "display_wifi"
 				(path "/c8a7c37e-85db-4c80-9732-f9406c6cc5f6"
 					(reference "#PWR09")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3.3V")
+		(at 77.47 124.46 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "3b2460b8-49fe-4a7b-9565-f01749e626a4")
+		(property "Reference" "#PWR035"
+			(at 77.47 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3.3V"
+			(at 77.47 120.65 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 77.47 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 77.47 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3.3V\""
+			(at 77.47 124.46 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "d19037b1-e1f3-45c8-a28a-89bac9bd53ba")
+		)
+		(instances
+			(project "display_wifi"
+				(path "/c8a7c37e-85db-4c80-9732-f9406c6cc5f6"
+					(reference "#PWR035")
 					(unit 1)
 				)
 			)
@@ -8914,6 +9123,93 @@
 	)
 	(symbol
 		(lib_id "Device:R_Small")
+		(at 85.09 128.27 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "680d06d2-7280-4318-b774-fd3bd59406f0")
+		(property "Reference" "R9"
+			(at 86.36 127 0)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "10k"
+			(at 86.36 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 85.09 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 85.09 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor, small symbol"
+			(at 85.09 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" ""
+			(at 85.09 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser PN" ""
+			(at 85.09 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "a3eaeef4-4af4-47ef-bd08-c4ec14ac60eb")
+		)
+		(pin "1"
+			(uuid "a4b1309b-8369-408c-8349-9e01b77e1588")
+		)
+		(instances
+			(project "display_wifi"
+				(path "/c8a7c37e-85db-4c80-9732-f9406c6cc5f6"
+					(reference "R9")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small")
 		(at 90.17 99.06 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -8976,6 +9272,93 @@
 			(project "display_wifi"
 				(path "/c8a7c37e-85db-4c80-9732-f9406c6cc5f6"
 					(reference "R4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R_Small")
+		(at 77.47 128.27 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "6c450ae4-cc46-440e-a373-952ef33dfaa4")
+		(property "Reference" "R8"
+			(at 78.74 127 0)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "1.2k"
+			(at 78.74 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 77.47 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 77.47 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor, small symbol"
+			(at 77.47 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" ""
+			(at 77.47 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser PN" ""
+			(at 77.47 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "fa0c6e29-6e8b-48be-ae4c-226a567ffead")
+		)
+		(pin "1"
+			(uuid "56a2ce34-c7f3-49a7-9c7e-8e9aa0546ce7")
+		)
+		(instances
+			(project "display_wifi"
+				(path "/c8a7c37e-85db-4c80-9732-f9406c6cc5f6"
+					(reference "R8")
 					(unit 1)
 				)
 			)
@@ -10825,6 +11208,93 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:R_Small")
+		(at 69.85 128.27 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "b4bcf348-728e-4c1f-8acd-c9b4dbc287e9")
+		(property "Reference" "R7"
+			(at 71.12 127 0)
+			(effects
+				(font
+					(size 1.016 1.016)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "1.2k"
+			(at 71.12 129.54 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+			(at 69.85 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 69.85 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor, small symbol"
+			(at 69.85 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" ""
+			(at 69.85 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser PN" ""
+			(at 69.85 128.27 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "94417fba-f7ff-48c0-b206-23ce1a518876")
+		)
+		(pin "1"
+			(uuid "4a6986d7-fa8f-4a10-b264-f3581f8c1c94")
+		)
+		(instances
+			(project "display_wifi"
+				(path "/c8a7c37e-85db-4c80-9732-f9406c6cc5f6"
+					(reference "R7")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 139.7 125.73 0)
 		(unit 1)
@@ -11090,7 +11560,7 @@
 	)
 	(symbol
 		(lib_id "power:+3.3V")
-		(at 107.95 45.72 0)
+		(at 100.33 45.72 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -11098,7 +11568,7 @@
 		(dnp no)
 		(uuid "c5187205-ef9d-46c2-84e7-4e3eee0494d4")
 		(property "Reference" "#PWR016"
-			(at 107.95 49.53 0)
+			(at 100.33 49.53 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11107,7 +11577,7 @@
 			)
 		)
 		(property "Value" "+3.3V"
-			(at 107.95 41.91 0)
+			(at 100.33 41.91 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11115,7 +11585,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 107.95 45.72 0)
+			(at 100.33 45.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11124,7 +11594,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 107.95 45.72 0)
+			(at 100.33 45.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11133,7 +11603,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"+3.3V\""
-			(at 107.95 45.72 0)
+			(at 100.33 45.72 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -11647,7 +12117,7 @@
 				)
 			)
 		)
-		(property "Value" "360R"
+		(property "Value" "1.8k"
 			(at 30.48 69.215 90)
 			(effects
 				(font
@@ -11924,6 +12394,93 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:C_Small")
+		(at 100.33 49.53 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "f01c2024-1b4b-4cd9-9b84-588eec162619")
+		(property "Reference" "C9"
+			(at 102.235 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "22u"
+			(at 102.235 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Capacitor_SMD:C_1210_3225Metric"
+			(at 100.33 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 100.33 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Unpolarized capacitor, small symbol"
+			(at 100.33 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" ""
+			(at 100.33 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Mouser PN" ""
+			(at 100.33 49.53 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "77ca6e15-eb4b-412a-8b5d-0b74064e4b7c")
+		)
+		(pin "1"
+			(uuid "8ca9f734-5492-4135-be56-3621b419d2f0")
+		)
+		(instances
+			(project "display_wifi"
+				(path "/c8a7c37e-85db-4c80-9732-f9406c6cc5f6"
+					(reference "C9")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 87.63 76.2 0)
 		(unit 1)
@@ -12005,7 +12562,7 @@
 				)
 			)
 		)
-		(property "Value" "620R"
+		(property "Value" "3.3k"
 			(at 35.56 74.295 90)
 			(effects
 				(font
