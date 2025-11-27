@@ -185,7 +185,7 @@ void EEZTick(void const * argument)
 
     for (;;) {
     	set_var_test_bar(tmp);
-    	set_var_test_int(tmp);
+    	set_test(tmp);
     	tmp = (tmp+1) & 0xFF;
         ui_tick();       // Update EEZ UI variables
         osDelay(1000);     // 5 Hz

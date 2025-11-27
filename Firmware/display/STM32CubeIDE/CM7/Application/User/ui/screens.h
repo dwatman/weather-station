@@ -12,6 +12,12 @@ typedef struct _objects_t {
     lv_obj_t *obj0;
     lv_obj_t *test_var;
     lv_obj_t *obj1;
+    lv_obj_t *indoor_temp;
+    lv_obj_t *indoor_humidity;
+    lv_obj_t *indoor_temp_1;
+    lv_obj_t *indoor_humidity_1;
+    lv_obj_t *indoor_humidity_2;
+    lv_obj_t *indoor_temp_2;
 } objects_t;
 
 extern objects_t objects;
