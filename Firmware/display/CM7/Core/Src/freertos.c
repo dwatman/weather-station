@@ -28,6 +28,7 @@
 #include "lvgl/lvgl.h"
 #include "ui.h"
 #include "ui_io.h"
+#include "shared.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -182,8 +183,12 @@ void LVGLTimer(void const * argument)
 void EEZTick(void const * argument)
 {
 	uint32_t tmp = 0;
+	SharedData_t *sharedMem = SHARED_DATA_PTR;
 
     for (;;) {
+    	// Invalidate DCache before reading shared data
+    	SCB_InvalidateDCache_by_Addr((uint32_t*)shared, sizeof(SharedData_t));
+    	set_lux(sharedMem->lux);
     	set_var_test_bar(tmp);
     	set_test(tmp);
     	tmp = (tmp+1) & 0xFF;

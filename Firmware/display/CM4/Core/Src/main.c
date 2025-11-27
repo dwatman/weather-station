@@ -56,7 +56,7 @@
 extern volatile uint8_t opt4001_data[4];
 extern volatile uint8_t opt4001_newdata;
 
-SharedData_t *shared = SHARED_DATA_PTR;
+SharedData_t *sharedMem = SHARED_DATA_PTR;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -152,6 +152,11 @@ int main(void)
 
 		lux = opt4001_Convert();
 		printf("lux: %.3f\n", lux);
+
+		sharedMem->lux = lux;
+
+		// Clean DCache to ensure data visibility to M7
+		SCB_CleanDCache_by_Addr((uint32_t*)shared, sizeof(SharedData_t));
 
 		// Signal data ready via HSEM1
 		HAL_HSEM_FastTake(HSEM_ID_1);   // Take
