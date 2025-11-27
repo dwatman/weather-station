@@ -39,6 +39,7 @@
 
 #include "ui.h"
 #include "ui_io.h"
+#include "shared.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -145,7 +146,6 @@ Error_Handler();
 /* USER CODE END Boot_Mode_Sequence_2 */
 
   /* USER CODE BEGIN SysInit */
-
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -183,6 +183,9 @@ Error_Handler();
   set_lux(12345.6);
   set_rssi(-99);
 
+  // Ensure any pending flags are cleared and enable trigger
+  __HAL_HSEM_CLEAR_FLAG(__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_1));
+  HAL_HSEM_ActivateNotification(__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_1));
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in cmsis_os2.c) */

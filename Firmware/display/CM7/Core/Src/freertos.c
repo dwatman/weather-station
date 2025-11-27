@@ -142,7 +142,7 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(lvgl_timer, LVGLTimer, osPriorityNormal, 0, 1024);
   lvgl_timerHandle = osThreadCreate(osThread(lvgl_timer), NULL);
 
-  osThreadDef(eez_tick, EEZTick, osPriorityNormal, 0, 1024);
+  osThreadDef(eez_tick, EEZTick, osPriorityNormal, 0, 512);
   osThreadCreate(osThread(eez_tick), NULL);
   /* USER CODE END RTOS_THREADS */
 
@@ -188,8 +188,8 @@ void EEZTick(void const * argument)
     	set_test(tmp);
     	tmp = (tmp+1) & 0xFF;
         ui_tick();       // Update EEZ UI variables
-        osDelay(1000);     // 5 Hz
-        HAL_GPIO_TogglePin(GPIOJ, GPIO_PIN_10); // User LED
+        osDelay(1000);    // 1 Hz
+        //HAL_GPIO_TogglePin(GPIOJ, GPIO_PIN_10); // User LED
     }
 }
 /* USER CODE END Application */

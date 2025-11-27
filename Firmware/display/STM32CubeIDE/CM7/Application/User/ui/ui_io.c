@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include "vars.h"
+#include "stm32h7xx_hal.h"
+#include "shared.h"
 
 // Strings to set LVGL labels
 char test_int[100] = { 0 };
@@ -110,4 +112,16 @@ void set_rssi(int val) {
 
 	snprintf(tmp, 32, "%+i", val);
 	set_var_rssi_str(tmp);
+}
+
+#include "gpio.h"
+// Triggered from interrupt when M4 has updated shared memory
+void HAL_HSEM_FreeCallback(uint32_t SemMask) {
+	if (SemMask & __HAL_HSEM_SEMID_TO_MASK(HSEM_ID_1)) 	{
+		// Clear flag just in case
+		__HAL_HSEM_CLEAR_FLAG(__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_1));
+		// Reactivate notification
+		HAL_HSEM_ActivateNotification(__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_1));
+	}
+	HAL_GPIO_TogglePin(GPIOJ, GPIO_PIN_10); // User LED
 }

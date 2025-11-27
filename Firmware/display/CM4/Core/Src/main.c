@@ -28,6 +28,7 @@
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include "opt4001.h"
+#include "shared.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -54,6 +55,8 @@
 /* USER CODE BEGIN PV */
 extern volatile uint8_t opt4001_data[4];
 extern volatile uint8_t opt4001_newdata;
+
+SharedData_t *shared = SHARED_DATA_PTR;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -120,9 +123,11 @@ int main(void)
   LL_TIM_EnableAllOutputs(TIM15);
   LL_TIM_EnableCounter(TIM15);
 
+  // Ensure semaphore flag is clear
+  __HAL_HSEM_CLEAR_FLAG(__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_1));
+
   // Initialise ambient light sensor
   opt4001_init();
-
   // Enable ALS interrupt
   LL_C2_EXTI_EnableIT_0_31(LL_EXTI_LINE_4); // _C2 for M4 core
   /* USER CODE END 2 */
@@ -148,6 +153,9 @@ int main(void)
 		lux = opt4001_Convert();
 		printf("lux: %.3f\n", lux);
 
+		// Signal data ready via HSEM1
+		HAL_HSEM_FastTake(HSEM_ID_1);   // Take
+		HAL_HSEM_Release(HSEM_ID_1, 0); // Release to interrupt to M7
 	}
 
 	HAL_Delay(100);
