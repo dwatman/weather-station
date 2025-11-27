@@ -143,7 +143,7 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(lvgl_timer, LVGLTimer, osPriorityNormal, 0, 1024);
   lvgl_timerHandle = osThreadCreate(osThread(lvgl_timer), NULL);
 
-  osThreadDef(eez_tick, EEZTick, osPriorityNormal, 0, 512);
+  osThreadDef(eez_tick, EEZTick, osPriorityBelowNormal, 0, 512);
   osThreadCreate(osThread(eez_tick), NULL);
   /* USER CODE END RTOS_THREADS */
 
@@ -178,7 +178,7 @@ void LVGLTimer(void const * argument)
     lv_timer_handler();
     osMutexRelease(lvgl_mutex);
 
-    osDelay(10);
+    osDelay(1);
   }
 }
 
@@ -192,14 +192,13 @@ void EEZTick(void const * argument)
     	// Invalidate DCache before reading shared data
     	SCB_InvalidateDCache_by_Addr((uint32_t*)sharedMem, sizeof(SharedData_t));
 
-    	osMutexWait(lvgl_mutex, osWaitForever);
-
     	set_lux(sharedMem->lux);
     	set_var_test_bar(tmp);
     	set_test(tmp);
     	tmp = (tmp+1) & 0xFF;
-        ui_tick();       // Update EEZ UI variables
 
+    	osMutexWait(lvgl_mutex, osWaitForever);
+        ui_tick();       // Update EEZ UI variables
         osMutexRelease(lvgl_mutex);
 
         osDelay(200);    // 5 Hz
