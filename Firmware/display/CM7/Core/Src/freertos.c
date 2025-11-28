@@ -192,6 +192,7 @@ void EEZTick(void const * argument)
 
     for (;;) {
 
+    	osMutexWait(lvgl_mutex, osWaitForever);
     	if (newdata) {
 			// Invalidate DCache before reading shared data
 			SCB_InvalidateDCache_by_Addr((uint32_t*)sharedMem, sizeof(SharedData_t));
@@ -222,7 +223,6 @@ void EEZTick(void const * argument)
     	set_test(tmp);
     	tmp = (tmp+1) & 0xFF;
 
-    	osMutexWait(lvgl_mutex, osWaitForever);
         ui_tick();       // Update EEZ UI variables
         osMutexRelease(lvgl_mutex);
 
