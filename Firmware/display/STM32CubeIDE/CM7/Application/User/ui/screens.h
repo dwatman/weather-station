@@ -18,6 +18,7 @@ typedef struct _objects_t {
     lv_obj_t *indoor_humidity_1;
     lv_obj_t *indoor_humidity_2;
     lv_obj_t *indoor_temp_2;
+    lv_obj_t *obj2;
 } objects_t;
 
 extern objects_t objects;

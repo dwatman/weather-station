@@ -143,7 +143,7 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(lvgl_timer, LVGLTimer, osPriorityNormal, 0, 1024);
   lvgl_timerHandle = osThreadCreate(osThread(lvgl_timer), NULL);
 
-  osThreadDef(eez_tick, EEZTick, osPriorityBelowNormal, 0, 512);
+  osThreadDef(eez_tick, EEZTick, osPriorityNormal, 0, 512);
   osThreadCreate(osThread(eez_tick), NULL);
   /* USER CODE END RTOS_THREADS */
 
