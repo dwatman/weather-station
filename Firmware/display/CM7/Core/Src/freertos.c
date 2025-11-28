@@ -188,6 +188,7 @@ void EEZTick(void const * argument)
 {
 	uint32_t tmp = 0;
 	SharedData_t *sharedMem = SHARED_DATA_PTR;
+	lv_color_t wifi_colour;
 
     for (;;) {
 
@@ -195,6 +196,7 @@ void EEZTick(void const * argument)
 			// Invalidate DCache before reading shared data
 			SCB_InvalidateDCache_by_Addr((uint32_t*)sharedMem, sizeof(SharedData_t));
 
+			set_time(sharedMem->time);
 			set_t1(sharedMem->t1);
 			set_t2(sharedMem->t2);
 			set_h1(sharedMem->h1);
@@ -202,6 +204,18 @@ void EEZTick(void const * argument)
 			set_lux(sharedMem->lux);
 			set_rssi(sharedMem->rssi);
 			HAL_GPIO_TogglePin(GPIOJ, GPIO_PIN_10); // User LED
+
+			if (tmp & 0x01) {
+				wifi_colour.red = 0xFF;
+				wifi_colour.green = 0;
+				wifi_colour.blue = 0;
+			}
+			else {
+				wifi_colour.red = 0;
+				wifi_colour.green = 0xFF;
+				wifi_colour.blue = 0;
+			}
+			set_wifi_colour(wifi_colour);
     	}
 
     	set_var_test_bar(tmp);

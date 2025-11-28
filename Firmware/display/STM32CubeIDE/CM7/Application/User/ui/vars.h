@@ -22,7 +22,9 @@ enum FlowGlobalVariables {
     FLOW_GLOBAL_VARIABLE_H1_STR = 4,
     FLOW_GLOBAL_VARIABLE_H2_STR = 5,
     FLOW_GLOBAL_VARIABLE_LUX_STR = 6,
-    FLOW_GLOBAL_VARIABLE_RSSI_STR = 7
+    FLOW_GLOBAL_VARIABLE_RSSI_STR = 7,
+    FLOW_GLOBAL_VARIABLE_TIME_STR = 8,
+    FLOW_GLOBAL_VARIABLE_AMPM_STR = 9
 };
 
 // Native global variables
@@ -43,6 +45,10 @@ extern const char *get_var_lux_str();
 extern void set_var_lux_str(const char *value);
 extern const char *get_var_rssi_str();
 extern void set_var_rssi_str(const char *value);
+extern const char *get_var_time_str();
+extern void set_var_time_str(const char *value);
+extern const char *get_var_ampm_str();
+extern void set_var_ampm_str(const char *value);
 
 
 #ifdef __cplusplus

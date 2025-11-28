@@ -137,6 +137,7 @@ int main(void)
   printf("\nStart\n");
 
   // Set initial data values
+  sharedMem->time = 0;
   sharedMem->t1 = 0.0f;
   sharedMem->t2 = 0.0f;
   sharedMem->h1 = 0.0f;

@@ -182,6 +182,7 @@ int main(void)
   ui_init();
   set_test(1);
 
+  set_time(0x0C12);
   set_t1(-12.3);
   set_t2(45.6);
   set_h1(24.6);

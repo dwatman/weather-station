@@ -2,6 +2,7 @@
 #define APPLICATION_USER_INCLUDE_SHARED_H_
 
 typedef struct {
+	uint32_t time;
     float t1;
     float t2;
     float h1;
