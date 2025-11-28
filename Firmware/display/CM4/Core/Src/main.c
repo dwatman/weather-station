@@ -136,6 +136,15 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   printf("\nStart\n");
 
+  // Set initial data values
+  sharedMem->t1 = 0.0f;
+  sharedMem->t2 = 0.0f;
+  sharedMem->h1 = 0.0f;
+  sharedMem->h2 = 0.0f;
+  sharedMem->lux = 0.0f;
+  sharedMem->rssi = 0;
+  sharedMem->status = 0;
+
   uint16_t backlight = 0;
   float lux = 0.0f;
   while (1)

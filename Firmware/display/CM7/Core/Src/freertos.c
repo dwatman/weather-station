@@ -49,6 +49,7 @@
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
 extern osMutexId lvgl_mutex;
+extern volatile uint32_t newdata;
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
 
@@ -189,10 +190,20 @@ void EEZTick(void const * argument)
 	SharedData_t *sharedMem = SHARED_DATA_PTR;
 
     for (;;) {
-    	// Invalidate DCache before reading shared data
-    	SCB_InvalidateDCache_by_Addr((uint32_t*)sharedMem, sizeof(SharedData_t));
 
-    	set_lux(sharedMem->lux);
+    	if (newdata) {
+			// Invalidate DCache before reading shared data
+			SCB_InvalidateDCache_by_Addr((uint32_t*)sharedMem, sizeof(SharedData_t));
+
+			set_t1(sharedMem->t1);
+			set_t2(sharedMem->t2);
+			set_h1(sharedMem->h1);
+			set_h2(sharedMem->h2);
+			set_lux(sharedMem->lux);
+			set_rssi(sharedMem->rssi);
+			HAL_GPIO_TogglePin(GPIOJ, GPIO_PIN_10); // User LED
+    	}
+
     	set_var_test_bar(tmp);
     	set_test(tmp);
     	tmp = (tmp+1) & 0xFF;

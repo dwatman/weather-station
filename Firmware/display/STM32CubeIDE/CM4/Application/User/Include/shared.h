@@ -8,6 +8,7 @@ typedef struct {
     float h2;
     float lux;
     int rssi;
+    uint32_t status;
 } SharedData_t;
 
 // Shared region in SRAM3 (0x30040000..)
