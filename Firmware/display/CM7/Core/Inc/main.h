@@ -99,8 +99,6 @@ void Error_Handler(void);
 #define D22_GPIO_Port GPIOH
 #define USB1_OVERCURRENT_Pin LL_GPIO_PIN_15
 #define USB1_OVERCURRENT_GPIO_Port GPIOC
-#define CTP_RST_Pin LL_GPIO_PIN_14
-#define CTP_RST_GPIO_Port GPIOC
 #define FMC_NBL0_Pin LL_GPIO_PIN_0
 #define FMC_NBL0_GPIO_Port GPIOE
 #define D27__IS42S32800G_DQ27_Pin LL_GPIO_PIN_3
@@ -143,9 +141,6 @@ void Error_Handler(void);
 #define USR_LED_GPIO_Port GPIOJ
 #define D7_Pin LL_GPIO_PIN_10
 #define D7_GPIO_Port GPIOE
-#define CTP_INT_Pin LL_GPIO_PIN_3
-#define CTP_INT_GPIO_Port GPIOH
-#define CTP_INT_EXTI_IRQn EXTI3_IRQn
 #define SDNWE_Pin LL_GPIO_PIN_5
 #define SDNWE_GPIO_Port GPIOH
 #define A7_Pin LL_GPIO_PIN_13

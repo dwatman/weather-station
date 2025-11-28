@@ -60,13 +60,14 @@ void MX_UART4_Init(void)
   /* USER CODE BEGIN UART4_Init 1 */
 
   /* USER CODE END UART4_Init 1 */
-  UART_InitStruct.PrescalerValue = LL_USART_PRESCALER_DIV1;
   UART_InitStruct.BaudRate = 115200;
   UART_InitStruct.DataWidth = LL_USART_DATAWIDTH_8B;
   UART_InitStruct.StopBits = LL_USART_STOPBITS_1;
   UART_InitStruct.Parity = LL_USART_PARITY_NONE;
   UART_InitStruct.TransferDirection = LL_USART_DIRECTION_TX;
   UART_InitStruct.OverSampling = LL_USART_OVERSAMPLING_16;
+  UART_InitStruct.PrescalerValue = LL_USART_PRESCALER_DIV1;
+
   LL_USART_Init(UART4, &UART_InitStruct);
   LL_USART_EnableFIFO(UART4);
   LL_USART_SetTXFIFOThreshold(UART4, LL_USART_FIFOTHRESHOLD_1_8);

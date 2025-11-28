@@ -43,7 +43,6 @@
 void MX_GPIO_Init(void)
 {
 
-  LL_EXTI_InitTypeDef EXTI_InitStruct = {0};
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
@@ -56,9 +55,6 @@ void MX_GPIO_Init(void)
   LL_AHB4_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_GPIOD);
   LL_AHB4_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_GPIOF);
   LL_AHB4_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_GPIOJ);
-
-  /**/
-  LL_GPIO_ResetOutputPin(CTP_RST_GPIO_Port, CTP_RST_Pin);
 
   /**/
   LL_GPIO_ResetOutputPin(USB1_EN_GPIO_Port, USB1_EN_Pin);
@@ -74,14 +70,6 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = LL_GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /**/
-  GPIO_InitStruct.Pin = CTP_RST_Pin;
-  GPIO_InitStruct.Mode = LL_GPIO_MODE_OUTPUT;
-  GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_LOW;
-  GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
-  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
-  LL_GPIO_Init(CTP_RST_GPIO_Port, &GPIO_InitStruct);
 
   /**/
   GPIO_InitStruct.Pin = MCO1_Pin;
@@ -115,28 +103,6 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(LCD_DISP_GPIO_Port, &GPIO_InitStruct);
-
-  /**/
-  LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTH, LL_SYSCFG_EXTI_LINE3);
-
-  /**/
-  EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_3;
-  EXTI_InitStruct.Line_32_63 = LL_EXTI_LINE_NONE;
-  EXTI_InitStruct.Line_64_95 = LL_EXTI_LINE_NONE;
-  EXTI_InitStruct.LineCommand = ENABLE;
-  EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
-  EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_FALLING;
-  LL_EXTI_Init(&EXTI_InitStruct);
-
-  /**/
-  LL_GPIO_SetPinPull(CTP_INT_GPIO_Port, CTP_INT_Pin, LL_GPIO_PULL_UP);
-
-  /**/
-  LL_GPIO_SetPinMode(CTP_INT_GPIO_Port, CTP_INT_Pin, LL_GPIO_MODE_INPUT);
-
-  /* EXTI interrupt init*/
-  NVIC_SetPriority(EXTI3_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),7, 0));
-  NVIC_EnableIRQ(EXTI3_IRQn);
 
 }
 
