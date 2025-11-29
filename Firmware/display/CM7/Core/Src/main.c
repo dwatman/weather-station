@@ -20,6 +20,7 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "crc.h"
+#include "dma.h"
 #include "dma2d.h"
 #include "dsihost.h"
 #include "jpeg.h"
@@ -150,6 +151,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_MDMA_Init();
+  MX_DMA_Init();
   MX_LTDC_Init();
   MX_DMA2D_Init();
   MX_CRC_Init();
