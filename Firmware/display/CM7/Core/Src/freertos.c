@@ -205,7 +205,7 @@ void EEZTick(void const * argument)
 			set_h2(sharedMem->h2);
 			set_lux(sharedMem->lux);
 			set_rssi(sharedMem->rssi);
-			HAL_GPIO_TogglePin(GPIOJ, GPIO_PIN_10); // User LED
+			//HAL_GPIO_TogglePin(GPIOJ, GPIO_PIN_10); // User LED
 
 			if (sharedMem->status &0x01) {
 				wifi_colour.red = 0;

@@ -28,6 +28,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include "circbuf.h"
 #include "opt4001.h"
 #include "shared.h"
 /* USER CODE END Includes */
@@ -56,6 +57,7 @@
 /* USER CODE BEGIN PV */
 extern volatile uint8_t opt4001_data[4];
 extern volatile uint8_t opt4001_newdata;
+extern CircularBuffer_t tx1Buf;
 
 SharedData_t *sharedMem = SHARED_DATA_PTR;
 /* USER CODE END PV */
@@ -148,6 +150,23 @@ int main(void)
   sharedMem->rssi = 0;
   sharedMem->status = 0;
 
+  printfCircBuf(&tx1Buf, "\r\n");
+  //printfCircBuf(&tx1Buf, "\r\nATE0\r\n"); // Set echo off
+  HAL_Delay(5000);
+  //printfCircBuf(&tx1Buf, "\r\nAT+CPWROFF\r\n"); // Reboot the WiFi module
+  //HAL_Delay(5000);
+
+  printfCircBuf(&tx1Buf, "AT&D0\r\n"); // Ignore DTR line
+  HAL_Delay(100);
+  printfCircBuf(&tx1Buf, "AT&S2\r\n"); // Assert DSR line when connected
+  HAL_Delay(100);
+  printfCircBuf(&tx1Buf, "AT+UDWS=3,1\r\n"); // Enable WiFi watchdog
+  HAL_Delay(1000);
+  printfCircBuf(&tx1Buf, "AT+UWSSTAT=3\r\n"); // Get WiFi connection status
+  HAL_Delay(1000);
+  printfCircBuf(&tx1Buf, "AT+UWSSTAT=6\r\n"); // Get WiFi RSSI
+  HAL_Delay(1000);
+
   uint16_t backlight = 0;
   float lux = 0.0f;
   while (1)
@@ -174,7 +193,8 @@ int main(void)
 		HAL_HSEM_Release(HSEM_ID_1, 0); // Release to interrupt to M7
 	}
 
-	HAL_Delay(100);
+	printfCircBuf(&tx1Buf, "AT+UWSSTAT=6\r\n"); // Get WiFi RSSI
+	HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

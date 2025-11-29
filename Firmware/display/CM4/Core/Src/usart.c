@@ -22,7 +22,8 @@
 
 /* USER CODE BEGIN 0 */
 #include "circbuf.h"
-static CircularBuffer_t txBuf;
+CircularBuffer_t tx1Buf;
+static CircularBuffer_t tx4Buf;
 /* USER CODE END 0 */
 
 /* UART4 init function */
@@ -85,7 +86,7 @@ void MX_UART4_Init(void)
   {
   }
   /* USER CODE BEGIN UART4_Init 2 */
-  initCircBuffer(&txBuf);
+  initCircBuffer(&tx4Buf);
   /* USER CODE END UART4_Init 2 */
 
 }
@@ -173,36 +174,53 @@ void MX_USART1_UART_Init(void)
   {
   }
   /* USER CODE BEGIN USART1_Init 2 */
-
+  initCircBuffer(&tx1Buf);
   /* USER CODE END USART1_Init 2 */
 
 }
 
 /* USER CODE BEGIN 1 */
+void USART1_ISR(void) {
+	uint8_t ch;
+
+	// Check TX FIFO threshold interrupt
+	if (LL_USART_IsActiveFlag_TXFE(USART1)) {
+		// Keep filling FIFO until full or buffer empty
+		while (LL_USART_IsActiveFlag_TXE_TXFNF(USART1) && !isCircBufEmpty(&tx1Buf)) {
+			if (readFromCircBuf(&tx1Buf, &ch))
+				LL_USART_TransmitData8(USART1, ch);
+		}
+
+		// Disable interrupt if buffer is empty
+		if (isCircBufEmpty(&tx1Buf))
+			LL_USART_DisableIT_TXFE(USART1);
+	}
+}
+
 void UART4_ISR(void) {
 	uint8_t ch;
 
 	// Check TX FIFO threshold interrupt
 	if (LL_USART_IsActiveFlag_TXFE(UART4)) {
 		// Keep filling FIFO until full or buffer empty
-		while (LL_USART_IsActiveFlag_TXE_TXFNF(UART4) && !isCircBufEmpty(&txBuf)) {
-			if (readFromCircBuf(&txBuf, &ch))
+		while (LL_USART_IsActiveFlag_TXE_TXFNF(UART4) && !isCircBufEmpty(&tx4Buf)) {
+			if (readFromCircBuf(&tx4Buf, &ch))
 				LL_USART_TransmitData8(UART4, ch);
 		}
 
 		// Disable interrupt if buffer is empty
-		if (isCircBufEmpty(&txBuf))
+		if (isCircBufEmpty(&tx4Buf))
 			LL_USART_DisableIT_TXFE(UART4);
 	}
 }
 
-// Redirect printf
+// Redirect printf tu UART4
 int _write(int file, char *ptr, int len) {
 	(void)file;
-	int written = (int)writeToCircBuf(&txBuf, (uint8_t *)ptr, len);
+	int written = (int)writeToCircBuf(&tx4Buf, (uint8_t *)ptr, len);
 
 	// Make sure interrupt is enabled if there is data to send
-	if (!isCircBufEmpty(&txBuf))
+	if (!isCircBufEmpty(&tx4Buf))
 		LL_USART_EnableIT_TXFE(UART4);
 
 	return written;

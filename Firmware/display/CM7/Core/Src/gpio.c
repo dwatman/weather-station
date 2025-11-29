@@ -60,7 +60,7 @@ void MX_GPIO_Init(void)
   LL_GPIO_ResetOutputPin(USB1_EN_GPIO_Port, USB1_EN_Pin);
 
   /**/
-  LL_GPIO_ResetOutputPin(USR_LED_GPIO_Port, USR_LED_Pin);
+  LL_GPIO_SetOutputPin(USR_LED_GPIO_Port, USR_LED_Pin);
 
   /**/
   LL_GPIO_SetOutputPin(LCD_DISP_GPIO_Port, LCD_DISP_Pin);
