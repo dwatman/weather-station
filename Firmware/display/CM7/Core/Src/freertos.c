@@ -193,6 +193,7 @@ void EEZTick(void const * argument)
     for (;;) {
 
     	osMutexWait(lvgl_mutex, osWaitForever);
+
     	if (newdata) {
 			// Invalidate DCache before reading shared data
 			SCB_InvalidateDCache_by_Addr((uint32_t*)sharedMem, sizeof(SharedData_t));
@@ -206,14 +207,14 @@ void EEZTick(void const * argument)
 			set_rssi(sharedMem->rssi);
 			HAL_GPIO_TogglePin(GPIOJ, GPIO_PIN_10); // User LED
 
-			if (tmp & 0x01) {
-				wifi_colour.red = 0xFF;
-				wifi_colour.green = 0;
+			if (sharedMem->status &0x01) {
+				wifi_colour.red = 0;
+				wifi_colour.green = 0xFF;
 				wifi_colour.blue = 0;
 			}
 			else {
-				wifi_colour.red = 0;
-				wifi_colour.green = 0xFF;
+				wifi_colour.red = 0xFF;
+				wifi_colour.green = 0;
 				wifi_colour.blue = 0;
 			}
 			set_wifi_colour(wifi_colour);
@@ -226,7 +227,7 @@ void EEZTick(void const * argument)
         ui_tick();       // Update EEZ UI variables
         osMutexRelease(lvgl_mutex);
 
-        osDelay(200);    // 5 Hz
+        osDelay(500);    // 2 Hz
         //HAL_GPIO_TogglePin(GPIOJ, GPIO_PIN_10); // User LED
     }
 }

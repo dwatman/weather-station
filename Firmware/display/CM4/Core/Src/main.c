@@ -165,6 +165,8 @@ int main(void)
 
 		sharedMem->lux = lux;
 
+		sharedMem->status ^= 1;
+
 		// Signal data ready via HSEM1
 		HAL_HSEM_FastTake(HSEM_ID_1);   // Take
 		HAL_HSEM_Release(HSEM_ID_1, 0); // Release to interrupt to M7

@@ -157,7 +157,7 @@ void set_rssi(int val) {
 }
 
 void set_wifi_colour(lv_color_t new_colour) {
-    lv_obj_t *obj = objects.obj2;
+    lv_obj_t *obj = objects.obj1;
 
     // Change colour
     lv_obj_set_style_image_recolor(obj, new_colour, LV_PART_MAIN | LV_STATE_DEFAULT);
