@@ -40,8 +40,6 @@ void MX_UART4_Init(void);
 void MX_USART1_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-void USART1_ISR(void);
-void UART4_ISR(void);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

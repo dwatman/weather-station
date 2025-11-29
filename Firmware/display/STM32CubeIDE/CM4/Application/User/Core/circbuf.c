@@ -4,12 +4,8 @@
  * <head> points to the next empty position
  * <tail> points to the oldest valid data
  */
-#include <stdio.h>
-#include <stdarg.h>
-
 #include "circbuf.h"
 #include "stm32h7xx.h" // for __get_PRIMASK() and __set_PRIMASK()
-#include "stm32h7xx_ll_usart.h"
 
 // Enter critical section, return previous PRIMASK
 static inline uint32_t enterCritical(void) {
@@ -125,29 +121,6 @@ int readFromCircBuf(CircularBuffer_t *buf, uint8_t *ch) {
 	exitCritical(primask);
 
 	return success;
-}
-
-uint32_t printfCircBuf(CircularBuffer_t *buf, const char *format, ...) {
-    char tempBuf[PRINT_BUF_LENGTH];
-    va_list args;
-
-    va_start(args, format);
-    int len = vsnprintf(tempBuf, sizeof(tempBuf), format, args);
-    va_end(args);
-
-    if (len < 0)
-        return 0;  // Formatting error
-
-    // Truncate if formatted string exceeds buffer size
-    uint32_t toWrite = (len < PRINT_BUF_LENGTH) ? len : PRINT_BUF_LENGTH - 1;
-
-    uint32_t written = writeToCircBuf(buf, (const uint8_t *)tempBuf, toWrite);
-
-	// Make sure interrupt is enabled if there is data to send
-	if (!isCircBufEmpty(buf))
-		LL_USART_EnableIT_TXFE(USART1);
-
-	return written;
 }
 
 /*  ----------------------------------------------------------------------

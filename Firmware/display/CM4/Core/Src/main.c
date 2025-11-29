@@ -29,6 +29,7 @@
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include "circbuf.h"
+#include "usart_util.h"
 #include "opt4001.h"
 #include "shared.h"
 /* USER CODE END Includes */
@@ -134,6 +135,9 @@ int main(void)
   opt4001_init();
   // Enable ALS interrupt
   LL_C2_EXTI_EnableIT_0_31(LL_EXTI_LINE_4); // _C2 for M4 core
+
+  initUsart1();
+  initUsart4();
   /* USER CODE END 2 */
 
   /* Infinite loop */

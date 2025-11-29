@@ -22,7 +22,9 @@
 #include "stm32h7xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "usart.h"
+#include <stdio.h>
+#include "circbuf.h"
+#include "usart_util.h"
 #include "opt4001.h"
 /* USER CODE END Includes */
 
@@ -43,7 +45,9 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+extern CircularBuffer_t rx1Buf;
+extern volatile uint32_t RxNewData;
+extern volatile uint32_t RxOverflow;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -226,7 +230,30 @@ void EXTI4_IRQHandler(void)
 void DMA1_Stream0_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Stream0_IRQn 0 */
+	// Transfer Complete interrupt
+	if (LL_DMA_IsActiveFlag_TC0(DMA1)) {
+		LL_DMA_ClearFlag_TC0(DMA1);
 
+		// Compute current write position
+		uint32_t pos = (uint32_t)(BUF_LENGTH - LL_DMA_GetDataLength(DMA1, LL_DMA_STREAM_0)) & BUF_MASK;
+		int ovf = advanceCircBufByDMApos(&rx1Buf, pos);
+
+		RxNewData = (inCircBuf(&rx1Buf) != 0U);
+		RxOverflow |= (uint8_t)ovf;
+		printf("TC0\n");
+	}
+
+	// Transfer Half Complete interrupt
+	if (LL_DMA_IsActiveFlag_HT0(DMA1)) {
+		LL_DMA_ClearFlag_HT0(DMA1);
+
+		uint32_t pos = (uint32_t)(BUF_LENGTH - LL_DMA_GetDataLength(DMA1, LL_DMA_STREAM_0)) & BUF_MASK;
+		int ovf = advanceCircBufByDMApos(&rx1Buf, pos);
+
+		RxNewData = (inCircBuf(&rx1Buf) != 0U);
+		RxOverflow |= (uint8_t)ovf;
+		printf("HT0\n");
+	}
   /* USER CODE END DMA1_Stream0_IRQn 0 */
   /* USER CODE BEGIN DMA1_Stream0_IRQn 1 */
 

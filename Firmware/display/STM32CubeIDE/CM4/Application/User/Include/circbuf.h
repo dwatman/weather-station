@@ -22,7 +22,6 @@ uint32_t inCircBuf(const CircularBuffer_t *buf);
 uint32_t writeToCircBuf(CircularBuffer_t *buf, const uint8_t *str, uint32_t length);
 uint8_t peekCircBuf(const CircularBuffer_t *buf, int position);
 int readFromCircBuf(CircularBuffer_t *buf, uint8_t *ch);
-uint32_t printfCircBuf(CircularBuffer_t *buf, const char *format, ...);
 int advanceCircBufByDMApos(CircularBuffer_t *buf, uint32_t dma_write_pos);
 
 #endif
