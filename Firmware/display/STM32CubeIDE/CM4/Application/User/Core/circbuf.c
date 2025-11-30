@@ -27,6 +27,13 @@ void initCircBuffer(CircularBuffer_t *buf) {
 		buf->data[i] = 0;
 }
 
+// Ignore any stored data by moving the tail up to the head
+void emptyCircBuffer(CircularBuffer_t *buf) {
+	uint32_t primask = enterCritical();
+	buf->tail = buf->head;
+	exitCritical(primask);
+}
+
 // Check if circular buffer is full
 bool isCircBufFull(const CircularBuffer_t *buf) {
 	uint32_t primask = enterCritical();

@@ -3,7 +3,7 @@
 #include "opt4001.h"
 
 volatile uint8_t opt4001_data[4];
-volatile uint8_t opt4001_newdata = 0;
+volatile uint32_t opt4001_newdata = 0;
 
 // Write a variable number of bytes (blocking)
 static int SendBytes(uint8_t addr, const uint8_t *data, uint8_t len) {
@@ -13,7 +13,7 @@ static int SendBytes(uint8_t addr, const uint8_t *data, uint8_t len) {
 	// Start transmission
 	LL_I2C_HandleTransfer(I2C4, addr, LL_I2C_ADDRSLAVE_7BIT, len, LL_I2C_MODE_AUTOEND, LL_I2C_GENERATE_START_WRITE);
 
-	for (uint8_t i=0; i<len; i++) {
+	for (uint32_t i=0; i<len; i++) {
 		// Wait for TX ready or detect error
 		while (!LL_I2C_IsActiveFlag_TXIS(I2C4)) {
 
@@ -120,7 +120,7 @@ float opt4001_Convert(void) {
 
 // Handle interrupts for the read process
 void opt4001_ISR(void) {
-	static uint8_t idx = 0;
+	static uint32_t idx = 0;
 
 	// RX data ready
 	if (LL_I2C_IsActiveFlag_RXNE(I2C4)) {

@@ -72,6 +72,16 @@ void initUsart4(void) {
 
 }
 
+// Ignore any stored data by moving the tail up to the head
+void emptyRx1Buffer(void) {
+	emptyCircBuffer(&rx1Buf);
+
+	// Clear flags
+	RxOverflow = 0;
+	RxBurstEnd = 0;
+	RxNewData = 0;
+}
+
 uint32_t printfCircBuf(CircularBuffer_t *buf, const char *format, ...) {
     char tempBuf[PRINT_BUF_LENGTH];
     va_list args;
@@ -126,7 +136,7 @@ void USART1_ISR(void) {
 		RxBurstEnd = 1;
 		RxOverflow |= ovf;
 
-		printf("IDLE\n");
+		//printf("IDLE\n");
 	}
 }
 

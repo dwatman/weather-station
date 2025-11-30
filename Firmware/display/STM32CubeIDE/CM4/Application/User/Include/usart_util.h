@@ -7,6 +7,8 @@
 void initUsart1(void);
 void initUsart4(void);
 
+void emptyRx1Buffer(void);
+
 uint32_t printfCircBuf(CircularBuffer_t *buf, const char *format, ...);
 
 void USART1_ISR(void);

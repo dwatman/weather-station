@@ -56,8 +56,9 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+extern volatile uint32_t flag_1sec;
 extern volatile uint8_t opt4001_data[4];
-extern volatile uint8_t opt4001_newdata;
+extern volatile uint32_t opt4001_newdata;
 extern CircularBuffer_t tx1Buf;
 
 SharedData_t *sharedMem = SHARED_DATA_PTR;

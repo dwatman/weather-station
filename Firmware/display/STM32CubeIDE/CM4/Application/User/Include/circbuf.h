@@ -16,6 +16,7 @@ typedef struct {
 } CircularBuffer_t;
 
 void initCircBuffer(CircularBuffer_t *buf);
+void emptyCircBuffer(CircularBuffer_t *buf);
 bool isCircBufFull(const CircularBuffer_t *buf);
 bool isCircBufEmpty(const CircularBuffer_t *buf);
 uint32_t inCircBuf(const CircularBuffer_t *buf);
