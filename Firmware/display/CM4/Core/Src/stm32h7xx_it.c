@@ -45,6 +45,9 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
+volatile uint32_t flag_1sec = 0;
+volatile uint32_t rxTimeout = 0;
+
 extern CircularBuffer_t rx1Buf;
 extern volatile uint32_t RxNewData;
 extern volatile uint32_t RxOverflow;
@@ -189,7 +192,15 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
+	static uint32_t count = 0;
 
+	// 1 second tick
+	if (count % 1000 == 0)
+		flag_1sec = 1;
+	count++;
+
+	// Decrement timeout towards zero if set
+	if (rxTimeout) rxTimeout--;
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
@@ -240,7 +251,7 @@ void DMA1_Stream0_IRQHandler(void)
 
 		RxNewData = (inCircBuf(&rx1Buf) != 0U);
 		RxOverflow |= (uint8_t)ovf;
-		printf("TC0\n");
+		//printf("TC0\n");
 	}
 
 	// Transfer Half Complete interrupt
@@ -252,7 +263,7 @@ void DMA1_Stream0_IRQHandler(void)
 
 		RxNewData = (inCircBuf(&rx1Buf) != 0U);
 		RxOverflow |= (uint8_t)ovf;
-		printf("HT0\n");
+		//printf("HT0\n");
 	}
   /* USER CODE END DMA1_Stream0_IRQn 0 */
   /* USER CODE BEGIN DMA1_Stream0_IRQn 1 */

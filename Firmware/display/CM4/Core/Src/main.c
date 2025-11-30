@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include "circbuf.h"
 #include "usart_util.h"
+#include "network.h"
 #include "opt4001.h"
 #include "shared.h"
 /* USER CODE END Includes */
@@ -60,6 +61,12 @@ extern volatile uint32_t flag_1sec;
 extern volatile uint8_t opt4001_data[4];
 extern volatile uint32_t opt4001_newdata;
 extern CircularBuffer_t tx1Buf;
+
+extern volatile uint32_t RxNewData;
+uint32_t newRx1Message = 0;
+//extern volatile uint32_t RxBurstEnd;
+
+NinaMessage_t NinaMessage;
 
 SharedData_t *sharedMem = SHARED_DATA_PTR;
 /* USER CODE END PV */
@@ -155,39 +162,33 @@ int main(void)
   sharedMem->rssi = 0;
   sharedMem->status = 0;
 
-  printfCircBuf(&tx1Buf, "\r\n");
-  //printfCircBuf(&tx1Buf, "\r\nATE0\r\n"); // Set echo off
+  //printfCircBuf(&tx1Buf, "\r\n");
   HAL_Delay(5000);
   //printfCircBuf(&tx1Buf, "\r\nAT+CPWROFF\r\n"); // Reboot the WiFi module
   //HAL_Delay(5000);
 
+  printfCircBuf(&tx1Buf, "\r\nATE0\r\n"); // Set echo off
+  HAL_Delay(100);
   printfCircBuf(&tx1Buf, "AT&D0\r\n"); // Ignore DTR line
   HAL_Delay(100);
   printfCircBuf(&tx1Buf, "AT&S2\r\n"); // Assert DSR line when connected
   HAL_Delay(100);
   printfCircBuf(&tx1Buf, "AT+UDWS=3,1\r\n"); // Enable WiFi watchdog
-  HAL_Delay(1000);
+  HAL_Delay(100);
+
+  emptyRx1Buffer(); // Ignore any buffered data up to now
   printfCircBuf(&tx1Buf, "AT+UWSSTAT=3\r\n"); // Get WiFi connection status
-  HAL_Delay(1000);
-  printfCircBuf(&tx1Buf, "AT+UWSSTAT=6\r\n"); // Get WiFi RSSI
-  HAL_Delay(1000);
 
   uint16_t backlight = 0;
   float lux = 0.0f;
   while (1)
   {
-	if (backlight < 500)
-		backlight++;
-	else
-		backlight = 0;
-
-	LL_TIM_OC_SetCompareCH1(TIM15, backlight);
-
+	// New ambient light data
 	if (opt4001_newdata) {
 		opt4001_newdata = 0;
 
 		lux = opt4001_Convert();
-		printf("lux: %.3f\n", lux);
+		//printf("lux: %.3f\n", lux);
 
 		sharedMem->lux = lux;
 
@@ -198,8 +199,30 @@ int main(void)
 		HAL_HSEM_Release(HSEM_ID_1, 0); // Release to interrupt to M7
 	}
 
-	printfCircBuf(&tx1Buf, "AT+UWSSTAT=6\r\n"); // Get WiFi RSSI
-	HAL_Delay(1000);
+	// End of RX data burst on USART1
+	if (RxNewData) {
+		newRx1Message = getNinaMsg(&NinaMessage);
+
+		if (newRx1Message) processNinaMsg(&NinaMessage);
+
+		// No full message in the buffer, don't check again until new data arrives
+		if (newRx1Message == 0)
+			RxNewData = 0;
+	}
+
+	// 1 second tick
+	if (flag_1sec) {
+		flag_1sec = 0;
+
+		if (backlight < 500)
+			backlight++;
+		else
+			backlight = 0;
+
+		LL_TIM_OC_SetCompareCH1(TIM15, backlight);
+
+		printfCircBuf(&tx1Buf, "AT+UWSSTAT=6\r\n"); // Get WiFi RSSI
+	}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
