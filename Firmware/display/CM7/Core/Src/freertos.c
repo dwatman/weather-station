@@ -184,9 +184,7 @@ void LVGLTimer(void const * argument)
 }
 
 // For data update
-void EEZTick(void const * argument)
-{
-	uint32_t tmp = 0;
+void EEZTick(void const * argument) {
 	SharedData_t *sharedMem = SHARED_DATA_PTR;
 	lv_color_t wifi_colour;
 
@@ -203,8 +201,14 @@ void EEZTick(void const * argument)
 			set_t2(sharedMem->t2);
 			set_h1(sharedMem->h1);
 			set_h2(sharedMem->h2);
+			set_press(sharedMem->pres);
 			set_lux(sharedMem->lux);
 			set_rssi(sharedMem->rssi);
+			set_bl(sharedMem->bl);
+			set_var_soil1_int(sharedMem->soil1);
+			set_var_soil2_int(sharedMem->soil2);
+			set_var_soil3_int(sharedMem->soil3);
+			set_var_soil4_int(sharedMem->soil4);
 			//HAL_GPIO_TogglePin(GPIOJ, GPIO_PIN_10); // User LED
 
 			if (sharedMem->status &0x01) {
@@ -219,10 +223,6 @@ void EEZTick(void const * argument)
 			}
 			set_wifi_colour(wifi_colour);
     	}
-
-    	set_var_test_bar(tmp);
-    	set_test(tmp);
-    	tmp = (tmp+1) & 0xFF;
 
         ui_tick();       // Update EEZ UI variables
         osMutexRelease(lvgl_mutex);

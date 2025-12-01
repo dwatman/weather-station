@@ -180,15 +180,14 @@ int main(void)
   //lv_demo_widgets();
   //lv_demo_music();
   //lv_demo_benchmark();
-  set_test(0);
   ui_init();
-  set_test(1);
 
   set_time(0x0C12);
   set_t1(-12.3);
   set_t2(45.6);
   set_h1(24.6);
   set_h2(89.0);
+  set_press(1234.5);
   set_lux(12345.6);
   set_rssi(-99);
 

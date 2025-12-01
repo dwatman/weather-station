@@ -565,7 +565,7 @@
     #define LV_THEME_DEFAULT_DARK 0
 
     /*1: Enable grow on press*/
-    #define LV_THEME_DEFAULT_GROW 1
+    #define LV_THEME_DEFAULT_GROW 0
 
     /*Default transition time in [ms]*/
     #define LV_THEME_DEFAULT_TRANSITION_TIME 80
@@ -582,10 +582,10 @@
  *==================*/
 
 /*A layout similar to Flexbox in CSS.*/
-#define LV_USE_FLEX 1
+#define LV_USE_FLEX 0
 
 /*A layout similar to Grid in CSS.*/
-#define LV_USE_GRID 1
+#define LV_USE_GRID 0
 
 /*====================
  * 3RD PARTS LIBRARIES

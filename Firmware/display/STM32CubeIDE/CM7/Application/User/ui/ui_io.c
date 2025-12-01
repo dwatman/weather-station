@@ -13,26 +13,30 @@ char t1_str[16] = { 0 };
 char t2_str[16] = { 0 };
 char h1_str[16] = { 0 };
 char h2_str[16] = { 0 };
+char press_str[16] = { 0 };
 char lux_str[16] = { 0 };
+char bl_str[16] = { 0 };
 char rssi_str[8] = { 0 };
-int32_t test_bar;
+int32_t soil1_int;
+int32_t soil2_int;
+int32_t soil3_int;
+int32_t soil4_int;
 
 // Fixed EEZ Studio functions
-const char *get_var_test_int() { return test_int; }
 const char *get_var_time_str() { return time_str; }
 const char *get_var_ampm_str() { return ampm_str; }
 const char *get_var_t1_str() { return t1_str; }
 const char *get_var_t2_str() { return t2_str; }
 const char *get_var_h1_str() { return h1_str; }
 const char *get_var_h2_str() { return h2_str; }
+const char *get_var_press_str() { return press_str; }
 const char *get_var_lux_str() { return lux_str; }
+const char *get_var_bl_str() { return bl_str; }
 const char *get_var_rssi_str() { return rssi_str; }
-int32_t get_var_test_bar() { return test_bar; }
-
-void set_var_test_int(const char *value) {
-    strncpy(test_int, value, sizeof(test_int) / sizeof(char));
-    test_int[sizeof(test_int) / sizeof(char) - 1] = 0;
-}
+int32_t get_var_soil1_int() { return soil1_int; }
+int32_t get_var_soil2_int() { return soil2_int; }
+int32_t get_var_soil3_int() { return soil3_int; }
+int32_t get_var_soil4_int() { return soil4_int; }
 
 void set_var_time_str(const char *value) {
     strncpy(time_str, value, sizeof(time_str) / sizeof(char));
@@ -64,9 +68,19 @@ void set_var_h2_str(const char *value) {
     h2_str[sizeof(h2_str) / sizeof(char) - 1] = 0;
 }
 
+void set_var_press_str(const char *value) {
+    strncpy(press_str, value, sizeof(press_str) / sizeof(char));
+    press_str[sizeof(press_str) / sizeof(char) - 1] = 0;
+}
+
 void set_var_lux_str(const char *value) {
     strncpy(lux_str, value, sizeof(lux_str) / sizeof(char));
     lux_str[sizeof(lux_str) / sizeof(char) - 1] = 0;
+}
+
+void set_var_bl_str(const char *value) {
+    strncpy(bl_str, value, sizeof(bl_str) / sizeof(char));
+    bl_str[sizeof(bl_str) / sizeof(char) - 1] = 0;
 }
 
 void set_var_rssi_str(const char *value) {
@@ -74,18 +88,23 @@ void set_var_rssi_str(const char *value) {
     rssi_str[sizeof(rssi_str) / sizeof(char) - 1] = 0;
 }
 
-void set_var_test_bar(int32_t value) {
-    test_bar = value;
+void set_var_soil1_int(int32_t value) {
+	soil1_int = value;
+}
+
+void set_var_soil2_int(int32_t value) {
+	soil2_int = value;
+}
+
+void set_var_soil3_int(int32_t value) {
+	soil3_int = value;
+}
+
+void set_var_soil4_int(int32_t value) {
+	soil4_int = value;
 }
 
 // Functions to create formatted text for the labels
-
-void set_test(int value) {
-	char tmp[32];
-
-	snprintf(tmp, 32, "Test %i", value);
-	set_var_test_int(tmp);
-}
 
 void set_time(uint32_t val) {
 	char tmp[8];
@@ -142,11 +161,25 @@ void set_h2(float val) {
 	set_var_h2_str(tmp);
 }
 
+void set_press(float val) {
+	char tmp[16];
+
+	snprintf(tmp, 16, "%.1f", val);
+	set_var_press_str(tmp);
+}
+
 void set_lux(float val) {
 	char tmp[16];
 
 	snprintf(tmp, 16, "%.1f", val);
 	set_var_lux_str(tmp);
+}
+
+void set_bl(int val) {
+	char tmp[8];
+
+	snprintf(tmp, 8, "%i", val);
+	set_var_bl_str(tmp);
 }
 
 void set_rssi(int val) {
@@ -157,7 +190,7 @@ void set_rssi(int val) {
 }
 
 void set_wifi_colour(lv_color_t new_colour) {
-    lv_obj_t *obj = objects.obj1;
+    lv_obj_t *obj = objects.img_wifi;
 
     // Change colour
     lv_obj_set_style_image_recolor(obj, new_colour, LV_PART_MAIN | LV_STATE_DEFAULT);

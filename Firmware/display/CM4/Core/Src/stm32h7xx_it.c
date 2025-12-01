@@ -45,7 +45,9 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-volatile uint32_t flag_1sec = 0;
+volatile uint32_t flag_status;
+volatile uint32_t flag_update;
+
 volatile uint32_t rxTimeout = 0;
 
 extern CircularBuffer_t rx1Buf;
@@ -195,8 +197,8 @@ void SysTick_Handler(void)
 	static uint32_t count = 0;
 
 	// 1 second tick
-	if (count % 1000 == 0)
-		flag_1sec = 1;
+	if (count % 5000 == 0) flag_status = 1;
+	if (count % 500 == 0) flag_update = 1;
 	count++;
 
 	// Decrement timeout towards zero if set

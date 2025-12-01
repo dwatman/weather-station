@@ -57,7 +57,9 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-extern volatile uint32_t flag_1sec;
+extern volatile uint32_t flag_status;
+extern volatile uint32_t flag_update;
+
 extern volatile uint8_t opt4001_data[4];
 extern volatile uint32_t opt4001_newdata;
 extern CircularBuffer_t tx1Buf;
@@ -154,12 +156,17 @@ int main(void)
 
   // Set initial data values
   sharedMem->time = 0;
-  sharedMem->t1 = 0.0f;
-  sharedMem->t2 = 0.0f;
+  sharedMem->t1 = -10.0f;
+  sharedMem->t2 = -20.0f;
   sharedMem->h1 = 0.0f;
   sharedMem->h2 = 0.0f;
+  sharedMem->pres = 1000.0f;
   sharedMem->lux = 0.0f;
   sharedMem->rssi = 0;
+  sharedMem->soil1 = 0;
+  sharedMem->soil2 = 20;
+  sharedMem->soil3 = 40;
+  sharedMem->soil4 = 60;
   sharedMem->status = 0;
 
   //printfCircBuf(&tx1Buf, "\r\n");
@@ -192,8 +199,6 @@ int main(void)
 
 		sharedMem->lux = lux;
 
-		sharedMem->status ^= 1;
-
 		// Signal data ready via HSEM1
 		HAL_HSEM_FastTake(HSEM_ID_1);   // Take
 		HAL_HSEM_Release(HSEM_ID_1, 0); // Release to interrupt to M7
@@ -210,16 +215,39 @@ int main(void)
 			RxNewData = 0;
 	}
 
-	// 1 second tick
-	if (flag_1sec) {
-		flag_1sec = 0;
+	// Update data
+	if (flag_update) {
+		flag_update = 0;
 
 		if (backlight < 500)
 			backlight++;
 		else
 			backlight = 0;
 
+		sharedMem->bl = backlight;
 		LL_TIM_OC_SetCompareCH1(TIM15, backlight);
+
+
+		// move variables for testing
+		sharedMem->time += 0x0101;
+		sharedMem->t1 += 0.1f;
+		sharedMem->t2 += 0.2f;
+		sharedMem->h1 = (sharedMem->h1 == 100) ? 0 : sharedMem->h1 + 0.2;
+		sharedMem->h2 = (sharedMem->h2 == 100) ? 0 : sharedMem->h2 + 0.3;
+		sharedMem->pres += 0.3f;
+		sharedMem->soil1 = (sharedMem->soil1 == 100) ? 0 : sharedMem->soil1 + 1;
+		sharedMem->soil2 = (sharedMem->soil2 == 100) ? 0 : sharedMem->soil2 + 1;
+		sharedMem->soil3 = (sharedMem->soil3 == 100) ? 0 : sharedMem->soil3 + 1;
+		sharedMem->soil4 = (sharedMem->soil4 == 100) ? 0 : sharedMem->soil4 + 1;
+		sharedMem->status ^= 1;
+
+		sharedMem->time &= 0x0F3F;
+		//printfCircBuf(&tx1Buf, "AT+UWSSTAT=6\r\n"); // Get WiFi RSSI
+	}
+
+	// Check status
+	if (flag_status) {
+		flag_status = 0;
 
 		printfCircBuf(&tx1Buf, "AT+UWSSTAT=6\r\n"); // Get WiFi RSSI
 	}

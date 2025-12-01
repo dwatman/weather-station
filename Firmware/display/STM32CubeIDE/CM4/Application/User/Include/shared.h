@@ -7,8 +7,14 @@ typedef struct {
     float t2;
     float h1;
     float h2;
+    float pres;
     float lux;
+    int bl;
     int rssi;
+    int soil1;
+    int soil2;
+    int soil3;
+    int soil4;
     uint32_t status;
 } SharedData_t;
 
