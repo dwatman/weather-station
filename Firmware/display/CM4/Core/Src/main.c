@@ -185,6 +185,15 @@ int main(void)
 
   emptyRx1Buffer(); // Ignore any buffered data up to now
   printfCircBuf(&tx1Buf, "AT+UWSSTAT=3\r\n"); // Get WiFi connection status
+  HAL_Delay(100);
+
+  //printfCircBuf(&tx1Buf, "AT+UDLP?\r\n"); // List peers
+  printfCircBuf(&tx1Buf, "AT+UDCPC=1\r\n"); // Close connection 1
+  HAL_Delay(100);
+
+  // Connect to MQTT
+  printfCircBuf(&tx1Buf, "AT+UDCP=at-mqtt://192.168.1.111:1883/?client=NINA-W132&user=mosquitto&passwd=MQTT.thingg!35&pt=test&st=display&encr=0&qos=0\r\n");
+  HAL_Delay(100);
 
   uint16_t backlight = 0;
   float lux = 0.0f;
@@ -229,7 +238,6 @@ int main(void)
 
 
 		// move variables for testing
-		sharedMem->time += 0x0101;
 		sharedMem->t1 += 0.1f;
 		sharedMem->t2 += 0.2f;
 		sharedMem->h1 = (sharedMem->h1 == 100) ? 0 : sharedMem->h1 + 0.2;
@@ -239,9 +247,7 @@ int main(void)
 		sharedMem->soil2 = (sharedMem->soil2 == 100) ? 0 : sharedMem->soil2 + 1;
 		sharedMem->soil3 = (sharedMem->soil3 == 100) ? 0 : sharedMem->soil3 + 1;
 		sharedMem->soil4 = (sharedMem->soil4 == 100) ? 0 : sharedMem->soil4 + 1;
-		sharedMem->status ^= 1;
 
-		sharedMem->time &= 0x0F3F;
 		//printfCircBuf(&tx1Buf, "AT+UWSSTAT=6\r\n"); // Get WiFi RSSI
 	}
 
@@ -249,6 +255,7 @@ int main(void)
 	if (flag_status) {
 		flag_status = 0;
 
+		//printf("test\n");
 		printfCircBuf(&tx1Buf, "AT+UWSSTAT=6\r\n"); // Get WiFi RSSI
 	}
     /* USER CODE END WHILE */

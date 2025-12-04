@@ -4,18 +4,20 @@
 #include <stdint.h>
 #include "circbuf.h"
 
-#define NINA_BUF_LENGTH 256U
+#define NINA_PAYLOAD_SIZE 256U
 
-#define NINA_MAX_FIELDS     4
+#define NINA_MAX_FIELDS     8
 #define NINA_MAX_TYPE_LEN  16
 #define NINA_MAX_FIELD_LEN 32
 
 typedef struct {
-	uint32_t length;
-	char data[NINA_BUF_LENGTH];
-	char *type;
-	char *fields[NINA_MAX_FIELDS];
-	int field_count;
+	char type[NINA_MAX_TYPE_LEN]; 		// Message type, e.g. "+UDATR", "OK"
+	uint32_t length; 					// Total message length
+	uint32_t payload_length; 			// Payload length (if any)
+	char payload[NINA_PAYLOAD_SIZE]; 	// Static payload buffer
+	char *fields[NINA_MAX_FIELDS]; 		// For text command fields
+	uint8_t field_count;
+	bool is_binary; 					// True if message has binary payload
 } NinaMessage_t;
 
 typedef enum nina_response_e {
@@ -26,7 +28,7 @@ typedef enum nina_response_e {
 } NinaResponseType;
 
 
-uint32_t extractMessage(CircularBuffer_t *buf, char *out);
+uint32_t extractMessage(CircularBuffer_t *buf, NinaMessage_t *msg);
 int getNinaMsg(NinaMessage_t *msg);
 int parseNinaMsg(NinaMessage_t *msg);
 int processNinaMsg(NinaMessage_t *msg);
