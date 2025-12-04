@@ -46,14 +46,17 @@ void MX_GPIO_Init(void)
   LL_AHB4_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_GPIOI);
   LL_AHB4_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_GPIOK);
   LL_AHB4_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_GPIOJ);
-  LL_AHB4_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_GPIOD);
   LL_AHB4_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_GPIOB);
+  LL_AHB4_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_GPIOD);
 
   /**/
   LL_GPIO_ResetOutputPin(WIFI_CTS_GPIO_Port, WIFI_CTS_Pin);
 
   /**/
   LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTE, LL_SYSCFG_EXTI_LINE4);
+
+  /**/
+  LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB, LL_SYSCFG_EXTI_LINE11);
 
   /**/
   EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_4;
@@ -65,10 +68,25 @@ void MX_GPIO_Init(void)
   LL_EXTI_Init(&EXTI_InitStruct);
 
   /**/
+  EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_11;
+  EXTI_InitStruct.Line_32_63 = LL_EXTI_LINE_NONE;
+  EXTI_InitStruct.Line_64_95 = LL_EXTI_LINE_NONE;
+  EXTI_InitStruct.LineCommand = ENABLE;
+  EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+  EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_FALLING;
+  LL_EXTI_Init(&EXTI_InitStruct);
+
+  /**/
   LL_GPIO_SetPinPull(ALS_INT_GPIO_Port, ALS_INT_Pin, LL_GPIO_PULL_NO);
 
   /**/
+  LL_GPIO_SetPinPull(PRES_INT_GPIO_Port, PRES_INT_Pin, LL_GPIO_PULL_NO);
+
+  /**/
   LL_GPIO_SetPinMode(ALS_INT_GPIO_Port, ALS_INT_Pin, LL_GPIO_MODE_INPUT);
+
+  /**/
+  LL_GPIO_SetPinMode(PRES_INT_GPIO_Port, PRES_INT_Pin, LL_GPIO_MODE_INPUT);
 
   /**/
   GPIO_InitStruct.Pin = WIFI_RTS_Pin;
@@ -93,6 +111,8 @@ void MX_GPIO_Init(void)
   /* EXTI interrupt init*/
   NVIC_SetPriority(EXTI4_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),14, 0));
   NVIC_EnableIRQ(EXTI4_IRQn);
+  NVIC_SetPriority(EXTI15_10_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),14, 0));
+  NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 }
 

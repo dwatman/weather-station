@@ -58,6 +58,7 @@ void SysTick_Handler(void);
 void EXTI4_IRQHandler(void);
 void DMA1_Stream0_IRQHandler(void);
 void USART1_IRQHandler(void);
+void EXTI15_10_IRQHandler(void);
 void UART4_IRQHandler(void);
 void I2C4_EV_IRQHandler(void);
 void I2C4_ER_IRQHandler(void);

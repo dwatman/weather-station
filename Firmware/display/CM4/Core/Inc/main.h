@@ -86,6 +86,8 @@ void Error_Handler(void);
 #define IR_IN_GPIO_Port GPIOK
 #define WIFI_CTS_Pin LL_GPIO_PIN_8
 #define WIFI_CTS_GPIO_Port GPIOJ
+#define PRES_INT_Pin LL_GPIO_PIN_11
+#define PRES_INT_GPIO_Port GPIOB
 #define WIFI_DTR_Pin LL_GPIO_PIN_0
 #define WIFI_DTR_GPIO_Port GPIOB
 
