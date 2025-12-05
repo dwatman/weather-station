@@ -25,7 +25,9 @@
 #include <stdio.h>
 #include "circbuf.h"
 #include "usart_util.h"
+#include "i2c_util.h"
 #include "opt4001.h"
+#include "lps25hb.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -53,6 +55,12 @@ volatile uint32_t rxTimeout = 0;
 extern CircularBuffer_t rx1Buf;
 extern volatile uint32_t RxNewData;
 extern volatile uint32_t RxOverflow;
+
+extern I2c_Status_t i2c4_status;
+
+// Flags indicating a read is needed
+volatile uint32_t opt4001_data_available = 0;
+volatile uint32_t lps25hb_data_available = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -229,7 +237,7 @@ void EXTI4_IRQHandler(void)
   {
     LL_C2_EXTI_ClearFlag_0_31(LL_EXTI_LINE_4);
     /* USER CODE BEGIN LL_EXTI_LINE_4 */
-    opt4001_StartRead();
+    opt4001_data_available = 1;
     /* USER CODE END LL_EXTI_LINE_4 */
   }
   /* USER CODE BEGIN EXTI4_IRQn 1 */
@@ -298,7 +306,7 @@ void EXTI15_10_IRQHandler(void)
   {
     LL_C2_EXTI_ClearFlag_0_31(LL_EXTI_LINE_11);
     /* USER CODE BEGIN LL_EXTI_LINE_11 */
-
+    lps25hb_data_available = 1;
     /* USER CODE END LL_EXTI_LINE_11 */
   }
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */
@@ -325,7 +333,7 @@ void UART4_IRQHandler(void)
 void I2C4_EV_IRQHandler(void)
 {
   /* USER CODE BEGIN I2C4_EV_IRQn 0 */
-	opt4001_ISR();
+	i2c_ISR(&i2c4_status);
   /* USER CODE END I2C4_EV_IRQn 0 */
   /* USER CODE BEGIN I2C4_EV_IRQn 1 */
 

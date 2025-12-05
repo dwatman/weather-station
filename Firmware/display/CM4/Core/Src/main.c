@@ -32,6 +32,7 @@
 #include "usart_util.h"
 #include "network.h"
 #include "opt4001.h"
+#include "lps25hb.h"
 #include "shared.h"
 /* USER CODE END Includes */
 
@@ -60,8 +61,14 @@
 extern volatile uint32_t flag_status;
 extern volatile uint32_t flag_update;
 
-extern volatile uint8_t opt4001_data[4];
+extern I2c_Status_t i2c4_status;
+
+extern volatile uint32_t opt4001_data_available;
+extern volatile uint32_t lps25hb_data_available;
+
 extern volatile uint32_t opt4001_newdata;
+extern volatile uint32_t lps25hb_newdata;
+
 extern CircularBuffer_t tx1Buf;
 
 extern volatile uint32_t RxNewData;
@@ -141,13 +148,17 @@ int main(void)
   // Ensure semaphore flag is clear
   __HAL_HSEM_CLEAR_FLAG(__HAL_HSEM_SEMID_TO_MASK(HSEM_ID_1));
 
-  // Initialise ambient light sensor
-  opt4001_init();
-  // Enable ALS interrupt
-  LL_C2_EXTI_EnableIT_0_31(LL_EXTI_LINE_4); // _C2 for M4 core
-
+  // Initialise UARTs
   initUsart1();
   initUsart4();
+
+  i2c4_status.state = I2C_STATE_IDLE;
+
+  // Initialise ambient light sensor
+  opt4001_init();
+
+  // Initialise pressure sensor
+  lps25hb_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -168,6 +179,11 @@ int main(void)
   sharedMem->soil3 = 40;
   sharedMem->soil4 = 60;
   sharedMem->status = 0;
+
+  // Enable ALS interrupt
+  LL_C2_EXTI_EnableIT_0_31(LL_EXTI_LINE_4); // _C2 for M4 core
+  // Enable pressure interrupt
+  LL_C2_EXTI_EnableIT_0_31(LL_EXTI_LINE_11); // _C2 for M4 core
 
   //printfCircBuf(&tx1Buf, "\r\n");
   HAL_Delay(5000);
@@ -195,22 +211,39 @@ int main(void)
   printfCircBuf(&tx1Buf, "AT+UDCP=at-mqtt://192.168.1.111:1883/?client=NINA-W132&user=mosquitto&passwd=MQTT.thingg!35&pt=test&st=display&encr=0&qos=0\r\n");
   HAL_Delay(100);
 
+  lps25hb_data_available = 1; // First trigger to get it started
+
   uint16_t backlight = 0;
-  float lux = 0.0f;
-  while (1)
-  {
+  while (1) {
+	// Read ALS data from sensor
+	if ((opt4001_data_available) && (i2c4_status.state == I2C_STATE_IDLE)) {
+		opt4001_data_available = 0;
+		opt4001_StartRead(&i2c4_status);
+	}
+	// Read pressure data from sensor
+	if ((lps25hb_data_available) && (i2c4_status.state == I2C_STATE_IDLE)) {
+		lps25hb_data_available = 0;
+		lps25hb_StartRead(&i2c4_status);
+	}
+
 	// New ambient light data
 	if (opt4001_newdata) {
 		opt4001_newdata = 0;
 
-		lux = opt4001_Convert();
-		//printf("lux: %.3f\n", lux);
+		float lux = opt4001_Convert();
+		printf("lux: %.3f\n", lux);
 
 		sharedMem->lux = lux;
+	}
 
-		// Signal data ready via HSEM1
-		HAL_HSEM_FastTake(HSEM_ID_1);   // Take
-		HAL_HSEM_Release(HSEM_ID_1, 0); // Release to interrupt to M7
+	// New pressure data
+	if (lps25hb_newdata) {
+		lps25hb_newdata = 0;
+
+		float hpa = lps25hb_Convert();
+		printf("press: %.2f\n", hpa);
+
+		sharedMem->pres = hpa;
 	}
 
 	// End of RX data burst on USART1
@@ -236,19 +269,19 @@ int main(void)
 		sharedMem->bl = backlight;
 		LL_TIM_OC_SetCompareCH1(TIM15, backlight);
 
-
 		// move variables for testing
 		sharedMem->t1 += 0.1f;
 		sharedMem->t2 += 0.2f;
 		sharedMem->h1 = (sharedMem->h1 == 100) ? 0 : sharedMem->h1 + 0.2;
 		sharedMem->h2 = (sharedMem->h2 == 100) ? 0 : sharedMem->h2 + 0.3;
-		sharedMem->pres += 0.3f;
 		sharedMem->soil1 = (sharedMem->soil1 == 100) ? 0 : sharedMem->soil1 + 1;
 		sharedMem->soil2 = (sharedMem->soil2 == 100) ? 0 : sharedMem->soil2 + 1;
 		sharedMem->soil3 = (sharedMem->soil3 == 100) ? 0 : sharedMem->soil3 + 1;
 		sharedMem->soil4 = (sharedMem->soil4 == 100) ? 0 : sharedMem->soil4 + 1;
 
-		//printfCircBuf(&tx1Buf, "AT+UWSSTAT=6\r\n"); // Get WiFi RSSI
+		// Signal data ready via HSEM1
+		HAL_HSEM_FastTake(HSEM_ID_1);   // Take
+		HAL_HSEM_Release(HSEM_ID_1, 0); // Release to interrupt to M7
 	}
 
 	// Check status
