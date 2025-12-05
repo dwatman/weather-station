@@ -102,7 +102,8 @@ float lps25hb_Convert(void) {
 					((uint32_t)lps25hb_data[1] << 8) |
 					lps25hb_data[0];
 
-	float hpa = raw/4096.0;
+	// Calculate and round to 1 decimal place
+	float hpa = roundf(raw/409.6)*0.1;
 
 	return hpa;
 }

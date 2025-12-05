@@ -231,7 +231,7 @@ int main(void)
 		opt4001_newdata = 0;
 
 		float lux = opt4001_Convert();
-		printf("lux: %.3f\n", lux);
+		printf("lux: %.1f\n", lux);
 
 		sharedMem->lux = lux;
 	}
@@ -241,7 +241,7 @@ int main(void)
 		lps25hb_newdata = 0;
 
 		float hpa = lps25hb_Convert();
-		printf("press: %.2f\n", hpa);
+		printf("press: %.1f\n", hpa);
 
 		sharedMem->pres = hpa;
 	}
