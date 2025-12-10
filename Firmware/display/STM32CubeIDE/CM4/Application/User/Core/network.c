@@ -265,6 +265,7 @@ void handle_UDCP(NinaMessage_t *msg) {
 	int id = atoi(msg->fields[0]);
 	printf("NINA UDCP (%i)\n", id);
 	wifi_events.EV_UDCP = 1;
+	wifi_ctx.peer_handle = id;
 }
 
 // Peer connected
@@ -272,6 +273,7 @@ void handle_UUDPC(NinaMessage_t *msg) {
 	int id = atoi(msg->fields[0]);
 	//printf("NINA UUDPC (%i)\n", value);
 	printf("Connected to peer: %i\n", id);
+	wifi_events.EV_UUDPC = 1;
 }
 
 // Peer disconnected

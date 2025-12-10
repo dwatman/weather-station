@@ -42,8 +42,8 @@ void wifi_state_machine_step(void) {
 	case SM_IDLE:
 		// Send separator and wait for any response before proceeding
 		if (!wifi_ctx.waiting) {
-			emptyRx1Buffer();
-			printfCircBuf(&tx1Buf, "\r\n");
+			//emptyRx1Buffer();
+			//printfCircBuf(&tx1Buf, "\r\n");
 			wifi_ctx.waiting = 1;
 			wifi_timeout = 1000;  // short wait (~1s)
 			wifi_ctx.retries = 0;
@@ -96,6 +96,7 @@ void wifi_state_machine_step(void) {
 			wifi_ctx.state = SM_WAIT_NET_JOIN;
 			wifi_ctx.progress = 0;
 			printf("SM: +STARTUP received, waiting for network join\n");
+			printfCircBuf(&tx1Buf, "ATE1\r\n"); // Set echo on
 		}
 		break;
 
@@ -113,7 +114,7 @@ void wifi_state_machine_step(void) {
 	case SM_MQTT_CFG1_CONNECT:
 		if (!wifi_ctx.waiting) {
 			// Connect to MQTT to send descriptor
-			printfCircBuf(&tx1Buf, "AT+UDCP=at-mqtt://192.168.0.200:1883/?client=NINA-W132&user=mqtt_user&passwd=MQ.jaygram&pt=test1&encr=0&qos=0\r\n");
+			printfCircBuf(&tx1Buf, "AT+UDCP=at-mqtt://192.168.0.200:1883/?client=NINA-W132&user=mqtt_user&passwd=MQ.jaygram&pt=test2&st=test&encr=0&qos=0\r\n");
 			wifi_ctx.waiting = 1;
 			wifi_timeout = wifi_ctx.timeout_ms;
 			printf("SM: MQTT CFG1 connect (descriptor)\n");
@@ -129,6 +130,9 @@ void wifi_state_machine_step(void) {
 		break;
 
 	case SM_MQTT_CFG1_SEND_JSON:
+		wifi_ctx.state = 99;
+		wifi_ctx.waiting = 0;
+		/*
 		if (!wifi_ctx.waiting) {
 			// Only send once per entry
 			wifi_ctx.waiting = 1;
@@ -155,10 +159,13 @@ void wifi_state_machine_step(void) {
 				wifi_ctx.state = SM_ERROR_RECOVERY;
 				wifi_ctx.waiting = 0;
 			}
-		}
+		}*/
 		break;
 
 	case SM_MQTT_CFG1_DISCONNECT:
+		wifi_ctx.state = 99;
+		wifi_ctx.waiting = 0;
+		/*
 		if (!wifi_ctx.waiting) {
 			// Close MQTT connection
 			printfCircBuf(&tx1Buf, "AT+UDCPC=1\r\n");
@@ -172,7 +179,7 @@ void wifi_state_machine_step(void) {
 		} else if (event_error || wifi_timeout == 0) {
 			if (++wifi_ctx.retries < WIFI_SM_MAX_RETRIES) wifi_ctx.waiting = 0;
 			else wifi_ctx.state = SM_ERROR_RECOVERY;
-		}
+		}*/
 		break;
 
 	case SM_MQTT_CFG2_CONNECT:

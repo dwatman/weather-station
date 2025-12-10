@@ -189,8 +189,16 @@ int main(void)
   LL_C2_EXTI_EnableIT_0_31(LL_EXTI_LINE_11); // _C2 for M4 core
 
 
-//  printfCircBuf(&tx1Buf, "AT+UDWS=3,1\r\n"); // Enable WiFi watchdog
-//  HAL_Delay(100);
+  printfCircBuf(&tx1Buf, "\r\n");
+  HAL_Delay(100);
+
+  printfCircBuf(&tx1Buf, "ATE1\r\n"); // Set echo on
+  HAL_Delay(100);
+
+  printfCircBuf(&tx1Buf, "AT+UDWS=3,1\r\n"); // Enable WiFi watchdog
+  HAL_Delay(100);
+  emptyRx1Buffer();
+
 //
 //
 //  printfCircBuf(&tx1Buf, "AT+UWSSTAT=3\r\n"); // Get WiFi connection status

@@ -10,6 +10,8 @@
 // Progress flags
 #define FLAG_UUWLE  (1 << 0)
 #define FLAG_UUNU   (1 << 1)
+#define FLAG_UDCP   (1 << 2)
+#define FLAG_UUDPC  (1 << 3)
 
 // State machine states
 typedef enum {
@@ -31,6 +33,7 @@ typedef struct {
 	volatile uint8_t EV_UUWLE;
 	volatile uint8_t EV_UUNU;
 	volatile uint8_t EV_UDCP;
+	volatile uint8_t EV_UUDPC;
 	volatile uint8_t EV_OK;
 	volatile uint8_t EV_ERROR;
 	volatile uint8_t EV_DISCONNECT;
@@ -43,6 +46,7 @@ typedef struct {
 	uint8_t progress;     // progress flags (UUWLE, UUNU)
 	uint8_t state;        // current state (WifiSM_State_t)
 	uint32_t timeout_ms;  // timeout for current command
+	int peer_handle;      // store peer handle from +UDCP
 } WifiSM_Ctx_t;
 
 // Global instances (shared with network.c)
