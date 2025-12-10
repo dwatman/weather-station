@@ -185,17 +185,17 @@ int main(void)
   // Enable pressure interrupt
   LL_C2_EXTI_EnableIT_0_31(LL_EXTI_LINE_11); // _C2 for M4 core
 
-  //printfCircBuf(&tx1Buf, "\r\n");
+  printfCircBuf(&tx1Buf, "\r\n"); // Separate from any startup junk
   HAL_Delay(5000);
   //printfCircBuf(&tx1Buf, "\r\nAT+CPWROFF\r\n"); // Reboot the WiFi module
   //HAL_Delay(5000);
 
-  printfCircBuf(&tx1Buf, "\r\nATE0\r\n"); // Set echo off
-  HAL_Delay(100);
-  printfCircBuf(&tx1Buf, "AT&D0\r\n"); // Ignore DTR line
-  HAL_Delay(100);
-  printfCircBuf(&tx1Buf, "AT&S2\r\n"); // Assert DSR line when connected
-  HAL_Delay(100);
+//  printfCircBuf(&tx1Buf, "\r\nATE0\r\n"); // Set echo off
+//  HAL_Delay(100);
+//  printfCircBuf(&tx1Buf, "AT&D0\r\n"); // Ignore DTR line
+//  HAL_Delay(100);
+//  printfCircBuf(&tx1Buf, "AT&S2\r\n"); // Assert DSR line when connected
+//  HAL_Delay(100);
   printfCircBuf(&tx1Buf, "AT+UDWS=3,1\r\n"); // Enable WiFi watchdog
   HAL_Delay(100);
 
@@ -206,11 +206,12 @@ int main(void)
   //printfCircBuf(&tx1Buf, "AT+UDLP?\r\n"); // List peers
   printfCircBuf(&tx1Buf, "AT+UDCPC=1\r\n"); // Close connection 1
   HAL_Delay(100);
-
+/*
   // Connect to MQTT
-  printfCircBuf(&tx1Buf, "AT+UDCP=at-mqtt://192.168.1.111:1883/?client=NINA-W132&user=mosquitto&passwd=MQTT.thingg!35&pt=test&st=display&encr=0&qos=0\r\n");
+  printfCircBuf(&tx1Buf, "AT+UDCP=at-mqtt://192.168.0.200:1883/?client=NINA-W132&user=
+  mosquittomqtt_user&passwd=MQ.jaygram&pt=test&st=display&encr=0&qos=0\r\n");
   HAL_Delay(100);
-
+*/
   lps25hb_data_available = 1; // First trigger to get it started
 
   uint16_t backlight = 0;
@@ -231,7 +232,7 @@ int main(void)
 		opt4001_newdata = 0;
 
 		float lux = opt4001_Convert();
-		printf("lux: %.1f\n", lux);
+		//printf("lux: %.1f\n", lux);
 
 		sharedMem->lux = lux;
 	}
@@ -241,7 +242,7 @@ int main(void)
 		lps25hb_newdata = 0;
 
 		float hpa = lps25hb_Convert();
-		printf("press: %.1f\n", hpa);
+		//printf("press: %.1f\n", hpa);
 
 		sharedMem->pres = hpa;
 	}
@@ -261,10 +262,11 @@ int main(void)
 	if (flag_update) {
 		flag_update = 0;
 
-		if (backlight < 500)
-			backlight++;
-		else
-			backlight = 0;
+//		if (backlight < 500)
+//			backlight++;
+//		else
+//			backlight = 0;
+		backlight = 100;
 
 		sharedMem->bl = backlight;
 		LL_TIM_OC_SetCompareCH1(TIM15, backlight);
@@ -289,7 +291,7 @@ int main(void)
 		flag_status = 0;
 
 		//printf("test\n");
-		printfCircBuf(&tx1Buf, "AT+UWSSTAT=6\r\n"); // Get WiFi RSSI
+		//printfCircBuf(&tx1Buf, "AT+UWSSTAT=6\r\n"); // Get WiFi RSSI
 	}
     /* USER CODE END WHILE */
 

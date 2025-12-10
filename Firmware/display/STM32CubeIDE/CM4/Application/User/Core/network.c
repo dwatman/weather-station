@@ -218,6 +218,23 @@ void handle_UWSSTAT(NinaMessage_t *msg) {
 		printf("Unhandled UWSSTAT id %i\n", id);
 }
 
+// Wi-Fi connection established
+void handle_UUWLE(NinaMessage_t *msg) {
+	int id = atoi(msg->fields[0]);
+	char *ssid = msg->fields[1];
+	int ch = atoi(msg->fields[2]);
+	//printf("NINA UUWLE (%i)\n", id);
+	printf("WiFi connected (%i) SSID: <%s> on ch %i\n", id, ssid, ch);
+}
+
+// Wi-Fi connection disconnected
+void handle_UUWLD(NinaMessage_t *msg) {
+	int id = atoi(msg->fields[0]);
+	int cause = atoi(msg->fields[1]);
+	//printf("NINA UUWLD (%i)\n", id);
+	printf("WiFi disconnected (%i) code: %i\n", id, cause);
+}
+
 // Network up
 void handle_UUNU(NinaMessage_t *msg) {
 	int id = atoi(msg->fields[0]);
@@ -288,6 +305,12 @@ int processNinaMsg(NinaMessage_t *msg) {
 	}
 	else if (type[0] == '+' && strncmp(type, "+UWSSTAT", 8) == 0) { // Wi-Fi station status
 		handle_UWSSTAT(msg);
+	}
+	else if (type[0] == '+' && strncmp(type, "+UUWLE", 6) == 0) { // Wi-Fi connection established
+		handle_UUWLE(msg);
+	}
+	else if (type[0] == '+' && strncmp(type, "+UUWLD", 6) == 0) { // Wi-Fi connection disconnected
+		handle_UUWLD(msg);
 	}
 	else if (type[0] == '+' && strncmp(type, "+UUNU", 5) == 0) { // Network up
 		handle_UUNU(msg);
