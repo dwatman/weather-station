@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 // Timeout and retry defaults
-#define WIFI_SM_DEFAULT_TIMEOUT_MS   5000
+#define WIFI_SM_DEFAULT_TIMEOUT_MS   10000
 #define WIFI_SM_MAX_RETRIES          3
 
 // Progress flags

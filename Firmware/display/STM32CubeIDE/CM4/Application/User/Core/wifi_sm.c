@@ -115,71 +115,134 @@ void wifi_state_machine_step(void) {
 		if (!wifi_ctx.waiting) {
 			// Connect to MQTT to send descriptor
 			printfCircBuf(&tx1Buf, "AT+UDCP=at-mqtt://192.168.0.200:1883/?client=NINA-W132&user=mqtt_user&passwd=MQ.jaygram&pt=test2&st=test&encr=0&qos=0\r\n");
-			wifi_ctx.waiting = 1;
-			wifi_timeout = wifi_ctx.timeout_ms;
-			printf("SM: MQTT CFG1 connect (descriptor)\n");
-		} else if (wifi_events.EV_UDCP) {
+			wifi_ctx.waiting   = 1;
+			wifi_ctx.progress &= ~(FLAG_UDCP | FLAG_UUDPC);
+			wifi_ctx.peer_handle = -1;
+			wifi_ctx.retries   = 0;
+			wifi_timeout       = wifi_ctx.timeout_ms;
+			printf("SM: MQTT CFG1 connect (sending command)\n");
+		}
+
+		// --- handle responses ---
+		if (wifi_events.EV_UDCP) {
 			wifi_events.EV_UDCP = 0;
+			wifi_ctx.progress  |= FLAG_UDCP;
+			printf("SM: +UDCP received, peer=%d\n", wifi_ctx.peer_handle);
+		}
+		if (wifi_events.EV_UUDPC) {
+			wifi_events.EV_UUDPC = 0;
+			wifi_ctx.progress  |= FLAG_UUDPC;
+			printf("SM: +UUDPC received\n");
+		}
+
+		// --- success: both replies arrived ---
+		if ((wifi_ctx.progress & (FLAG_UDCP | FLAG_UUDPC)) ==
+			(FLAG_UDCP | FLAG_UUDPC)) {
 			wifi_ctx.waiting = 0;
-			wifi_ctx.state = SM_MQTT_CFG1_SEND_JSON;
-			printf("SM: MQTT CFG1 connected, sending JSON\n");
-		} else if (event_error || wifi_timeout == 0) {
-			if (++wifi_ctx.retries < WIFI_SM_MAX_RETRIES) wifi_ctx.waiting = 0;
-			else wifi_ctx.state = SM_ERROR_RECOVERY;
+			wifi_ctx.retries = 0;
+			wifi_ctx.state   = SM_MQTT_CFG1_SEND_JSON;
+			printf("SM: MQTT CFG1 fully connected, ready to send JSON\n");
+		}
+
+		// --- timeout / retry ---
+		if (wifi_timeout == 0 && wifi_ctx.waiting) {
+			if (++wifi_ctx.retries < WIFI_SM_MAX_RETRIES) {
+				wifi_ctx.waiting = 0;
+				wifi_ctx.progress &= ~(FLAG_UDCP | FLAG_UUDPC);
+				printf("SM: MQTT CFG1 connect timeout, retry %d\n",
+					   wifi_ctx.retries);
+			} else {
+				wifi_ctx.state   = SM_ERROR_RECOVERY;
+				wifi_ctx.waiting = 0;
+				printf("SM: MQTT CFG1 connect failed, recovery\n");
+			}
 		}
 		break;
 
 	case SM_MQTT_CFG1_SEND_JSON:
-		wifi_ctx.state = 99;
-		wifi_ctx.waiting = 0;
-		/*
 		if (!wifi_ctx.waiting) {
-			// Only send once per entry
-			wifi_ctx.waiting = 1;
-			wifi_timeout = wifi_ctx.timeout_ms;
-			// Send JSON configuration
-			printfCircBuf(&tx1Buf, "AT+UDATW=1,0,testcfg\r\n");
-			printf("SM: Sent JSON (placeholder)\n");
-		} else if (event_ok) {
-			wifi_ctx.waiting = 0;
-			wifi_ctx.state = SM_MQTT_CFG1_DISCONNECT;
-			wifi_ctx.retries = 0;
-			printf("SM: JSON acknowledged, disconnecting MQTT CFG1\n");
-		} else if (event_error) {
-			wifi_ctx.waiting = 0;
-			if (++wifi_ctx.retries < WIFI_SM_MAX_RETRIES)
-				printf("SM: JSON send error, retry %d\n", wifi_ctx.retries);
-			else
+			if (wifi_ctx.peer_handle < 0) {
+				printf("SM: No valid peer handle, recovery\n");
 				wifi_ctx.state = SM_ERROR_RECOVERY;
-		} else if (wifi_timeout == 0) {
+				break;
+			}
+			// Send JSON configuration
+			printfCircBuf(&tx1Buf, "AT+UDATW=%d,0,testcfg\r\n", wifi_ctx.peer_handle);
+			//   "AT+UDATW=%d,0,{\"config\":\"value\"}\r\n", wifi_ctx.peer_handle);
+			wifi_ctx.waiting   = 1;
+			wifi_ctx.retries   = 0;
+			wifi_timeout       = wifi_ctx.timeout_ms;
+			printf("SM: Sent configuration JSON (peer %d)\n", wifi_ctx.peer_handle);
+		}
+
+		if (wifi_events.EV_OK) {
+			wifi_events.EV_OK = 0;
+			wifi_ctx.waiting = 0;
+			wifi_ctx.state   = SM_MQTT_CFG1_DISCONNECT;
+			printf("SM: JSON send acknowledged, disconnecting CFG1\n");
+		} else if (wifi_events.EV_ERROR) {
+			wifi_events.EV_ERROR = 0;
+			if (++wifi_ctx.retries < WIFI_SM_MAX_RETRIES) {
+				wifi_ctx.waiting = 0;
+				printf("SM: JSON send error, retry %d\n", wifi_ctx.retries);
+			} else {
+				wifi_ctx.state = SM_ERROR_RECOVERY;
+				wifi_ctx.waiting = 0;
+				printf("SM: JSON send failed, recovery\n");
+			}
+		} else if (wifi_timeout == 0 && wifi_ctx.waiting) {
 			if (++wifi_ctx.retries < WIFI_SM_MAX_RETRIES) {
 				wifi_ctx.waiting = 0;
 				printf("SM: JSON send timeout, retry %d\n", wifi_ctx.retries);
 			} else {
 				wifi_ctx.state = SM_ERROR_RECOVERY;
 				wifi_ctx.waiting = 0;
+				printf("SM: JSON send timed out, recovery\n");
 			}
-		}*/
+		}
 		break;
 
 	case SM_MQTT_CFG1_DISCONNECT:
-		wifi_ctx.state = 99;
-		wifi_ctx.waiting = 0;
-		/*
 		if (!wifi_ctx.waiting) {
+			if (wifi_ctx.peer_handle < 0) {
+				printf("SM: Invalid peer handle, skipping disconnect\n");
+				wifi_ctx.state = SM_MQTT_CFG2_CONNECT;
+				break;
+			}
 			// Close MQTT connection
-			printfCircBuf(&tx1Buf, "AT+UDCPC=1\r\n");
+			printfCircBuf(&tx1Buf, "AT+UDCPC=%d\r\n", wifi_ctx.peer_handle);
 			wifi_ctx.waiting = 1;
-			wifi_timeout = wifi_ctx.timeout_ms;
-			printf("SM: MQTT CFG1 disconnect (descriptor)\n");
-		} else if (event_ok) {
+			wifi_ctx.retries = 0;
+			wifi_timeout     = wifi_ctx.timeout_ms;
+			printf("SM: MQTT CFG1 disconnect (peer %d)\n", wifi_ctx.peer_handle);
+		}
+
+		if (wifi_events.EV_OK) {
+			wifi_events.EV_OK = 0;
 			wifi_ctx.waiting = 0;
-			wifi_ctx.state = SM_MQTT_CFG2_CONNECT;
-			printf("SM: MQTT CFG1 disconnected, connecting CFG2\n");
-		} else if (event_error || wifi_timeout == 0) {
-			if (++wifi_ctx.retries < WIFI_SM_MAX_RETRIES) wifi_ctx.waiting = 0;
-			else wifi_ctx.state = SM_ERROR_RECOVERY;
-		}*/
+			wifi_ctx.state   = SM_MQTT_CFG2_CONNECT;
+			wifi_ctx.peer_handle = -1;
+			printf("SM: MQTT CFG1 disconnected, switching to CFG2\n");
+		} else if (wifi_events.EV_ERROR) {
+			wifi_events.EV_ERROR = 0;
+			if (++wifi_ctx.retries < WIFI_SM_MAX_RETRIES) {
+				wifi_ctx.waiting = 0;
+				printf("SM: Disconnect error, retry %d\n", wifi_ctx.retries);
+			} else {
+				wifi_ctx.state = SM_ERROR_RECOVERY;
+				wifi_ctx.waiting = 0;
+				printf("SM: Disconnect failed, recovery\n");
+			}
+		} else if (wifi_timeout == 0 && wifi_ctx.waiting) {
+			if (++wifi_ctx.retries < WIFI_SM_MAX_RETRIES) {
+				wifi_ctx.waiting = 0;
+				printf("SM: Disconnect timeout, retry %d\n", wifi_ctx.retries);
+			} else {
+				wifi_ctx.state = SM_ERROR_RECOVERY;
+				wifi_ctx.waiting = 0;
+				printf("SM: Disconnect timed out, recovery\n");
+			}
+		}
 		break;
 
 	case SM_MQTT_CFG2_CONNECT:

@@ -37,126 +37,120 @@ uint32_t extractMessage(CircularBuffer_t *buf, NinaMessage_t *msg) {
 	uint32_t available = buf->head - buf->tail;
 	uint32_t startPos = 0;
 
-	// Skip any leading CR/LF
-	while (available > 0) {
+	// Skip leading CR/LF before message start
+	while (startPos < available) {
 		uint8_t c = buf->data[(buf->tail + startPos) & BUF_MASK];
 		if (c != '\r' && c != '\n') break;
 		startPos++;
-		available--;
 	}
 
-	if (available == 0) {
-		buf->tail += startPos;
+	if (startPos >= available) {
+		// only CR/LF so far; don't advance tail yet
 		exitCritical(primask);
 		return 0;
 	}
 
-	// Detect +UDATR
+	// ---- Handle +UDATR (binary) ----
 	bool isUDATR = false;
-	if (available >= 6) {
+	if (available - startPos >= 6) {
 		char header[8] = {0};
-		for (uint32_t i = 0; i < 7 && i < available; i++)
+		for (uint32_t i = 0; i < 6; i++)
 			header[i] = buf->data[(buf->tail + startPos + i) & BUF_MASK];
 		if (strncmp(header, "+UDATR", 6) == 0)
 			isUDATR = true;
 	}
 
-	// ---- Handle +UDATR message ----
 	if (isUDATR) {
 		// Find CRLF after "+UDATR:<len>"
-		uint32_t lineEnd = startPos;
-		while (lineEnd + 1 < available) {
-			if (buf->data[(buf->tail + lineEnd) & BUF_MASK] == '\r' &&
-				buf->data[(buf->tail + lineEnd + 1) & BUF_MASK] == '\n') {
+		uint32_t i = startPos;
+		while (i + 1 < available) {
+			if (buf->data[(buf->tail + i) & BUF_MASK] == '\r' &&
+				buf->data[(buf->tail + i + 1) & BUF_MASK] == '\n')
 				break;
-			}
-			lineEnd++;
+			i++;
 		}
-
-		if (lineEnd + 1 >= available) {
+		if (i + 1 >= available) {
 			exitCritical(primask);
-			return 0; // incomplete header line
+			return 0; // header not complete yet
 		}
 
-		// Extract numeric length after "+UDATR:"
+		// Extract payload length
 		char lenStr[12] = {0};
-		uint32_t lenStart = startPos + 7; // after "+UDATR:"
+		uint32_t lenStart = startPos + 7;
 		uint32_t lenCount = 0;
-		for (uint32_t i = lenStart; i < lineEnd && lenCount < sizeof(lenStr)-1; i++, lenCount++)
-			lenStr[lenCount] = buf->data[(buf->tail + i) & BUF_MASK];
+		for (uint32_t j = lenStart; j < i && lenCount < sizeof(lenStr) - 1; j++, lenCount++)
+			lenStr[lenCount] = buf->data[(buf->tail + j) & BUF_MASK];
 		uint32_t payloadLen = atoi(lenStr);
 
 		if (payloadLen > NINA_PAYLOAD_SIZE) {
-			printf("[NINA] Payload too large: %lu bytes (max %d)\n", payloadLen, NINA_PAYLOAD_SIZE);
-			buf->tail = buf->head; // discard entire buffer safely
+			printf("[NINA] Payload too large: %lu bytes\n", (unsigned long)payloadLen);
+			buf->tail = buf->head; // discard all to recover
 			exitCritical(primask);
 			return 0;
 		}
 
-		// Calculate total bytes required for complete message
-		// header line + CRLF + payload + final CRLF
-		uint32_t totalNeeded = (lineEnd - startPos + 2) + payloadLen + 2;
-		if (available < totalNeeded) {
+		// header + CRLF + payload + trailing CRLF
+		uint32_t totalNeeded = (i - startPos + 2) + payloadLen + 2;
+		if (available < totalNeeded + startPos) {
 			exitCritical(primask);
-			return 0; // not yet complete
+			return 0; // incomplete
 		}
 
 		// Copy payload
-		uint32_t payloadStart = buf->tail + lineEnd + 2; // after first CRLF
-		for (uint32_t i = 0; i < payloadLen; i++)
-			msg->payload[i] = buf->data[(payloadStart + i) & BUF_MASK];
-
+		uint32_t payloadStart = buf->tail + i + 2;
+		for (uint32_t j = 0; j < payloadLen; j++)
+			msg->payload[j] = buf->data[(payloadStart + j) & BUF_MASK];
 		msg->payload_length = payloadLen;
 		msg->length = payloadLen;
 		strcpy(msg->type, "+UDATR");
 		msg->is_binary = true;
 
-		// Advance tail past message
 		buf->tail += totalNeeded + startPos;
-
 		exitCritical(primask);
 		return payloadLen;
 	}
 
-	// ---- Handle normal text-based message ----
-	uint32_t msgLen = 0;
-	bool endFound = false;
+	// ---- Normal text message ----
+	uint32_t msgEnd = startPos;
+	bool foundEnd = false;
 
-	for (uint32_t i = startPos; i + 1 < available; i++) {
-		uint8_t c1 = buf->data[(buf->tail + i) & BUF_MASK];
-		uint8_t c2 = buf->data[(buf->tail + i + 1) & BUF_MASK];
+	for (; msgEnd + 1 < available; msgEnd++) {
+		uint8_t c1 = buf->data[(buf->tail + msgEnd) & BUF_MASK];
+		uint8_t c2 = buf->data[(buf->tail + msgEnd + 1) & BUF_MASK];
 		if (c1 == '\r' && c2 == '\n') {
-			msgLen = i - startPos;
-			endFound = true;
+			foundEnd = true;
 			break;
 		}
 	}
 
-	if (!endFound) {
+	if (!foundEnd) {
 		exitCritical(primask);
-		return 0; // incomplete text message
+		return 0; // incomplete message
 	}
 
-	uint32_t toCopy = (msgLen < sizeof(msg->payload)) ? msgLen : sizeof(msg->payload) - 1;
+	uint32_t msgLen = msgEnd - startPos;
+	uint32_t toCopy = (msgLen < sizeof(msg->payload) - 1) ? msgLen : sizeof(msg->payload) - 1;
+
 	for (uint32_t i = 0; i < toCopy; i++)
 		msg->payload[i] = buf->data[(buf->tail + startPos + i) & BUF_MASK];
-
 	msg->payload[toCopy] = '\0';
+	msg->is_binary = false;
 	msg->length = toCopy;
 	msg->payload_length = 0;
-	msg->is_binary = false;
 
-	// Determine message type (everything before ':')
+	// Determine message type (up to ':')
 	char *colon = strchr(msg->payload, ':');
 	if (colon) {
-		size_t tlen = (colon - msg->payload);
-		tlen = (tlen < sizeof(msg->type)-1) ? tlen : sizeof(msg->type)-1;
+		size_t tlen = (size_t)(colon - msg->payload);
+		tlen = (tlen < sizeof(msg->type) - 1) ? tlen : sizeof(msg->type) - 1;
 		memcpy(msg->type, msg->payload, tlen);
-		msg->type[tlen] = 0;
+		msg->type[tlen] = '\0';
 	} else {
-		strncpy(msg->type, msg->payload, sizeof(msg->type)-1);
+		strncpy(msg->type, msg->payload, sizeof(msg->type) - 1);
+		msg->type[sizeof(msg->type) - 1] = '\0';
 	}
 
+	// Advance tail after CRLF
 	buf->tail += startPos + msgLen + 2;
 
 	exitCritical(primask);
@@ -169,22 +163,23 @@ int getNinaMsg(NinaMessage_t *msg) {
 	memset(msg, 0, sizeof(*msg));
 
 	uint32_t len = extractMessage(&rx1Buf, msg);
-	if (!len) return 0;
+	if (!len) return 0;  // no complete message available
 
 	if (!msg->is_binary) {
-		// Tokenize fields for text commands
+		// Tokenize fields safely without corrupting subsequent parses
 		char *data = strchr(msg->payload, ':');
 		if (data) {
 			data++;
-			char *tok = strtok(data, ",");
+			char *saveptr = NULL;
+			char *tok = strtok_r(data, ",", &saveptr);
 			while (tok && msg->field_count < NINA_MAX_FIELDS) {
 				msg->fields[msg->field_count++] = tok;
-				tok = strtok(NULL, ",");
+				tok = strtok_r(NULL, ",", &saveptr);
 			}
 		}
 	}
 
-	return 1;
+	return 1;  // one complete message extracted
 }
 
 
@@ -349,6 +344,9 @@ int processNinaMsg(NinaMessage_t *msg) {
 	}
 	else if (type[0] == '+' && strncmp(type, "+UDATR", 6) == 0) { // Read received data from peer
 		handle_UDATR(msg);
+	}
+	else if (len >= 2 && type[0] == 'A' && type[1] == 'T') {
+		printf("Sent: <%s>\n", msg->payload);
 	}
 	else {
 		printf("Unhandled message: <%s>\n", msg->payload);
