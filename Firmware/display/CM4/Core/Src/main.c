@@ -31,6 +31,7 @@
 #include "circbuf.h"
 #include "usart_util.h"
 #include "network.h"
+#include "wifi_sm.h"
 #include "opt4001.h"
 #include "lps25hb.h"
 #include "shared.h"
@@ -151,8 +152,10 @@ int main(void)
   // Initialise UARTs
   initUsart1();
   initUsart4();
-
   i2c4_status.state = I2C_STATE_IDLE;
+
+  // Initialise WiFi state machine
+  wifi_sm_init();
 
   // Initialise ambient light sensor
   opt4001_init();
@@ -185,31 +188,17 @@ int main(void)
   // Enable pressure interrupt
   LL_C2_EXTI_EnableIT_0_31(LL_EXTI_LINE_11); // _C2 for M4 core
 
-  printfCircBuf(&tx1Buf, "\r\n"); // Separate from any startup junk
-  HAL_Delay(5000);
-  //printfCircBuf(&tx1Buf, "\r\nAT+CPWROFF\r\n"); // Reboot the WiFi module
-  //HAL_Delay(5000);
 
-//  printfCircBuf(&tx1Buf, "\r\nATE0\r\n"); // Set echo off
+//  printfCircBuf(&tx1Buf, "AT+UDWS=3,1\r\n"); // Enable WiFi watchdog
 //  HAL_Delay(100);
-//  printfCircBuf(&tx1Buf, "AT&D0\r\n"); // Ignore DTR line
+//
+//
+//  printfCircBuf(&tx1Buf, "AT+UWSSTAT=3\r\n"); // Get WiFi connection status
 //  HAL_Delay(100);
-//  printfCircBuf(&tx1Buf, "AT&S2\r\n"); // Assert DSR line when connected
-//  HAL_Delay(100);
-  printfCircBuf(&tx1Buf, "AT+UDWS=3,1\r\n"); // Enable WiFi watchdog
-  HAL_Delay(100);
 
-  emptyRx1Buffer(); // Ignore any buffered data up to now
-  printfCircBuf(&tx1Buf, "AT+UWSSTAT=3\r\n"); // Get WiFi connection status
-  HAL_Delay(100);
-
-  //printfCircBuf(&tx1Buf, "AT+UDLP?\r\n"); // List peers
-  printfCircBuf(&tx1Buf, "AT+UDCPC=1\r\n"); // Close connection 1
-  HAL_Delay(100);
 /*
   // Connect to MQTT
-  printfCircBuf(&tx1Buf, "AT+UDCP=at-mqtt://192.168.0.200:1883/?client=NINA-W132&user=
-  mosquittomqtt_user&passwd=MQ.jaygram&pt=test&st=display&encr=0&qos=0\r\n");
+  printfCircBuf(&tx1Buf, "AT+UDCP=at-mqtt://192.168.0.200:1883/?client=NINA-W132&user=mqtt_user&passwd=MQ.jaygram&pt=test&st=display&encr=0&qos=0\r\n");
   HAL_Delay(100);
 */
   lps25hb_data_available = 1; // First trigger to get it started
@@ -257,6 +246,9 @@ int main(void)
 		if (newRx1Message == 0)
 			RxNewData = 0;
 	}
+
+	// WiFi state machine
+	wifi_state_machine_step();
 
 	// Update data
 	if (flag_update) {

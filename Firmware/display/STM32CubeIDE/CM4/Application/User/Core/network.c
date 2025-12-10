@@ -5,6 +5,7 @@
 #include "stm32h7xx.h" // for __get_PRIMASK() and __set_PRIMASK()
 
 #include "network.h"
+#include "wifi_sm.h"
 #include "usart_util.h"
 #include "circbuf.h"
 #include "shared.h"
@@ -30,169 +31,176 @@ static inline void exitCritical(uint32_t primask) {
 // Extract a single complete message from the circular buffer.
 // Returns the number of bytes extracted (header + payload) or 0 if incomplete.
 uint32_t extractMessage(CircularBuffer_t *buf, NinaMessage_t *msg) {
-    if (isCircBufEmpty(buf)) return 0;
+	if (isCircBufEmpty(buf)) return 0;
 
-    uint32_t primask = enterCritical();
-    uint32_t available = buf->head - buf->tail;
-    uint32_t startPos = 0;
+	uint32_t primask = enterCritical();
+	uint32_t available = buf->head - buf->tail;
+	uint32_t startPos = 0;
 
-    // Skip any leading CR/LF
-    while (available > 0) {
-        uint8_t c = buf->data[(buf->tail + startPos) & BUF_MASK];
-        if (c != '\r' && c != '\n') break;
-        startPos++;
-        available--;
-    }
+	// Skip any leading CR/LF
+	while (available > 0) {
+		uint8_t c = buf->data[(buf->tail + startPos) & BUF_MASK];
+		if (c != '\r' && c != '\n') break;
+		startPos++;
+		available--;
+	}
 
-    if (available == 0) {
-        buf->tail += startPos;
-        exitCritical(primask);
-        return 0;
-    }
+	if (available == 0) {
+		buf->tail += startPos;
+		exitCritical(primask);
+		return 0;
+	}
 
-    // Detect +UDATR
-    bool isUDATR = false;
-    if (available >= 6) {
-        char header[8] = {0};
-        for (uint32_t i = 0; i < 7 && i < available; i++)
-            header[i] = buf->data[(buf->tail + startPos + i) & BUF_MASK];
-        if (strncmp(header, "+UDATR", 6) == 0)
-            isUDATR = true;
-    }
+	// Detect +UDATR
+	bool isUDATR = false;
+	if (available >= 6) {
+		char header[8] = {0};
+		for (uint32_t i = 0; i < 7 && i < available; i++)
+			header[i] = buf->data[(buf->tail + startPos + i) & BUF_MASK];
+		if (strncmp(header, "+UDATR", 6) == 0)
+			isUDATR = true;
+	}
 
-    // ---- Handle +UDATR message ----
-    if (isUDATR) {
-        // Find CRLF after "+UDATR:<len>"
-        uint32_t lineEnd = startPos;
-        while (lineEnd + 1 < available) {
-            if (buf->data[(buf->tail + lineEnd) & BUF_MASK] == '\r' &&
-                buf->data[(buf->tail + lineEnd + 1) & BUF_MASK] == '\n') {
-                break;
-            }
-            lineEnd++;
-        }
+	// ---- Handle +UDATR message ----
+	if (isUDATR) {
+		// Find CRLF after "+UDATR:<len>"
+		uint32_t lineEnd = startPos;
+		while (lineEnd + 1 < available) {
+			if (buf->data[(buf->tail + lineEnd) & BUF_MASK] == '\r' &&
+				buf->data[(buf->tail + lineEnd + 1) & BUF_MASK] == '\n') {
+				break;
+			}
+			lineEnd++;
+		}
 
-        if (lineEnd + 1 >= available) {
-            exitCritical(primask);
-            return 0; // incomplete header line
-        }
+		if (lineEnd + 1 >= available) {
+			exitCritical(primask);
+			return 0; // incomplete header line
+		}
 
-        // Extract numeric length after "+UDATR:"
-        char lenStr[12] = {0};
-        uint32_t lenStart = startPos + 7; // after "+UDATR:"
-        uint32_t lenCount = 0;
-        for (uint32_t i = lenStart; i < lineEnd && lenCount < sizeof(lenStr)-1; i++, lenCount++)
-            lenStr[lenCount] = buf->data[(buf->tail + i) & BUF_MASK];
-        uint32_t payloadLen = atoi(lenStr);
+		// Extract numeric length after "+UDATR:"
+		char lenStr[12] = {0};
+		uint32_t lenStart = startPos + 7; // after "+UDATR:"
+		uint32_t lenCount = 0;
+		for (uint32_t i = lenStart; i < lineEnd && lenCount < sizeof(lenStr)-1; i++, lenCount++)
+			lenStr[lenCount] = buf->data[(buf->tail + i) & BUF_MASK];
+		uint32_t payloadLen = atoi(lenStr);
 
-        if (payloadLen > NINA_PAYLOAD_SIZE) {
-            printf("[NINA] Payload too large: %lu bytes (max %d)\n", payloadLen, NINA_PAYLOAD_SIZE);
-            buf->tail = buf->head; // discard entire buffer safely
-            exitCritical(primask);
-            return 0;
-        }
+		if (payloadLen > NINA_PAYLOAD_SIZE) {
+			printf("[NINA] Payload too large: %lu bytes (max %d)\n", payloadLen, NINA_PAYLOAD_SIZE);
+			buf->tail = buf->head; // discard entire buffer safely
+			exitCritical(primask);
+			return 0;
+		}
 
-        // Calculate total bytes required for complete message
-        // header line + CRLF + payload + final CRLF
-        uint32_t totalNeeded = (lineEnd - startPos + 2) + payloadLen + 2;
-        if (available < totalNeeded) {
-            exitCritical(primask);
-            return 0; // not yet complete
-        }
+		// Calculate total bytes required for complete message
+		// header line + CRLF + payload + final CRLF
+		uint32_t totalNeeded = (lineEnd - startPos + 2) + payloadLen + 2;
+		if (available < totalNeeded) {
+			exitCritical(primask);
+			return 0; // not yet complete
+		}
 
-        // Copy payload
-        uint32_t payloadStart = buf->tail + lineEnd + 2; // after first CRLF
-        for (uint32_t i = 0; i < payloadLen; i++)
-            msg->payload[i] = buf->data[(payloadStart + i) & BUF_MASK];
+		// Copy payload
+		uint32_t payloadStart = buf->tail + lineEnd + 2; // after first CRLF
+		for (uint32_t i = 0; i < payloadLen; i++)
+			msg->payload[i] = buf->data[(payloadStart + i) & BUF_MASK];
 
-        msg->payload_length = payloadLen;
-        msg->length = payloadLen;
-        strcpy(msg->type, "+UDATR");
-        msg->is_binary = true;
+		msg->payload_length = payloadLen;
+		msg->length = payloadLen;
+		strcpy(msg->type, "+UDATR");
+		msg->is_binary = true;
 
-        // Advance tail past message
-        buf->tail += totalNeeded + startPos;
+		// Advance tail past message
+		buf->tail += totalNeeded + startPos;
 
-        exitCritical(primask);
-        return payloadLen;
-    }
+		exitCritical(primask);
+		return payloadLen;
+	}
 
-    // ---- Handle normal text-based message ----
-    uint32_t msgLen = 0;
-    bool endFound = false;
+	// ---- Handle normal text-based message ----
+	uint32_t msgLen = 0;
+	bool endFound = false;
 
-    for (uint32_t i = startPos; i + 1 < available; i++) {
-        uint8_t c1 = buf->data[(buf->tail + i) & BUF_MASK];
-        uint8_t c2 = buf->data[(buf->tail + i + 1) & BUF_MASK];
-        if (c1 == '\r' && c2 == '\n') {
-            msgLen = i - startPos;
-            endFound = true;
-            break;
-        }
-    }
+	for (uint32_t i = startPos; i + 1 < available; i++) {
+		uint8_t c1 = buf->data[(buf->tail + i) & BUF_MASK];
+		uint8_t c2 = buf->data[(buf->tail + i + 1) & BUF_MASK];
+		if (c1 == '\r' && c2 == '\n') {
+			msgLen = i - startPos;
+			endFound = true;
+			break;
+		}
+	}
 
-    if (!endFound) {
-        exitCritical(primask);
-        return 0; // incomplete text message
-    }
+	if (!endFound) {
+		exitCritical(primask);
+		return 0; // incomplete text message
+	}
 
-    uint32_t toCopy = (msgLen < sizeof(msg->payload)) ? msgLen : sizeof(msg->payload) - 1;
-    for (uint32_t i = 0; i < toCopy; i++)
-        msg->payload[i] = buf->data[(buf->tail + startPos + i) & BUF_MASK];
+	uint32_t toCopy = (msgLen < sizeof(msg->payload)) ? msgLen : sizeof(msg->payload) - 1;
+	for (uint32_t i = 0; i < toCopy; i++)
+		msg->payload[i] = buf->data[(buf->tail + startPos + i) & BUF_MASK];
 
-    msg->payload[toCopy] = '\0';
-    msg->length = toCopy;
-    msg->payload_length = 0;
-    msg->is_binary = false;
+	msg->payload[toCopy] = '\0';
+	msg->length = toCopy;
+	msg->payload_length = 0;
+	msg->is_binary = false;
 
-    // Determine message type (everything before ':')
-    char *colon = strchr(msg->payload, ':');
-    if (colon) {
-        size_t tlen = (colon - msg->payload);
-        tlen = (tlen < sizeof(msg->type)-1) ? tlen : sizeof(msg->type)-1;
-        memcpy(msg->type, msg->payload, tlen);
-        msg->type[tlen] = 0;
-    } else {
-        strncpy(msg->type, msg->payload, sizeof(msg->type)-1);
-    }
+	// Determine message type (everything before ':')
+	char *colon = strchr(msg->payload, ':');
+	if (colon) {
+		size_t tlen = (colon - msg->payload);
+		tlen = (tlen < sizeof(msg->type)-1) ? tlen : sizeof(msg->type)-1;
+		memcpy(msg->type, msg->payload, tlen);
+		msg->type[tlen] = 0;
+	} else {
+		strncpy(msg->type, msg->payload, sizeof(msg->type)-1);
+	}
 
-    buf->tail += startPos + msgLen + 2;
+	buf->tail += startPos + msgLen + 2;
 
-    exitCritical(primask);
-    return msg->length;
+	exitCritical(primask);
+	return msg->length;
 }
 
 // Retrieve and parse a message from buffer.
 // Returns 1 if valid message extracted, 0 if not.
 int getNinaMsg(NinaMessage_t *msg) {
-    memset(msg, 0, sizeof(*msg));
+	memset(msg, 0, sizeof(*msg));
 
-    uint32_t len = extractMessage(&rx1Buf, msg);
-    if (!len) return 0;
+	uint32_t len = extractMessage(&rx1Buf, msg);
+	if (!len) return 0;
 
-    if (!msg->is_binary) {
-        // Tokenize fields for text commands
-        char *data = strchr(msg->payload, ':');
-        if (data) {
-            data++;
-            char *tok = strtok(data, ",");
-            while (tok && msg->field_count < NINA_MAX_FIELDS) {
-                msg->fields[msg->field_count++] = tok;
-                tok = strtok(NULL, ",");
-            }
-        }
-    }
+	if (!msg->is_binary) {
+		// Tokenize fields for text commands
+		char *data = strchr(msg->payload, ':');
+		if (data) {
+			data++;
+			char *tok = strtok(data, ",");
+			while (tok && msg->field_count < NINA_MAX_FIELDS) {
+				msg->fields[msg->field_count++] = tok;
+				tok = strtok(NULL, ",");
+			}
+		}
+	}
 
-    return 1;
+	return 1;
 }
 
 
 void handle_OK(NinaMessage_t *msg) {
-	//printf("NINA OK\n");
+	printf("NINA OK\n");
+	wifi_events.EV_OK = 1;
 }
 
 void handle_ERROR(NinaMessage_t *msg) {
 	printf("NINA ERROR\n");
+	wifi_events.EV_ERROR = 1;
+}
+
+void handle_STARTUP(NinaMessage_t *msg) {
+	printf("NINA STARTUP\n");
+	wifi_events.EV_STARTUP = 1;
 }
 
 // Network status
@@ -225,6 +233,7 @@ void handle_UUWLE(NinaMessage_t *msg) {
 	int ch = atoi(msg->fields[2]);
 	//printf("NINA UUWLE (%i)\n", id);
 	printf("WiFi connected (%i) SSID: <%s> on ch %i\n", id, ssid, ch);
+	wifi_events.EV_UUWLE = 1;
 }
 
 // Wi-Fi connection disconnected
@@ -233,6 +242,7 @@ void handle_UUWLD(NinaMessage_t *msg) {
 	int cause = atoi(msg->fields[1]);
 	//printf("NINA UUWLD (%i)\n", id);
 	printf("WiFi disconnected (%i) code: %i\n", id, cause);
+	wifi_events.EV_DISCONNECT = 1;
 }
 
 // Network up
@@ -240,6 +250,7 @@ void handle_UUNU(NinaMessage_t *msg) {
 	int id = atoi(msg->fields[0]);
 	//printf("NINA UUNU (%i)\n", id);
 	printf("Network up (%i)\n", id);
+	wifi_events.EV_UUNU = 1;
 }
 
 // Network down
@@ -253,6 +264,7 @@ void handle_UUND(NinaMessage_t *msg) {
 void handle_UDCP(NinaMessage_t *msg) {
 	int id = atoi(msg->fields[0]);
 	printf("NINA UDCP (%i)\n", id);
+	wifi_events.EV_UDCP = 1;
 }
 
 // Peer connected
@@ -302,6 +314,9 @@ int processNinaMsg(NinaMessage_t *msg) {
 	}
 	else if (len == 5 && strncmp(type, "ERROR", 5) == 0) {
 		handle_ERROR(msg);
+	}
+	else if (type[0] == '+' && strncmp(type, "+STARTUP", 8) == 0) { // Module start
+		handle_STARTUP(msg);
 	}
 	else if (type[0] == '+' && strncmp(type, "+UWSSTAT", 8) == 0) { // Wi-Fi station status
 		handle_UWSSTAT(msg);

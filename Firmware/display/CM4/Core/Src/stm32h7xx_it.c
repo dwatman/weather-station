@@ -51,6 +51,7 @@ volatile uint32_t flag_status;
 volatile uint32_t flag_update;
 
 volatile uint32_t rxTimeout = 0;
+volatile uint32_t wifi_timeout = 0;
 
 extern CircularBuffer_t rx1Buf;
 extern volatile uint32_t RxNewData;
@@ -209,8 +210,9 @@ void SysTick_Handler(void)
 	if (count % 500 == 0) flag_update = 1;
 	count++;
 
-	// Decrement timeout towards zero if set
+	// Decrement timeouts towards zero if set
 	if (rxTimeout) rxTimeout--;
+	if (wifi_timeout) wifi_timeout--;
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */

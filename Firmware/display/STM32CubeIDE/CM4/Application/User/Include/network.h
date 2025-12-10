@@ -21,10 +21,10 @@ typedef struct {
 } NinaMessage_t;
 
 typedef enum nina_response_e {
-  RESPONSE_NONE,
-  RESPONSE_OK,
-  RESPONSE_ERROR,
-  RESPONSE_DATA
+	RESPONSE_NONE,
+	RESPONSE_OK,
+	RESPONSE_ERROR,
+	RESPONSE_DATA
 } NinaResponseType;
 
 
