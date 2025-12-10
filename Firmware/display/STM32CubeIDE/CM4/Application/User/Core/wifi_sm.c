@@ -175,13 +175,11 @@ void wifi_state_machine_step(void) {
 			printf("SM: Sent configuration JSON (peer %d)\n", wifi_ctx.peer_handle);
 		}
 
-		if (wifi_events.EV_OK) {
-			wifi_events.EV_OK = 0;
+		if (event_ok) {
 			wifi_ctx.waiting = 0;
 			wifi_ctx.state   = SM_MQTT_CFG1_DISCONNECT;
 			printf("SM: JSON send acknowledged, disconnecting CFG1\n");
-		} else if (wifi_events.EV_ERROR) {
-			wifi_events.EV_ERROR = 0;
+		} else if (event_error) {
 			if (++wifi_ctx.retries < WIFI_SM_MAX_RETRIES) {
 				wifi_ctx.waiting = 0;
 				printf("SM: JSON send error, retry %d\n", wifi_ctx.retries);
@@ -217,14 +215,12 @@ void wifi_state_machine_step(void) {
 			printf("SM: MQTT CFG1 disconnect (peer %d)\n", wifi_ctx.peer_handle);
 		}
 
-		if (wifi_events.EV_OK) {
-			wifi_events.EV_OK = 0;
+		if (event_ok) {
 			wifi_ctx.waiting = 0;
 			wifi_ctx.state   = SM_MQTT_CFG2_CONNECT;
 			wifi_ctx.peer_handle = -1;
 			printf("SM: MQTT CFG1 disconnected, switching to CFG2\n");
-		} else if (wifi_events.EV_ERROR) {
-			wifi_events.EV_ERROR = 0;
+		} else if (event_error) {
 			if (++wifi_ctx.retries < WIFI_SM_MAX_RETRIES) {
 				wifi_ctx.waiting = 0;
 				printf("SM: Disconnect error, retry %d\n", wifi_ctx.retries);
