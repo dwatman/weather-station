@@ -7,24 +7,24 @@
 #include "stm32h7xx_ll_usart.h"
 
 const char pressure_config[] =
-"{\"name\":\"Pressure\","
-"\"uniq_id\":\"DW_display_pressure\","
-"\"stat_t\":\"dw_display/state\","
-"\"val_tpl\":\"{{ value_json.pressure }}\","
-"\"unit_of_meas\":\"hPa\","
-"\"dev_cla\":\"pressure\","
-"\"stat_cla\":\"measurement\","
-"\"dev\":{\"ids\":[\"DW_display\"],\"name\":\"DW_display\",\"mf\":\"DW Custom\",\"mdl\":\"Display v1\"}}";
+	"{\"name\":\"Pressure\","
+	"\"uniq_id\":\"DW_display_pressure\","
+	"\"stat_t\":\"dw_display/state\","
+	"\"val_tpl\":\"{{ value_json.pressure }}\","
+	"\"unit_of_meas\":\"hPa\","
+	"\"dev_cla\":\"pressure\","
+	"\"stat_cla\":\"measurement\","
+	"\"dev\":{\"ids\":[\"DW_display\"],\"name\":\"DW_display\",\"mf\":\"DW Custom\",\"mdl\":\"Display v1\"}}";
 
 const char light_config[] =
-"{\"name\":\"Light\","
-"\"uniq_id\":\"DW_display_light\","
-"\"stat_t\":\"dw_display/state\","
-"\"val_tpl\":\"{{ value_json.light }}\","
-"\"unit_of_meas\":\"lx\","
-"\"dev_cla\":\"illuminance\","
-"\"stat_cla\":\"measurement\","
-"\"dev\":{\"ids\":[\"DW_display\"],\"name\":\"DW_display\",\"mf\":\"DW Custom\",\"mdl\":\"Display v1\"}}";
+	"{\"name\":\"Light\","
+	"\"uniq_id\":\"DW_display_light\","
+	"\"stat_t\":\"dw_display/state\","
+	"\"val_tpl\":\"{{ value_json.light }}\","
+	"\"unit_of_meas\":\"lx\","
+	"\"dev_cla\":\"illuminance\","
+	"\"stat_cla\":\"measurement\","
+	"\"dev\":{\"ids\":[\"DW_display\"],\"name\":\"DW_display\",\"mf\":\"DW Custom\",\"mdl\":\"Display v1\"}}";
 
 extern CircularBuffer_t tx1Buf;
 extern volatile uint32_t wifi_timeout;
@@ -32,13 +32,24 @@ extern volatile uint32_t wifi_timeout;
 WifiEvents_t wifi_events = {0};
 WifiSM_Ctx_t wifi_ctx = {0};
 
+void sendMqttData(float pressure, float light) {
+	snprintf((char*)wifi_ctx.payload, PAYLOAD_BUF_LEN,
+	         "{\"pressure\":%.1f,\"light\":%.1f}", pressure, light);
+	wifi_ctx.payload_len = strlen((char*)wifi_ctx.payload);
+
+	// Set the send flag
+	wifi_events.EV_SEND = 1;
+}
+
 // Initialize state machine
 void wifi_sm_init(void) {
 	wifi_ctx.state = SM_IDLE;
 	wifi_ctx.waiting = 0;
 	wifi_ctx.retries = 0;
 	wifi_ctx.progress = 0;
+	wifi_ctx.data_send_state = DATA_SEND_IDLE;
 	wifi_ctx.timeout_ms = WIFI_SM_DEFAULT_TIMEOUT_MS;
+	wifi_ctx.peer_handle = -1;
 }
 
 // Main step function to call in main loop
@@ -51,39 +62,32 @@ void wifi_state_machine_step(void) {
 	if (wifi_events.EV_ERROR) { event_error = 1; wifi_events.EV_ERROR = 0; }
 
 	// Check for unexpected module restart
-	if (wifi_events.EV_STARTUP && wifi_ctx.state != SM_WAIT_STARTUP && wifi_ctx.state != SM_RESET_POWER_OFF) {
+	if (wifi_events.EV_STARTUP && wifi_ctx.state != SM_WAIT_STARTUP &&
+	    wifi_ctx.state != SM_RESET_POWER_OFF && wifi_ctx.state != SM_IDLE) {
 		wifi_events.EV_STARTUP = 0;
 		printf("SM: Unexpected +STARTUP detected, restarting sequence\n");
 		wifi_ctx.state = SM_WAIT_STARTUP;
 		wifi_ctx.waiting = 0;
 		wifi_ctx.retries = 0;
 		wifi_ctx.progress = 0;
+		wifi_ctx.data_send_state = DATA_SEND_IDLE;
+		wifi_ctx.peer_handle = -1;
 		return;  // restart processing next loop iteration
 	}
 
 	switch (wifi_ctx.state) {
 	case SM_IDLE:
-		// Send separator and wait for any response before proceeding
+		// Simple startup delay to allow module to stabilize
 		if (!wifi_ctx.waiting) {
-			//emptyRx1Buffer();
-			//printfCircBuf(&tx1Buf, "\r\n");
+			wifi_timeout = WIFI_SM_STARTUP_DELAY_MS;
 			wifi_ctx.waiting = 1;
-			wifi_timeout = 1000;  // short wait (~1s)
-			wifi_ctx.retries = 0;
-			printf("SM: Idle -> sent initial CRLF, waiting for response\n");
-		} else if (event_ok || event_error) {
-			// Either OK or ERROR means UART link is clear
+			printf("SM: Startup delay\n");
+		} else if (wifi_timeout == 0) {
 			wifi_ctx.waiting = 0;
 			wifi_ctx.state = SM_RESET_POWER_OFF;
 			wifi_ctx.progress = 0;
 			wifi_ctx.retries = 0;
-			wifi_ctx.timeout_ms = WIFI_SM_DEFAULT_TIMEOUT_MS;
-			printf("SM: Initial CRLF acknowledged, proceeding to reset\n");
-		} else if (wifi_timeout == 0) {
-			// Timeout waiting for a response; continue anyway
-			wifi_ctx.waiting = 0;
-			wifi_ctx.state = SM_RESET_POWER_OFF;
-			printf("SM: Initial CRLF timeout, continuing to reset\n");
+			printf("SM: Starting initialization sequence\n");
 		}
 		break;
 
@@ -108,6 +112,7 @@ void wifi_state_machine_step(void) {
 			} else {
 				wifi_ctx.state = SM_ERROR_RECOVERY;
 				wifi_ctx.waiting = 0;
+				printf("SM: CPWROFF max retries exceeded\n");
 			}
 		}
 		break;
@@ -130,10 +135,9 @@ void wifi_state_machine_step(void) {
 			// NETWORK JOINED: Start the Sequence
 			wifi_ctx.sequence_step = SEQ_CONFIG_PRESSURE; // Start with Pressure
 			wifi_ctx.state = SM_MQTT_SEQ_CONNECT;
-
 			wifi_ctx.waiting = 0;
 			wifi_ctx.retries = 0;
-			wifi_ctx.progress = 0;
+			wifi_ctx.progress = 0;  // Clear flags before next sequence
 			printf("SM: Network joined, starting MQTT sequence\n");
 		}
 		break;
@@ -151,13 +155,13 @@ void wifi_state_machine_step(void) {
 				case SEQ_CONFIG_PRESSURE:
 					snprintf(topic_buf, TOPIC_BUF_LEN, TOPIC_DISC_PRES);
 					wifi_ctx.payload_type = PAYLOAD_JSON_PRES;
-					snprintf((char *)wifi_ctx.payload, PAYLOAD_BUF_LEN, pressure_config);
+					snprintf((char *)wifi_ctx.payload, PAYLOAD_BUF_LEN, "%s", pressure_config);
 					wifi_ctx.payload_len = strlen((char *)wifi_ctx.payload);
 					break;
 				case SEQ_CONFIG_LIGHT:
 					snprintf(topic_buf, TOPIC_BUF_LEN, TOPIC_DISC_LITE);
 					wifi_ctx.payload_type = PAYLOAD_JSON_LITE;
-					snprintf((char *)wifi_ctx.payload, PAYLOAD_BUF_LEN, light_config);
+					snprintf((char *)wifi_ctx.payload, PAYLOAD_BUF_LEN, "%s", light_config);
 					wifi_ctx.payload_len = strlen((char *)wifi_ctx.payload);
 					break;
 				case SEQ_DATA_CONNECT:
@@ -200,7 +204,9 @@ void wifi_state_machine_step(void) {
 			// Check if initialisation is complete
 			if (wifi_ctx.sequence_step == SEQ_DATA_CONNECT) {
 				wifi_ctx.state = SM_OPERATIONAL; // We are done!
-				printf("SM: Data Connection Established. Operational.\n");
+				wifi_ctx.data_send_state = DATA_SEND_IDLE;
+				printf("SM: Data Connection Established (handle=%d). Operational.\n",
+				       wifi_ctx.peer_handle);
 			} else {
 				wifi_ctx.state = SM_MQTT_SEQ_WRITE_CMD; // Go to Binary Write
 				printf("SM: Connected, preparing to write config JSON\n");
@@ -212,12 +218,11 @@ void wifi_state_machine_step(void) {
 			if (++wifi_ctx.retries < WIFI_SM_MAX_RETRIES) {
 				wifi_ctx.waiting = 0;
 				wifi_ctx.progress = 0;
-				printf("SM: MQTT CFG1 connect timeout, retry %d\n",
-					   wifi_ctx.retries);
+				printf("SM: MQTT connect timeout, retry %d\n", wifi_ctx.retries);
 			} else {
 				wifi_ctx.state   = SM_ERROR_RECOVERY;
 				wifi_ctx.waiting = 0;
-				printf("SM: MQTT CFG1 connect failed, recovery\n");
+				printf("SM: MQTT connect failed, recovery\n");
 			}
 		}
 		break;
@@ -245,10 +250,20 @@ void wifi_state_machine_step(void) {
 			printf("SM: Prompt received, sending raw data\n");
 		}
 		else if (event_error) {
-			// Handle error
 			wifi_ctx.state = SM_ERROR_RECOVERY;
+			wifi_ctx.waiting = 0;
+			printf("SM: UDATW command error\n");
 		}
-		// ... (Timeout logic) ...
+		else if (wifi_timeout == 0) {
+			if (++wifi_ctx.retries < WIFI_SM_MAX_RETRIES) {
+				wifi_ctx.waiting = 0;
+				printf("SM: UDATW prompt timeout, retry %d\n", wifi_ctx.retries);
+			} else {
+				wifi_ctx.state = SM_ERROR_RECOVERY;
+				wifi_ctx.waiting = 0;
+				printf("SM: UDATW prompt timeout, max retries exceeded\n");
+			}
+		}
 		break;
 
 	// -------------------------------------------------------------------------
@@ -262,6 +277,7 @@ void wifi_state_machine_step(void) {
 
 			wifi_ctx.waiting = 1;
 			wifi_timeout = 5000;
+			wifi_ctx.retries = 0;
 			printf("SM: Raw data sent, waiting for OK\n");
 		}
 
@@ -271,7 +287,19 @@ void wifi_state_machine_step(void) {
 			printf("SM: Data write OK. Disconnecting this handle.\n");
 		}
 		else if (event_error) {
-			 wifi_ctx.state = SM_ERROR_RECOVERY;
+			wifi_ctx.state = SM_ERROR_RECOVERY;
+			wifi_ctx.waiting = 0;
+			printf("SM: Data write error\n");
+		}
+		else if (wifi_timeout == 0) {
+			if (++wifi_ctx.retries < WIFI_SM_MAX_RETRIES) {
+				wifi_ctx.waiting = 0;
+				printf("SM: Data write timeout, retry %d\n", wifi_ctx.retries);
+			} else {
+				wifi_ctx.state = SM_ERROR_RECOVERY;
+				wifi_ctx.waiting = 0;
+				printf("SM: Data write timeout, max retries exceeded\n");
+			}
 		}
 		break;
 
@@ -283,10 +311,12 @@ void wifi_state_machine_step(void) {
 			printfCircBuf(&tx1Buf, "AT+UDCPC=%d\r\n", wifi_ctx.peer_handle);
 			wifi_ctx.waiting = 1;
 			wifi_ctx.progress = 0;
+			wifi_ctx.retries = 0;
 			wifi_timeout = 2000;
+			printf("SM: Disconnecting peer %d\n", wifi_ctx.peer_handle);
 		}
 
-		if (event_ok) { event_ok = 0; wifi_ctx.progress |= FLAG_OK; }
+		if (event_ok) { wifi_ctx.progress |= FLAG_OK; }
 		if (wifi_events.EV_PEER_CLOSED) { wifi_events.EV_PEER_CLOSED = 0; wifi_ctx.progress |= FLAG_UUDPD; }
 
 		if ((wifi_ctx.progress & (FLAG_OK | FLAG_UUDPD)) == (FLAG_OK | FLAG_UUDPD)) {
@@ -298,32 +328,138 @@ void wifi_state_machine_step(void) {
 			wifi_ctx.state = SM_MQTT_SEQ_CONNECT; // Loop back to connect for next step
 			printf("SM: Disconnect complete, advancing to Step %d\n", wifi_ctx.sequence_step);
 		}
-		// ... (Timeout logic) ...
+		else if (wifi_timeout == 0 && wifi_ctx.waiting) {
+			if (++wifi_ctx.retries < WIFI_SM_MAX_RETRIES) {
+				wifi_ctx.waiting = 0;
+				wifi_ctx.progress = 0;
+				printf("SM: Disconnect timeout, retry %d\n", wifi_ctx.retries);
+			} else {
+				// Proceed anyway - connection might be closed
+				wifi_ctx.waiting = 0;
+				wifi_ctx.peer_handle = -1;
+				wifi_ctx.sequence_step++;
+				wifi_ctx.state = SM_MQTT_SEQ_CONNECT;
+				printf("SM: Disconnect timeout, proceeding to Step %d\n", wifi_ctx.sequence_step);
+			}
+		}
 		break;
 
 	case SM_OPERATIONAL:
-		// Passive monitoring mode
+		// =====================================================================
+		// DATA SEND SUB-STATE MACHINE
+		// =====================================================================
+		switch (wifi_ctx.data_send_state) {
+		case DATA_SEND_IDLE:
+			// Check for send request
+			if (wifi_events.EV_SEND) {
+				wifi_events.EV_SEND = 0;
+
+				// Validate we have a valid peer handle
+				if (wifi_ctx.peer_handle < 0) {
+					printf("SM: Data send requested but no valid peer handle\n");
+					break;
+				}
+
+				wifi_ctx.data_send_state = DATA_SEND_WRITE_CMD;
+				wifi_ctx.waiting = 0;
+				printf("SM: Data send requested, starting send\n");
+			}
+			break;
+
+		case DATA_SEND_WRITE_CMD:
+			if (!wifi_ctx.waiting) {
+				printfCircBuf(&tx1Buf, "AT+UDATW=%d,2,%d\r\n",
+				              wifi_ctx.peer_handle,
+				              wifi_ctx.payload_len);
+
+				wifi_ctx.waiting = 1;
+				wifi_timeout = 5000;
+				printf("SM: Data send - UDATW command sent\n");
+			}
+
+			if (wifi_events.EV_PROMPT) {
+				wifi_events.EV_PROMPT = 0;
+				wifi_ctx.waiting = 0;
+				wifi_ctx.data_send_state = DATA_SEND_WRITE_DATA;
+				printf("SM: Data send - prompt received\n");
+			}
+			else if (event_error) {
+				wifi_ctx.waiting = 0;
+				wifi_ctx.data_send_state = DATA_SEND_IDLE;
+				printf("SM: Data send - UDATW command error, aborted\n");
+			}
+			else if (wifi_timeout == 0) {
+				wifi_ctx.waiting = 0;
+				wifi_ctx.data_send_state = DATA_SEND_IDLE;
+				printf("SM: Data send - UDATW timeout, aborted\n");
+			}
+			break;
+
+		case DATA_SEND_WRITE_DATA:
+			if (!wifi_ctx.waiting) {
+				writeToCircBuf(&tx1Buf, wifi_ctx.payload, wifi_ctx.payload_len);
+				LL_USART_EnableIT_TXFE(USART1);
+
+				wifi_ctx.waiting = 1;
+				wifi_timeout = 5000;
+				printf("SM: Data send - payload sent (%d bytes)\n", wifi_ctx.payload_len);
+			}
+
+			if (event_ok) {
+				wifi_ctx.waiting = 0;
+				wifi_ctx.data_send_state = DATA_SEND_IDLE;
+				printf("SM: Data send - complete\n");
+			}
+			else if (event_error) {
+				wifi_ctx.waiting = 0;
+				wifi_ctx.data_send_state = DATA_SEND_IDLE;
+				printf("SM: Data send - write error, aborted\n");
+			}
+			else if (wifi_timeout == 0) {
+				wifi_ctx.waiting = 0;
+				wifi_ctx.data_send_state = DATA_SEND_IDLE;
+				printf("SM: Data send - write timeout, aborted\n");
+			}
+			break;
+		}
+
+		// =====================================================================
+		// MONITOR FOR DISCONNECTS (runs in parallel with data send)
+		// =====================================================================
+
+		// Track network status events
+		if (wifi_events.EV_UUWLE) { wifi_ctx.progress |= FLAG_UUWLE; wifi_events.EV_UUWLE = 0; }
+		if (wifi_events.EV_UUNU) { wifi_ctx.progress |= FLAG_UUNU; wifi_events.EV_UUNU = 0; }
+
+		// Network disconnected
 		if (wifi_events.EV_DISCONNECT) {
 			wifi_events.EV_DISCONNECT = 0;
 			wifi_ctx.state = SM_WAIT_NET_JOIN;
+			wifi_ctx.data_send_state = DATA_SEND_IDLE;
+			wifi_ctx.peer_handle = -1;
+			wifi_ctx.progress = 0;
 			printf("SM: Network disconnected, waiting for reconnection\n");
 		}
 
-		// Optional: detect lost MQTT session (if peer closed)
+		// MQTT peer closed unexpectedly
 		if (wifi_events.EV_PEER_CLOSED) {
 			wifi_events.EV_PEER_CLOSED = 0;
 			wifi_ctx.sequence_step = SEQ_DATA_CONNECT; // Reconnect to data topic
 			wifi_ctx.state = SM_MQTT_SEQ_CONNECT;
-			printf("SM: MQTT peer closed, reconnecting CFG2\n");
+			wifi_ctx.data_send_state = DATA_SEND_IDLE;
+			wifi_ctx.peer_handle = -1;
+			wifi_ctx.progress = 0;
+			printf("SM: MQTT peer closed, reconnecting\n");
 		}
 
-		// Detect successful network reconnect
-		if ((wifi_ctx.progress & (FLAG_UUWLE | FLAG_UUNU)) ==
-			(FLAG_UUWLE | FLAG_UUNU)) {
-			wifi_ctx.progress &= ~(FLAG_UUWLE | FLAG_UUNU);
+		// Network reconnected (both flags present)
+		if ((wifi_ctx.progress & (FLAG_UUWLE | FLAG_UUNU)) == (FLAG_UUWLE | FLAG_UUNU)) {
+			wifi_ctx.progress = 0;  // Clear flags
 			wifi_ctx.sequence_step = SEQ_DATA_CONNECT; // Reconnect to data topic
 			wifi_ctx.state = SM_MQTT_SEQ_CONNECT;
-			printf("SM: Network rejoined, reconnecting MQTT CFG2\n");
+			wifi_ctx.data_send_state = DATA_SEND_IDLE;
+			wifi_ctx.peer_handle = -1;
+			printf("SM: Network rejoined, reconnecting MQTT\n");
 		}
 		break;
 
@@ -333,6 +469,8 @@ void wifi_state_machine_step(void) {
 		wifi_ctx.waiting = 0;
 		wifi_ctx.retries = 0;
 		wifi_ctx.progress = 0;
+		wifi_ctx.data_send_state = DATA_SEND_IDLE;
+		wifi_ctx.peer_handle = -1;
 		emptyRx1Buffer();
 		printfCircBuf(&tx1Buf, "\r\n");
 		break;

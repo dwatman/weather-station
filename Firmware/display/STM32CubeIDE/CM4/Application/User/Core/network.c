@@ -197,7 +197,6 @@ int getNinaMsg(NinaMessage_t *msg) {
 	return 1;  // one complete message extracted
 }
 
-
 void handle_OK(NinaMessage_t *msg) {
 	//printf("NINA OK\n");
 	wifi_events.EV_OK = 1;

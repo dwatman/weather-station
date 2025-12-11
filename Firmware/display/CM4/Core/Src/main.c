@@ -305,9 +305,9 @@ int main(void)
 	if (flag_mqtt) {
 		flag_mqtt = 0;
 
-		if (wifi_ctx.state == SM_OPERATIONAL) {
-			printf("Sent MQTT data\n");
-			printfCircBuf(&tx1Buf, "AT+UDATW=%d,0,testdata\r\n", wifi_ctx.peer_handle);
+		if ((wifi_ctx.state == SM_OPERATIONAL) && (wifi_ctx.data_send_state == DATA_SEND_IDLE)) {
+			printf("Sending MQTT data\n");
+			sendMqttData(sharedMem->pres, sharedMem->lux);
 		}
 	}
 

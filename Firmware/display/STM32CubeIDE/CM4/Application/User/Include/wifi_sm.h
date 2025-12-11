@@ -4,8 +4,9 @@
 #include <stdint.h>
 
 // Timeout and retry defaults
-#define WIFI_SM_DEFAULT_TIMEOUT_MS   10000
-#define WIFI_SM_MAX_RETRIES          3
+#define WIFI_SM_STARTUP_DELAY_MS   500
+#define WIFI_SM_DEFAULT_TIMEOUT_MS 10000
+#define WIFI_SM_MAX_RETRIES        3
 
 // Progress flags
 #define FLAG_OK     (1 << 0)
@@ -22,7 +23,7 @@
 // MQTT topics
 #define TOPIC_DISC_PRES "homeassistant/sensor/DW_display/pressure/config"
 #define TOPIC_DISC_LITE "homeassistant/sensor/DW_display/light/config"
-#define TOPIC_DATA      "test_data"
+#define TOPIC_DATA      "dw_display/state"
 #define TOPIC_LISTEN    "display"
 
 // Sequence states
@@ -34,6 +35,11 @@
 #define PAYLOAD_JSON_NONE 0
 #define PAYLOAD_JSON_PRES 1
 #define PAYLOAD_JSON_LITE 2
+
+// Data sending states
+#define DATA_SEND_IDLE       0
+#define DATA_SEND_WRITE_CMD  1
+#define DATA_SEND_WRITE_DATA 2
 
 // State machine states
 typedef enum {
@@ -51,16 +57,17 @@ typedef enum {
 
 // Event flags (set by parser handle_XXX functions)
 typedef struct {
-	volatile uint8_t EV_STARTUP;
-	volatile uint8_t EV_UUWLE;
-	volatile uint8_t EV_UUNU;
-	volatile uint8_t EV_UDCP;
-	volatile uint8_t EV_UUDPC;
-	volatile uint8_t EV_OK;
-	volatile uint8_t EV_ERROR;
-	volatile uint8_t EV_DISCONNECT;
-	volatile uint8_t EV_PEER_CLOSED;
-	volatile uint8_t EV_PROMPT;
+	uint8_t EV_STARTUP;
+	uint8_t EV_UUWLE;
+	uint8_t EV_UUNU;
+	uint8_t EV_UDCP;
+	uint8_t EV_UUDPC;
+	uint8_t EV_OK;
+	uint8_t EV_ERROR;
+	uint8_t EV_DISCONNECT;
+	uint8_t EV_PEER_CLOSED;
+	uint8_t EV_PROMPT;
+	uint8_t EV_SEND;
 } WifiEvents_t;
 
 // State machine context
@@ -70,9 +77,10 @@ typedef struct {
 	uint8_t progress;      // progress flags (UUWLE, UUNU)
 	uint8_t state;         // current state (WifiSM_State_t)
 	uint8_t sequence_step; // step in sub-sequence
+	uint8_t data_send_state;
 	uint32_t timeout_ms;   // timeout for current command
 	int peer_handle;       // store peer handle from +UDCP
-	uint8_t payload_type;   // Payload type currently in the buffer
+	uint8_t payload_type;  // Payload type currently in the buffer
 	int payload_len;       // Length of data in the payload
 	uint8_t payload[PAYLOAD_BUF_LEN];  // Payload data
 } WifiSM_Ctx_t;
@@ -82,7 +90,8 @@ extern WifiEvents_t wifi_events;
 extern WifiSM_Ctx_t wifi_ctx;
 
 // Public API
-void wifi_state_machine_step(void);
 void wifi_sm_init(void);
+void wifi_state_machine_step(void);
+void sendMqttData(float pressure, float light);
 
 #endif
