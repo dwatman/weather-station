@@ -309,7 +309,6 @@ int main(void)
 			printf("Sent MQTT data\n");
 			printfCircBuf(&tx1Buf, "AT+UDATW=%d,0,testdata\r\n", wifi_ctx.peer_handle);
 		}
-		//printf("test\n");
 	}
 
     /* USER CODE END WHILE */

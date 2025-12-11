@@ -27,7 +27,6 @@ static inline void exitCritical(uint32_t primask) {
 	__set_PRIMASK(primask);
 }
 
-
 // Extract a single complete message from the circular buffer.
 // Returns the number of bytes extracted (header + payload) or 0 if incomplete.
 uint32_t extractMessage(CircularBuffer_t *buf, NinaMessage_t *msg) {
@@ -50,7 +49,7 @@ uint32_t extractMessage(CircularBuffer_t *buf, NinaMessage_t *msg) {
 		return 0;
 	}
 
-	// ---- Handle +UDATR (binary) ----
+	// Handle +UDATR (binary)
 	bool isUDATR = false;
 	if (available - startPos >= 6) {
 		char header[8] = {0};
@@ -110,7 +109,23 @@ uint32_t extractMessage(CircularBuffer_t *buf, NinaMessage_t *msg) {
 		return payloadLen;
 	}
 
-	// ---- Normal text message ----
+	// Handle ">" prompt
+	uint8_t firstChar = buf->data[(buf->tail + startPos) & BUF_MASK];
+	if (firstChar == '>') {
+		msg->payload[0] = '\0';  // empty payload
+		strcpy(msg->type, ">");
+		msg->is_binary = false;
+		msg->length = 1;
+		msg->payload_length = 0;
+
+		// Advance tail past the '>' only
+		buf->tail += startPos + 1;
+
+		exitCritical(primask);
+		return 1;
+	}
+
+	// Normal text message
 	uint32_t msgEnd = startPos;
 	bool foundEnd = false;
 
@@ -193,6 +208,11 @@ void handle_ERROR(NinaMessage_t *msg) {
 	wifi_events.EV_ERROR = 1;
 }
 
+void handle_GT(NinaMessage_t *msg) {
+	//printf("NINA PROMPT\n");
+	wifi_events.EV_PROMPT = 1;
+}
+
 void handle_STARTUP(NinaMessage_t *msg) {
 	printf("NINA STARTUP\n");
 	wifi_events.EV_STARTUP = 1;
@@ -258,7 +278,7 @@ void handle_UUND(NinaMessage_t *msg) {
 // Connect peer response
 void handle_UDCP(NinaMessage_t *msg) {
 	int id = atoi(msg->fields[0]);
-	printf("NINA UDCP (%i)\n", id);
+	//printf("NINA UDCP (%i)\n", id);
 	wifi_events.EV_UDCP = 1;
 	wifi_ctx.peer_handle = id;
 }
@@ -313,6 +333,9 @@ int processNinaMsg(NinaMessage_t *msg) {
 	else if (len == 5 && strncmp(type, "ERROR", 5) == 0) {
 		handle_ERROR(msg);
 	}
+	else if (len == 1 && type[0] == '>') {
+		handle_GT(msg);
+	}
 	else if (type[0] == '+' && strncmp(type, "+STARTUP", 8) == 0) { // Module start
 		handle_STARTUP(msg);
 	}
@@ -350,7 +373,7 @@ int processNinaMsg(NinaMessage_t *msg) {
 		printf("Sent: <%s>\n", msg->payload);
 	}
 	else {
-		printf("Unhandled message: <%s>\n", msg->payload);
+		printf("Unhandled message (len %d): <%s>\n", len, msg->payload);
 		err = -1;
 	}
 
