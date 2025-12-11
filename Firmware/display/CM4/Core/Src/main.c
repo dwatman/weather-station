@@ -171,17 +171,19 @@ int main(void)
 
   // Set initial data values
   sharedMem->time = 0;
-  sharedMem->t1 = -10.0f;
-  sharedMem->t2 = -20.0f;
+  sharedMem->t1 = 0.0f;
+  sharedMem->t2 = 0.0f;
   sharedMem->h1 = 0.0f;
   sharedMem->h2 = 0.0f;
   sharedMem->pres = 1000.0f;
   sharedMem->lux = 0.0f;
   sharedMem->rssi = 0;
-  sharedMem->soil1 = 0;
-  sharedMem->soil2 = 20;
-  sharedMem->soil3 = 40;
-  sharedMem->soil4 = 60;
+  sharedMem->soil[0] = 0;
+  sharedMem->soil[1] = 0;
+  sharedMem->soil[2] = 0;
+  sharedMem->soil[3] = 0;
+  sharedMem->soil[4] = 0;
+  sharedMem->soil[5] = 0;
   sharedMem->status = 0;
 
   // Enable ALS interrupt
@@ -263,10 +265,7 @@ int main(void)
 	if (flag_update) {
 		flag_update = 0;
 
-//		if (backlight < 500)
-//			backlight++;
-//		else
-//			backlight = 0;
+		// Set backlight brightness
 		backlight = 100;
 
 		sharedMem->bl = backlight;
@@ -276,16 +275,6 @@ int main(void)
 			sharedMem->status |= STATUS_CONNECTED;
 		else
 			sharedMem->status &= ~STATUS_CONNECTED;
-
-		// move variables for testing
-		sharedMem->t1 += 0.1f;
-		sharedMem->t2 += 0.2f;
-		sharedMem->h1 = (sharedMem->h1 == 100) ? 0 : sharedMem->h1 + 0.2;
-		sharedMem->h2 = (sharedMem->h2 == 100) ? 0 : sharedMem->h2 + 0.3;
-		sharedMem->soil1 = (sharedMem->soil1 == 100) ? 0 : sharedMem->soil1 + 1;
-		sharedMem->soil2 = (sharedMem->soil2 == 100) ? 0 : sharedMem->soil2 + 1;
-		sharedMem->soil3 = (sharedMem->soil3 == 100) ? 0 : sharedMem->soil3 + 1;
-		sharedMem->soil4 = (sharedMem->soil4 == 100) ? 0 : sharedMem->soil4 + 1;
 
 		// Signal data ready via HSEM1
 		HAL_HSEM_FastTake(HSEM_ID_1);   // Take

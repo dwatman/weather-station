@@ -11,10 +11,7 @@ typedef struct {
     float lux;
     int bl;
     int rssi;
-    int soil1;
-    int soil2;
-    int soil3;
-    int soil4;
+    int soil[6];
     uint32_t status;
 } SharedData_t;
 
@@ -25,5 +22,6 @@ typedef struct {
 #define HSEM_ID_1 (1U) // For indicating new data
 
 #define STATUS_CONNECTED (1 << 0)
+#define STATUS_GARAGE    (1 << 1)
 
 #endif

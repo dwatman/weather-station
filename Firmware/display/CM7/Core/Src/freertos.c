@@ -205,10 +205,12 @@ void EEZTick(void const * argument) {
 			set_lux(sharedMem->lux);
 			set_rssi(sharedMem->rssi);
 			set_bl(sharedMem->bl);
-			set_var_soil1_int(sharedMem->soil1);
-			set_var_soil2_int(sharedMem->soil2);
-			set_var_soil3_int(sharedMem->soil3);
-			set_var_soil4_int(sharedMem->soil4);
+			set_var_soil1_int(sharedMem->soil[0]);
+			set_var_soil2_int(sharedMem->soil[1]);
+			set_var_soil3_int(sharedMem->soil[2]);
+			set_var_soil4_int(sharedMem->soil[3]);
+			//set_var_soil5_int(sharedMem->soil[4]);
+			//set_var_soil6_int(sharedMem->soil[5]);
 			//HAL_GPIO_TogglePin(GPIOJ, GPIO_PIN_10); // User LED
 
 			if (sharedMem->status &0x01) {

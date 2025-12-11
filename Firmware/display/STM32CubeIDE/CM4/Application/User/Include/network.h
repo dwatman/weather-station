@@ -32,5 +32,6 @@ uint32_t extractMessage(CircularBuffer_t *buf, NinaMessage_t *msg);
 int getNinaMsg(NinaMessage_t *msg);
 int parseNinaMsg(NinaMessage_t *msg);
 int processNinaMsg(NinaMessage_t *msg);
+int parseRxMessage(const char* msg);
 
 #endif

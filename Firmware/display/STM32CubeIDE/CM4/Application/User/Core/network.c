@@ -314,10 +314,8 @@ void handle_UDATR(NinaMessage_t *msg) {
 	printf("NINA UDATR (%i): %li\n", length, msg->payload_length);
 	printf("*** Payload: <%s>\n", msg->payload);
 
-	// Get time
-	uint8_t time_hr = (uint8_t)atoi((char[]){msg->payload[0], msg->payload[1], '\0'});
-	uint8_t time_min = (uint8_t)atoi((char[]){msg->payload[2], msg->payload[3], '\0'});
-	sharedMem->time = ((uint16_t)time_hr<<8) | time_min;
+	// Process received data and put into shared memory
+	parseRxMessage(msg->payload);
 }
 
 int processNinaMsg(NinaMessage_t *msg) {
@@ -377,4 +375,56 @@ int processNinaMsg(NinaMessage_t *msg) {
 	}
 
 	return err;
+}
+
+int parseRxMessage(const char* msg) {
+    int pos = 0;
+    char buffer[10];
+
+    // Example: "1435,+23.5,-05.2,45.3,62.1,025,030,045,050,055,060,1"
+
+    // Parse time (HHMM)
+    strncpy(buffer, msg + pos, 2); buffer[2] = '\0';
+    uint8_t time_hr = (uint8_t)atoi(buffer);
+    pos += 2;
+    strncpy(buffer, msg + pos, 2); buffer[2] = '\0';
+    uint8_t time_min = (uint8_t)atoi(buffer);
+	sharedMem->time = ((uint16_t)time_hr<<8) | time_min;
+    pos += 3;  // +1 for comma
+
+    // Parse indoor temp (+/-XX.X)
+    strncpy(buffer, msg + pos, 5); buffer[5] = '\0';
+    sharedMem->t1 = atof(buffer);
+    printf("buf: <%s> -> %f\n", buffer, sharedMem->t1);
+    pos += 6;
+
+    // Parse outdoor temp
+    strncpy(buffer, msg + pos, 5); buffer[5] = '\0';
+    sharedMem->t2 = atof(buffer);
+    pos += 6;
+
+    // Parse indoor humidity (XX.X)
+    strncpy(buffer, msg + pos, 4); buffer[4] = '\0';
+    sharedMem->h1 = atof(buffer);
+    pos += 5;
+
+    // Parse outdoor humidity
+    strncpy(buffer, msg + pos, 4); buffer[4] = '\0';
+    sharedMem->h2 = atof(buffer);
+    pos += 5;
+
+    // Parse soil moisture (6 values)
+    for (int i = 0; i < 6; i++) {
+        strncpy(buffer, msg + pos, 3); buffer[3] = '\0';
+        sharedMem->soil[i] = atoi(buffer);
+        pos += 4;
+    }
+
+    // Parse garage door state
+    if (msg[pos] == '0')
+    	sharedMem->status |= STATUS_GARAGE;
+    else
+    	sharedMem->status &= ~STATUS_GARAGE;
+
+    return 0;
 }
