@@ -47,8 +47,9 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-volatile uint32_t flag_status;
 volatile uint32_t flag_update;
+volatile uint32_t flag_status;
+volatile uint32_t flag_mqtt;
 
 volatile uint32_t rxTimeout = 0;
 volatile uint32_t wifi_timeout = 0;
@@ -206,8 +207,9 @@ void SysTick_Handler(void)
 	static uint32_t count = 0;
 
 	// Regular ticks
-	if (count % 5000 == 0) flag_status = 1;
 	if (count % 500 == 0) flag_update = 1;
+	if (count % 5000 == 0) flag_status = 1;
+	if (count % 30000 == 0) flag_mqtt = 1;
 	count++;
 
 	// Decrement timeouts towards zero if set

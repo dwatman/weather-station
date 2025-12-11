@@ -59,8 +59,9 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-extern volatile uint32_t flag_status;
 extern volatile uint32_t flag_update;
+extern volatile uint32_t flag_status;
+extern volatile uint32_t flag_mqtt;
 
 extern I2c_Status_t i2c4_status;
 
@@ -192,8 +193,8 @@ int main(void)
   printfCircBuf(&tx1Buf, "\r\n");
   HAL_Delay(100);
 
-  printfCircBuf(&tx1Buf, "ATE1\r\n"); // Set echo on
-  HAL_Delay(100);
+  //printfCircBuf(&tx1Buf, "ATE1\r\n"); // Set echo on
+  //HAL_Delay(100);
 
   printfCircBuf(&tx1Buf, "AT+UDWS=3,1\r\n"); // Enable WiFi watchdog
   HAL_Delay(100);
@@ -271,6 +272,11 @@ int main(void)
 		sharedMem->bl = backlight;
 		LL_TIM_OC_SetCompareCH1(TIM15, backlight);
 
+		if (wifi_ctx.state == SM_OPERATIONAL)
+			sharedMem->status |= STATUS_CONNECTED;
+		else
+			sharedMem->status &= ~STATUS_CONNECTED;
+
 		// move variables for testing
 		sharedMem->t1 += 0.1f;
 		sharedMem->t2 += 0.2f;
@@ -290,9 +296,22 @@ int main(void)
 	if (flag_status) {
 		flag_status = 0;
 
-		//printf("test\n");
-		//printfCircBuf(&tx1Buf, "AT+UWSSTAT=6\r\n"); // Get WiFi RSSI
+		if (wifi_ctx.state == SM_OPERATIONAL) {
+			printfCircBuf(&tx1Buf, "AT+UWSSTAT=6\r\n"); // Get WiFi RSSI
+		}
 	}
+
+	// Send MQTT message
+	if (flag_mqtt) {
+		flag_mqtt = 0;
+
+		if (wifi_ctx.state == SM_OPERATIONAL) {
+			printf("Sent MQTT data\n");
+			printfCircBuf(&tx1Buf, "AT+UDATW=%d,0,testdata\r\n", wifi_ctx.peer_handle);
+		}
+		//printf("test\n");
+	}
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

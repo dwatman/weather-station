@@ -8,10 +8,12 @@
 #define WIFI_SM_MAX_RETRIES          3
 
 // Progress flags
-#define FLAG_UUWLE  (1 << 0)
-#define FLAG_UUNU   (1 << 1)
-#define FLAG_UDCP   (1 << 2)
-#define FLAG_UUDPC  (1 << 3)
+#define FLAG_OK     (1 << 0)
+#define FLAG_UUWLE  (1 << 1)
+#define FLAG_UUNU   (1 << 2)
+#define FLAG_UDCP   (1 << 3)
+#define FLAG_UUDPC  (1 << 4)
+#define FLAG_UUDPD  (1 << 5)
 
 // State machine states
 typedef enum {
@@ -37,6 +39,7 @@ typedef struct {
 	volatile uint8_t EV_OK;
 	volatile uint8_t EV_ERROR;
 	volatile uint8_t EV_DISCONNECT;
+	volatile uint8_t EV_PEER_CLOSED;
 } WifiEvents_t;
 
 // State machine context

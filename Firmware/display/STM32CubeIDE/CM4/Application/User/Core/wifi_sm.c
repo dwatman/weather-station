@@ -89,14 +89,13 @@ void wifi_state_machine_step(void) {
 		}
 		break;
 
-
 	case SM_WAIT_STARTUP:
 		if (wifi_events.EV_STARTUP) {
 			wifi_events.EV_STARTUP = 0;
 			wifi_ctx.state = SM_WAIT_NET_JOIN;
 			wifi_ctx.progress = 0;
 			printf("SM: +STARTUP received, waiting for network join\n");
-			printfCircBuf(&tx1Buf, "ATE1\r\n"); // Set echo on
+			//printfCircBuf(&tx1Buf, "ATE1\r\n"); // Set echo on for debug
 		}
 		break;
 
@@ -107,6 +106,7 @@ void wifi_state_machine_step(void) {
 			wifi_ctx.state = SM_MQTT_CFG1_CONNECT;
 			wifi_ctx.waiting = 0;
 			wifi_ctx.retries = 0;
+			wifi_ctx.progress = 0;
 			printf("SM: Network joined, proceeding to MQTT CFG1 connect\n");
 		}
 		break;
@@ -114,16 +114,19 @@ void wifi_state_machine_step(void) {
 	case SM_MQTT_CFG1_CONNECT:
 		if (!wifi_ctx.waiting) {
 			// Connect to MQTT to send descriptor
-			printfCircBuf(&tx1Buf, "AT+UDCP=at-mqtt://192.168.0.200:1883/?client=NINA-W132&user=mqtt_user&passwd=MQ.jaygram&pt=test2&st=test&encr=0&qos=0\r\n");
+			printfCircBuf(&tx1Buf,
+				"AT+UDCP=at-mqtt://192.168.0.200:1883/"
+				"?client=NINA-W132_PUB&user=mqtt_user&passwd=MQ.jaygram"
+				"&pt=testcfg&st=test&encr=0&qos=0\r\n");
 			wifi_ctx.waiting   = 1;
-			wifi_ctx.progress &= ~(FLAG_UDCP | FLAG_UUDPC);
+			wifi_ctx.progress = 0;
 			wifi_ctx.peer_handle = -1;
 			wifi_ctx.retries   = 0;
 			wifi_timeout       = wifi_ctx.timeout_ms;
 			printf("SM: MQTT CFG1 connect (sending command)\n");
 		}
 
-		// --- handle responses ---
+		// Handle responses
 		if (wifi_events.EV_UDCP) {
 			wifi_events.EV_UDCP = 0;
 			wifi_ctx.progress  |= FLAG_UDCP;
@@ -135,20 +138,21 @@ void wifi_state_machine_step(void) {
 			printf("SM: +UUDPC received\n");
 		}
 
-		// --- success: both replies arrived ---
+		// Success: both replies arrived
 		if ((wifi_ctx.progress & (FLAG_UDCP | FLAG_UUDPC)) ==
 			(FLAG_UDCP | FLAG_UUDPC)) {
 			wifi_ctx.waiting = 0;
 			wifi_ctx.retries = 0;
+			wifi_ctx.progress = 0;
 			wifi_ctx.state   = SM_MQTT_CFG1_SEND_JSON;
 			printf("SM: MQTT CFG1 fully connected, ready to send JSON\n");
 		}
 
-		// --- timeout / retry ---
+		// Timeout/retry
 		if (wifi_timeout == 0 && wifi_ctx.waiting) {
 			if (++wifi_ctx.retries < WIFI_SM_MAX_RETRIES) {
 				wifi_ctx.waiting = 0;
-				wifi_ctx.progress &= ~(FLAG_UDCP | FLAG_UUDPC);
+				wifi_ctx.progress = 0;
 				printf("SM: MQTT CFG1 connect timeout, retry %d\n",
 					   wifi_ctx.retries);
 			} else {
@@ -168,7 +172,6 @@ void wifi_state_machine_step(void) {
 			}
 			// Send JSON configuration
 			printfCircBuf(&tx1Buf, "AT+UDATW=%d,0,testcfg\r\n", wifi_ctx.peer_handle);
-			//   "AT+UDATW=%d,0,{\"config\":\"value\"}\r\n", wifi_ctx.peer_handle);
 			wifi_ctx.waiting   = 1;
 			wifi_ctx.retries   = 0;
 			wifi_timeout       = wifi_ctx.timeout_ms;
@@ -209,66 +212,140 @@ void wifi_state_machine_step(void) {
 			}
 			// Close MQTT connection
 			printfCircBuf(&tx1Buf, "AT+UDCPC=%d\r\n", wifi_ctx.peer_handle);
-			wifi_ctx.waiting = 1;
-			wifi_ctx.retries = 0;
-			wifi_timeout     = wifi_ctx.timeout_ms;
+			wifi_ctx.waiting   = 1;
+			wifi_ctx.retries   = 0;
+			wifi_ctx.progress  = 0;;
+			wifi_timeout       = wifi_ctx.timeout_ms;
+
 			printf("SM: MQTT CFG1 disconnect (peer %d)\n", wifi_ctx.peer_handle);
+			break; // wait for peer-closed
 		}
 
+		// Handle OK/ERROR/PEER_CLOSED responses
 		if (event_ok) {
+			event_ok = 0;
+			wifi_ctx.progress |= FLAG_OK;
+			printf("SM: Disconnect OK received\n");
+		}
+
+		if (event_error) {
+			event_error = 0;
 			wifi_ctx.waiting = 0;
-			wifi_ctx.state   = SM_MQTT_CFG2_CONNECT;
-			wifi_ctx.peer_handle = -1;
-			printf("SM: MQTT CFG1 disconnected, switching to CFG2\n");
-		} else if (event_error) {
 			if (++wifi_ctx.retries < WIFI_SM_MAX_RETRIES) {
-				wifi_ctx.waiting = 0;
-				printf("SM: Disconnect error, retry %d\n", wifi_ctx.retries);
+				wifi_ctx.progress = 0;
+				printf("SM: Disconnect ERROR, retry %d\n", wifi_ctx.retries);
 			} else {
 				wifi_ctx.state = SM_ERROR_RECOVERY;
-				wifi_ctx.waiting = 0;
 				printf("SM: Disconnect failed, recovery\n");
 			}
-		} else if (wifi_timeout == 0 && wifi_ctx.waiting) {
+			break;
+		}
+
+		// Wait for EV_PEER_CLOSED
+		if (wifi_events.EV_PEER_CLOSED) {
+			wifi_events.EV_PEER_CLOSED = 0;
+			wifi_ctx.progress |= FLAG_UUDPD;
+			printf("SM: Peer closed event received\n");
+		}
+
+		// Success: both OK and PEER_CLOSED received
+		if ((wifi_ctx.progress & (FLAG_OK | FLAG_UUDPD)) == (FLAG_OK | FLAG_UUDPD)) {
+			wifi_ctx.waiting = 0;
+			wifi_ctx.peer_handle = -1;
+			wifi_ctx.retries = 0;
+			wifi_ctx.state = SM_MQTT_CFG2_CONNECT;
+			printf("SM: MQTT CFG1 disconnect complete, switching to CFG2\n");
+			break;
+		}
+
+		// Timeout handling: still waiting for peer closed
+		if (wifi_ctx.waiting && wifi_timeout == 0) {
 			if (++wifi_ctx.retries < WIFI_SM_MAX_RETRIES) {
 				wifi_ctx.waiting = 0;
+				wifi_ctx.progress &= ~(FLAG_OK | FLAG_UUDPD);
 				printf("SM: Disconnect timeout, retry %d\n", wifi_ctx.retries);
 			} else {
 				wifi_ctx.state = SM_ERROR_RECOVERY;
 				wifi_ctx.waiting = 0;
+				wifi_ctx.state = SM_ERROR_RECOVERY;
 				printf("SM: Disconnect timed out, recovery\n");
 			}
 		}
 		break;
 
 	case SM_MQTT_CFG2_CONNECT:
-		wifi_ctx.state = 99;
-		wifi_ctx.waiting = 0;/*
 		if (!wifi_ctx.waiting) {
-			// Connect to MQTT (main)
-			printfCircBuf(&tx1Buf, "AT+UDCP=at-mqtt://192.168.0.200:1883/?client=NINA-W132&user=mqtt_user&passwd=MQ.jaygram&pt=test2&st=display&encr=0&qos=0\r\n");
-			wifi_ctx.waiting = 1;
-			wifi_timeout = wifi_ctx.timeout_ms;
-			printf("SM: MQTT CFG2 connect (main)\n");
-		} else if (wifi_events.EV_UDCP) {
+			// Connect to MQTT for publishing data
+			printfCircBuf(&tx1Buf,
+				"AT+UDCP=at-mqtt://192.168.0.200:1883/"
+				"?client=NINA-W132_PUB&user=mqtt_user&passwd=MQ.jaygram"
+				"&pt=testdata&st=display&encr=0&qos=0\r\n");
+			wifi_ctx.waiting   = 1;
+			wifi_ctx.progress = 0;
+			wifi_ctx.peer_handle = -1;
+			wifi_ctx.retries   = 0;
+			wifi_timeout       = wifi_ctx.timeout_ms;
+			printf("SM: MQTT CFG2 connect (sending command)\n");
+		}
+
+		// Handle responses
+		if (wifi_events.EV_UDCP) {
 			wifi_events.EV_UDCP = 0;
+			wifi_ctx.progress  |= FLAG_UDCP;
+			printf("SM: +UDCP received, peer=%d\n", wifi_ctx.peer_handle);
+		}
+		if (wifi_events.EV_UUDPC) {
+			wifi_events.EV_UUDPC = 0;
+			wifi_ctx.progress  |= FLAG_UUDPC;
+			printf("SM: +UUDPC received\n");
+		}
+
+		// Success: both replies arrived
+		if ((wifi_ctx.progress & (FLAG_UDCP | FLAG_UUDPC)) ==
+			(FLAG_UDCP | FLAG_UUDPC)) {
 			wifi_ctx.waiting = 0;
-			wifi_ctx.state = SM_OPERATIONAL;
-			printf("SM: MQTT CFG2 connected, entering operational\n");
-		} else if (event_error || wifi_timeout == 0) {
-			if (++wifi_ctx.retries < WIFI_SM_MAX_RETRIES) wifi_ctx.waiting = 0;
-			else wifi_ctx.state = SM_ERROR_RECOVERY;
-		}*/
+			wifi_ctx.retries = 0;
+			wifi_ctx.progress = 0;
+			wifi_ctx.state   = SM_OPERATIONAL;
+			printf("SM: MQTT CFG2 fully connected, entering operational mode\n");
+		}
+
+		// Timeout/retry
+		if (wifi_timeout == 0 && wifi_ctx.waiting) {
+			if (++wifi_ctx.retries < WIFI_SM_MAX_RETRIES) {
+				wifi_ctx.waiting = 0;
+				wifi_ctx.progress = 0;
+				printf("SM: MQTT CFG2 connect timeout, retry %d\n",
+					   wifi_ctx.retries);
+			} else {
+				wifi_ctx.state   = SM_ERROR_RECOVERY;
+				wifi_ctx.waiting = 0;
+				printf("SM: MQTT CFG2 connect failed, recovery\n");
+			}
+		}
 		break;
 
 	case SM_OPERATIONAL:
-		// Monitor disconnects and other runtime events
+		// Passive monitoring mode
 		if (wifi_events.EV_DISCONNECT) {
 			wifi_events.EV_DISCONNECT = 0;
-			printf("SM: Disconnected, reconnecting CFG2\n");
+			wifi_ctx.state = SM_WAIT_NET_JOIN;
+			printf("SM: Network disconnected, waiting for reconnection\n");
+		}
+
+		// Optional: detect lost MQTT session (if peer closed)
+		if (wifi_events.EV_PEER_CLOSED) {
+			wifi_events.EV_PEER_CLOSED = 0;
 			wifi_ctx.state = SM_MQTT_CFG2_CONNECT;
-			wifi_ctx.waiting = 0;
-			wifi_ctx.retries = 0;
+			printf("SM: MQTT peer closed, reconnecting CFG2\n");
+		}
+
+		// Detect successful network reconnect
+		if ((wifi_ctx.progress & (FLAG_UUWLE | FLAG_UUNU)) ==
+			(FLAG_UUWLE | FLAG_UUNU)) {
+			wifi_ctx.progress &= ~(FLAG_UUWLE | FLAG_UUNU);
+			wifi_ctx.state = SM_MQTT_CFG2_CONNECT;
+			printf("SM: Network rejoined, reconnecting MQTT CFG2\n");
 		}
 		break;
 
@@ -280,12 +357,6 @@ void wifi_state_machine_step(void) {
 		wifi_ctx.progress = 0;
 		emptyRx1Buffer();
 		printfCircBuf(&tx1Buf, "\r\n");
-		break;
-	case 99://STOP for test
-		if (!wifi_ctx.waiting) {
-			printf("SM: Debug STOP\n");
-			wifi_ctx.waiting = 1;
-		}
 		break;
 
 	default:

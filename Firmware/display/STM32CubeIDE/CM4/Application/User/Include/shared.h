@@ -24,4 +24,6 @@ typedef struct {
 
 #define HSEM_ID_1 (1U) // For indicating new data
 
+#define STATUS_CONNECTED (1 << 0)
+
 #endif

@@ -184,7 +184,7 @@ int getNinaMsg(NinaMessage_t *msg) {
 
 
 void handle_OK(NinaMessage_t *msg) {
-	printf("NINA OK\n");
+	//printf("NINA OK\n");
 	wifi_events.EV_OK = 1;
 }
 
@@ -276,6 +276,7 @@ void handle_UUDPD(NinaMessage_t *msg) {
 	int id = atoi(msg->fields[0]);
 	//printf("NINA UUDPD (%i)\n", value);
 	printf("Disconnected from peer: %i\n", id);
+	wifi_events.EV_PEER_CLOSED = 1;
 }
 
 // Data from remote peer is available
