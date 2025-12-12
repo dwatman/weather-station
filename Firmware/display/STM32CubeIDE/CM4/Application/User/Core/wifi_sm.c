@@ -362,7 +362,7 @@ void wifi_state_machine_step(void) {
 
 				wifi_ctx.data_send_state = DATA_SEND_WRITE_CMD;
 				wifi_ctx.waiting = 0;
-				printf("SM: Data send requested, starting send\n");
+				//printf("SM: Data send requested, starting send\n");
 			}
 			break;
 
@@ -374,14 +374,14 @@ void wifi_state_machine_step(void) {
 
 				wifi_ctx.waiting = 1;
 				wifi_timeout = 5000;
-				printf("SM: Data send - UDATW command sent\n");
+				//printf("SM: Data send - UDATW command sent\n");
 			}
 
 			if (wifi_events.EV_PROMPT) {
 				wifi_events.EV_PROMPT = 0;
 				wifi_ctx.waiting = 0;
 				wifi_ctx.data_send_state = DATA_SEND_WRITE_DATA;
-				printf("SM: Data send - prompt received\n");
+				//printf("SM: Data send - prompt received\n");
 			}
 			else if (event_error) {
 				wifi_ctx.waiting = 0;
@@ -402,7 +402,7 @@ void wifi_state_machine_step(void) {
 
 				wifi_ctx.waiting = 1;
 				wifi_timeout = 5000;
-				printf("SM: Data send - payload sent (%d bytes)\n", wifi_ctx.payload_len);
+				//printf("SM: Data send - payload sent (%d bytes)\n", wifi_ctx.payload_len);
 			}
 
 			if (event_ok) {

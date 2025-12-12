@@ -311,8 +311,8 @@ void handle_UUDATA(NinaMessage_t *msg) {
 // Read received data from peer
 void handle_UDATR(NinaMessage_t *msg) {
 	int length = atoi(msg->fields[0]);
-	printf("NINA UDATR (%i): %li\n", length, msg->payload_length);
-	printf("*** Payload: <%s>\n", msg->payload);
+	//printf("NINA UDATR (%i): %li\n", length, msg->payload_length);
+	printf("*** Payload (%i): <%s>\n", length, msg->payload);
 
 	// Process received data and put into shared memory
 	parseRxMessage(msg->payload);

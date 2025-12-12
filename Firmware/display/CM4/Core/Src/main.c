@@ -214,7 +214,8 @@ int main(void)
 */
   lps25hb_data_available = 1; // First trigger to get it started
 
-  uint16_t backlight = 0;
+  uint16_t backlight = 1;
+  float backlight_tgt = 1.0f;
   while (1) {
 	// Read ALS data from sensor
 	if ((opt4001_data_available) && (i2c4_status.state == I2C_STATE_IDLE)) {
@@ -235,6 +236,11 @@ int main(void)
 		//printf("lux: %.1f\n", lux);
 
 		sharedMem->lux = lux;
+
+		// Set backlight target brightness (filtered)
+		backlight_tgt = 0.95f * backlight_tgt + 0.05f*lux;
+		if (backlight_tgt > 998.0f) backlight_tgt = 998.0f;
+		//printf("BL tgt: %.3f\n", backlight_tgt);
 	}
 
 	// New pressure data
@@ -265,8 +271,9 @@ int main(void)
 	if (flag_update) {
 		flag_update = 0;
 
-		// Set backlight brightness
-		backlight = 100;
+		// Slowly adjust backlight towards target
+		if (backlight < roundf(backlight_tgt)) backlight++;
+		if (backlight > roundf(backlight_tgt)) backlight--;
 
 		sharedMem->bl = backlight;
 		LL_TIM_OC_SetCompareCH1(TIM15, backlight);

@@ -206,9 +206,9 @@ void SysTick_Handler(void)
   /* USER CODE BEGIN SysTick_IRQn 0 */
 	static uint32_t count = 0;
 
-	// Regular ticks
-	if (count % 500 == 0) flag_update = 1;
-	if (count % 5000 == 0) flag_status = 1;
+	// Regular ticks (ideally not simultaneous)
+	if (count % 501 == 0) flag_update = 1;
+	if (count % 5001 == 0) flag_status = 1;
 	if (count % 30000 == 0) flag_mqtt = 1;
 	count++;
 
