@@ -310,12 +310,12 @@ void handle_UUDATA(NinaMessage_t *msg) {
 
 // Read received data from peer
 void handle_UDATR(NinaMessage_t *msg) {
-	int length = atoi(msg->fields[0]);
+	//int length = atoi(msg->fields[0]);
 	//printf("NINA UDATR (%i): %li\n", length, msg->payload_length);
-	printf("*** Payload (%i): <%s>\n", length, msg->payload);
+	printf("Payload (%li): <%s>\n", msg->payload_length, msg->payload);
 
 	// Process received data and put into shared memory
-	parseRxMessage(msg->payload);
+	parseRxMessage(msg);
 }
 
 int processNinaMsg(NinaMessage_t *msg) {
@@ -377,51 +377,56 @@ int processNinaMsg(NinaMessage_t *msg) {
 	return err;
 }
 
-int parseRxMessage(const char* msg) {
+int parseRxMessage(const NinaMessage_t* msg) {
     int pos = 0;
+    const char *data = msg->payload;
     char buffer[10];
 
     // Example: "1435,+23.5,-05.2,45.3,62.1,025,030,045,050,055,060,1"
 
+    if (msg->payload_length != MQTT_EXPECTED_MSG_LENGTH) {
+    	printf("Invalid MQTT message length (%li), ignored\n", msg->payload_length);
+    	return -1;
+    }
+
     // Parse time (HHMM)
-    strncpy(buffer, msg + pos, 2); buffer[2] = '\0';
+    strncpy(buffer, data + pos, 2); buffer[2] = '\0';
     uint8_t time_hr = (uint8_t)atoi(buffer);
     pos += 2;
-    strncpy(buffer, msg + pos, 2); buffer[2] = '\0';
+    strncpy(buffer, data + pos, 2); buffer[2] = '\0';
     uint8_t time_min = (uint8_t)atoi(buffer);
 	sharedMem->time = ((uint16_t)time_hr<<8) | time_min;
     pos += 3;  // +1 for comma
 
     // Parse indoor temp (+/-XX.X)
-    strncpy(buffer, msg + pos, 5); buffer[5] = '\0';
+    strncpy(buffer, data + pos, 5); buffer[5] = '\0';
     sharedMem->t1 = atof(buffer);
-    printf("buf: <%s> -> %f\n", buffer, sharedMem->t1);
     pos += 6;
 
     // Parse outdoor temp
-    strncpy(buffer, msg + pos, 5); buffer[5] = '\0';
+    strncpy(buffer, data + pos, 5); buffer[5] = '\0';
     sharedMem->t2 = atof(buffer);
     pos += 6;
 
     // Parse indoor humidity (XX.X)
-    strncpy(buffer, msg + pos, 4); buffer[4] = '\0';
+    strncpy(buffer, data + pos, 4); buffer[4] = '\0';
     sharedMem->h1 = atof(buffer);
     pos += 5;
 
     // Parse outdoor humidity
-    strncpy(buffer, msg + pos, 4); buffer[4] = '\0';
+    strncpy(buffer, data + pos, 4); buffer[4] = '\0';
     sharedMem->h2 = atof(buffer);
     pos += 5;
 
     // Parse soil moisture (6 values)
     for (int i = 0; i < 6; i++) {
-        strncpy(buffer, msg + pos, 3); buffer[3] = '\0';
+        strncpy(buffer, data + pos, 3); buffer[3] = '\0';
         sharedMem->soil[i] = atoi(buffer);
         pos += 4;
     }
 
     // Parse garage door state
-    if (msg[pos] == '0')
+    if (data[pos] == '0')
     	sharedMem->status |= STATUS_GARAGE;
     else
     	sharedMem->status &= ~STATUS_GARAGE;
