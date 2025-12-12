@@ -213,9 +213,10 @@ int main(void)
   HAL_Delay(100);
 */
   lps25hb_data_available = 1; // First trigger to get it started
-
-  uint16_t backlight = 1;
-  float backlight_tgt = 1.0f;
+  int restarted = 1;
+  uint16_t backlight = 100;
+  float backlight_tgt = 100.0f;
+  float pressure_filt = 1000.0f;
   while (1) {
 	// Read ALS data from sensor
 	if ((opt4001_data_available) && (i2c4_status.state == I2C_STATE_IDLE)) {
@@ -238,7 +239,11 @@ int main(void)
 		sharedMem->lux = lux;
 
 		// Set backlight target brightness (filtered)
-		backlight_tgt = 0.95f * backlight_tgt + 0.05f*lux;
+		if (restarted)
+			backlight_tgt = lux;
+		else
+			backlight_tgt = 0.95f*backlight_tgt + 0.05f*lux;
+
 		if (backlight_tgt > 998.0f) backlight_tgt = 998.0f;
 		//printf("BL tgt: %.3f\n", backlight_tgt);
 	}
@@ -250,7 +255,14 @@ int main(void)
 		float hpa = lps25hb_Convert();
 		//printf("press: %.1f\n", hpa);
 
-		sharedMem->pres = hpa;
+		// Filter pressure data
+		if (restarted)
+			pressure_filt = hpa;
+		else
+			pressure_filt = 0.95f*pressure_filt + 0.05f*hpa;
+
+		// Round to 1 decimal place
+		sharedMem->pres = 0.1f*roundf(10*pressure_filt);
 	}
 
 	// End of RX data burst on USART1
@@ -293,8 +305,11 @@ int main(void)
 		flag_status = 0;
 
 		if (wifi_ctx.state == SM_OPERATIONAL) {
+			restarted = 0; // Clear after a few seconds
 			printfCircBuf(&tx1Buf, "AT+UWSSTAT=6\r\n"); // Get WiFi RSSI
 		}
+		else
+			restarted = 1;
 	}
 
 	// Send MQTT message
