@@ -9,6 +9,9 @@ extern "C" {
 
 typedef struct _objects_t {
     lv_obj_t *main;
+    lv_obj_t *panel_in;
+    lv_obj_t *panel_out;
+    lv_obj_t *panel_press;
     lv_obj_t *indoor_temp;
     lv_obj_t *indoor_humidity;
     lv_obj_t *outdoor_temp;
