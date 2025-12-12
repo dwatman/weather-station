@@ -28,7 +28,10 @@ enum FlowGlobalVariables {
     FLOW_GLOBAL_VARIABLE_SOIL1_INT = 10,
     FLOW_GLOBAL_VARIABLE_SOIL2_INT = 11,
     FLOW_GLOBAL_VARIABLE_SOIL3_INT = 12,
-    FLOW_GLOBAL_VARIABLE_SOIL4_INT = 13
+    FLOW_GLOBAL_VARIABLE_SOIL4_INT = 13,
+    FLOW_GLOBAL_VARIABLE_SOIL5_INT = 14,
+    FLOW_GLOBAL_VARIABLE_SOIL6_INT = 15,
+    FLOW_GLOBAL_VARIABLE_GARAGE_INT = 16
 };
 
 // Native global variables
@@ -61,6 +64,12 @@ extern int32_t get_var_soil3_int();
 extern void set_var_soil3_int(int32_t value);
 extern int32_t get_var_soil4_int();
 extern void set_var_soil4_int(int32_t value);
+extern int32_t get_var_soil5_int();
+extern void set_var_soil5_int(int32_t value);
+extern int32_t get_var_soil6_int();
+extern void set_var_soil6_int(int32_t value);
+extern int32_t get_var_garage_int();
+extern void set_var_garage_int(int32_t value);
 
 
 #ifdef __cplusplus

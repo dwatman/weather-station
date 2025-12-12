@@ -21,6 +21,9 @@ int32_t soil1_int;
 int32_t soil2_int;
 int32_t soil3_int;
 int32_t soil4_int;
+int32_t soil5_int;
+int32_t soil6_int;
+int32_t garage_int;
 
 // Fixed EEZ Studio functions
 const char *get_var_time_str() { return time_str; }
@@ -37,6 +40,9 @@ int32_t get_var_soil1_int() { return soil1_int; }
 int32_t get_var_soil2_int() { return soil2_int; }
 int32_t get_var_soil3_int() { return soil3_int; }
 int32_t get_var_soil4_int() { return soil4_int; }
+int32_t get_var_soil5_int() { return soil5_int; }
+int32_t get_var_soil6_int() { return soil6_int; }
+int32_t get_var_garage_int() { return garage_int; }
 
 void set_var_time_str(const char *value) {
     strncpy(time_str, value, sizeof(time_str) / sizeof(char));
@@ -102,6 +108,18 @@ void set_var_soil3_int(int32_t value) {
 
 void set_var_soil4_int(int32_t value) {
 	soil4_int = value;
+}
+
+void set_var_soil5_int(int32_t value) {
+	soil5_int = value;
+}
+
+void set_var_soil6_int(int32_t value) {
+	soil6_int = value;
+}
+
+void set_var_garage_int(int32_t value) {
+	garage_int = value;
 }
 
 // Functions to create formatted text for the labels

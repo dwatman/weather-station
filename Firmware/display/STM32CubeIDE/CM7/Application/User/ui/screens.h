@@ -22,7 +22,10 @@ typedef struct _objects_t {
     lv_obj_t *bar2;
     lv_obj_t *bar3;
     lv_obj_t *bar4;
+    lv_obj_t *bar5;
+    lv_obj_t *bar6;
     lv_obj_t *display_bl;
+    lv_obj_t *garage_door;
     lv_obj_t *obj0;
 } objects_t;
 

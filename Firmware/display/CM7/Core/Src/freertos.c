@@ -209,8 +209,13 @@ void EEZTick(void const * argument) {
 			set_var_soil2_int(sharedMem->soil[1]);
 			set_var_soil3_int(sharedMem->soil[2]);
 			set_var_soil4_int(sharedMem->soil[3]);
-			//set_var_soil5_int(sharedMem->soil[4]);
-			//set_var_soil6_int(sharedMem->soil[5]);
+			set_var_soil5_int(sharedMem->soil[4]);
+			set_var_soil6_int(sharedMem->soil[5]);
+
+			if (sharedMem->status&STATUS_GARAGE)
+				set_var_garage_int(1);
+			else
+				set_var_garage_int(0);
 			//HAL_GPIO_TogglePin(GPIOJ, GPIO_PIN_10); // User LED
 
 			if (sharedMem->status &0x01) {
