@@ -29,7 +29,6 @@ typedef enum nina_response_e {
 	RESPONSE_DATA
 } NinaResponseType;
 
-
 uint32_t extractMessage(CircularBuffer_t *buf, NinaMessage_t *msg);
 int getNinaMsg(NinaMessage_t *msg);
 int parseNinaMsg(NinaMessage_t *msg);
