@@ -34,6 +34,7 @@
 #include "wifi_sm.h"
 #include "opt4001.h"
 #include "lps25hb.h"
+#include "ir_decode.h"
 #include "shared.h"
 /* USER CODE END Includes */
 
@@ -191,27 +192,16 @@ int main(void)
   // Enable pressure interrupt
   LL_C2_EXTI_EnableIT_0_31(LL_EXTI_LINE_11); // _C2 for M4 core
 
+  // Initialize IR decoder (starts DMA capture)
+  IR_Decoder_Init(&ir_decode);
 
   printfCircBuf(&tx1Buf, "\r\n");
   HAL_Delay(100);
-
-  //printfCircBuf(&tx1Buf, "ATE1\r\n"); // Set echo on
-  //HAL_Delay(100);
 
   printfCircBuf(&tx1Buf, "AT+UDWS=3,1\r\n"); // Enable WiFi watchdog
   HAL_Delay(100);
   emptyRx1Buffer();
 
-//
-//
-//  printfCircBuf(&tx1Buf, "AT+UWSSTAT=3\r\n"); // Get WiFi connection status
-//  HAL_Delay(100);
-
-/*
-  // Connect to MQTT
-  printfCircBuf(&tx1Buf, "AT+UDCP=at-mqtt://192.168.0.200:1883/?client=NINA-W132&user=mqtt_user&passwd=MQ.jaygram&pt=test&st=display&encr=0&qos=0\r\n");
-  HAL_Delay(100);
-*/
   lps25hb_data_available = 1; // First trigger to get it started
   int restarted = 1;
   uint16_t backlight = 100;
@@ -317,11 +307,26 @@ int main(void)
 		flag_mqtt = 0;
 
 		if ((wifi_ctx.state == SM_OPERATIONAL) && (wifi_ctx.data_send_state == DATA_SEND_IDLE)) {
-			printf("Sending MQTT data\n");
+			//printf("Sending MQTT data\n");
 			sendMqttData(sharedMem->pres, sharedMem->lux);
 		}
 	}
 
+ 	// Check for new IR code
+    if (ir_decode.new_data_available) {
+		ir_decode.new_data_available = false;
+
+		bool ok = IR_Decode_Frame(&ir_decode);
+		if (ok)
+			printf("Decoded code: 0x%08lX\n", ir_decode.decoded_code);
+		else
+			printf("Decode error\n");
+
+		// Restart DMA after processing
+		IR_Start_DMA_Capture(&ir_decode);
+		ir_decode.dma_active = 0;
+		ir_decode.overflow_count = 0;
+	}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

@@ -207,12 +207,13 @@ void wifi_state_machine_step(void) {
 				wifi_ctx.data_send_state = DATA_SEND_IDLE;
 				printf("SM: Data Connection Established (handle=%d). Operational.\n",
 				       wifi_ctx.peer_handle);
+				printfCircBuf(&tx1Buf, "AT+UWSSTAT=6\r\n"); // Get WiFi RSSI
 			} else {
 				wifi_ctx.state = SM_MQTT_SEQ_WRITE_CMD; // Go to Binary Write
 				printf("SM: Connected, preparing to write config JSON\n");
 			}
 		}
-
+// TODO; check for error response
 		// Timeout/retry
 		if (wifi_timeout == 0 && wifi_ctx.waiting) {
 			if (++wifi_ctx.retries < WIFI_SM_MAX_RETRIES) {

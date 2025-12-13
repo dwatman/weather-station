@@ -303,7 +303,7 @@ void handle_UUDATA(NinaMessage_t *msg) {
 	int id = atoi(msg->fields[0]);
 	int length = atoi(msg->fields[1]);
 	//printf("NINA UUDATA (%i:%i)\n", id, length);
-	printf("Data available from peer %i: %i bytes\n", id, length);
+	//printf("Data available from peer %i: %i bytes\n", id, length);
 	if (length > 0)
 		printfCircBuf(&tx1Buf, "AT+UDATR=%i,2,%i\r\n", id, length); // Request all data
 }

@@ -57,7 +57,7 @@ void MX_I2C4_Init(void)
   /* I2C4 interrupt Init */
   NVIC_SetPriority(I2C4_EV_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),8, 0));
   NVIC_EnableIRQ(I2C4_EV_IRQn);
-  NVIC_SetPriority(I2C4_ER_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),4, 0));
+  NVIC_SetPriority(I2C4_ER_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),7, 0));
   NVIC_EnableIRQ(I2C4_ER_IRQn);
 
   /* USER CODE BEGIN I2C4_Init 1 */
