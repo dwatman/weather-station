@@ -193,3 +193,45 @@ bool IR_Decode_Frame(IR_Decoder_t *ir) {
 	ir->decoded_code = code;
 	return true;
 }
+
+// Validate and decode a 32-bit Samsung/NEC code
+// Returns true if valid, false if checksum fails
+bool IR_CheckAndDecode(IR_Decoder_t *ir) {
+
+	uint8_t addr_lsb = (uint8_t)(ir->decoded_code & 0xFF);
+	uint8_t addr_msb = (uint8_t)((ir->decoded_code >> 8) & 0xFF);
+	uint8_t cmd      = (uint8_t)((ir->decoded_code >> 16) & 0xFF);
+	uint8_t cmd_inv  = (uint8_t)((ir->decoded_code >> 24) & 0xFF);
+
+	// Validate by checking that it matches its inverse
+	bool valid = ((cmd ^ cmd_inv) == 0xFF);
+
+	if (!valid) {
+		printf("IR code invalid: command checksum mismatch\n");
+		printf("AddrLSB=0x%02X AddrMSB=0x%02X Cmd=0x%02X Inv=0x%02X\n",
+			   addr_lsb, addr_msb, cmd, cmd_inv);
+		return false;
+	}
+
+	// Combine address bytes (little endian)
+	uint16_t addr = (uint16_t)(addr_msb << 8 | addr_lsb);
+
+	printf("IR valid frame:");
+	printf("  Address: 0x%02X", addr);
+	printf("  Command: 0x%02X", cmd);
+	ir->decoded_address = addr;
+	ir->decoded_command = cmd;
+
+	// Interpret known command codes
+	switch (cmd) {
+		case 0x02: printf("  -> Power\n"); break;
+		case 0x07: printf("  -> Volume Up\n"); break;
+		case 0x0B: printf("  -> Volume Down\n"); break;
+		case 0x12: printf("  -> Channel Up\n"); break;
+		case 0x10: printf("  -> Channel Down\n"); break;
+		default:   printf("  -> Unknown command\n"); break;
+	}
+
+	return true;
+}
+

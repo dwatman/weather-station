@@ -317,8 +317,10 @@ int main(void)
 		ir_decode.new_data_available = false;
 
 		bool ok = IR_Decode_Frame(&ir_decode);
-		if (ok)
-			printf("Decoded code: 0x%08lX\n", ir_decode.decoded_code);
+		if (ok) {
+			//printf("Decoded code: 0x%08lX\n", ir_decode.decoded_code);
+			IR_CheckAndDecode(&ir_decode);
+		}
 		else
 			printf("Decode error\n");
 
