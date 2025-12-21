@@ -229,12 +229,14 @@ int main(void)
 		sharedMem->lux = lux;
 
 		// Set backlight target brightness (filtered)
+		// Linear brightness up to 1000 lux
 		if (restarted)
-			backlight_tgt = lux;
+			backlight_tgt = lux*4;
 		else
-			backlight_tgt = 0.95f*backlight_tgt + 0.05f*lux;
+			backlight_tgt = 0.95f*backlight_tgt + 0.05f*lux*4;
 
-		if (backlight_tgt > 998.0f) backlight_tgt = 998.0f;
+		// Max PWM value is 3999
+		if (backlight_tgt > 3999.0f) backlight_tgt = 3999.0f;
 		//printf("BL tgt: %.3f\n", backlight_tgt);
 	}
 
