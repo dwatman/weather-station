@@ -224,9 +224,7 @@ int main(void)
 		opt4001_newdata = 0;
 
 		float lux = opt4001_Convert();
-		//printf("lux: %.1f\n", lux);
-
-		sharedMem->lux = lux;
+		//printf("lux: %.3f\n", lux);
 
 		// Set backlight target brightness (filtered)
 		// Linear brightness up to 1000 lux
@@ -238,6 +236,9 @@ int main(void)
 		// Max PWM value is 3999
 		if (backlight_tgt > 3999.0f) backlight_tgt = 3999.0f;
 		//printf("BL tgt: %.3f\n", backlight_tgt);
+
+		// Round to 3 decimal places
+		sharedMem->lux = roundf(1000*lux)*0.001;
 	}
 
 	// New pressure data

@@ -34,7 +34,7 @@ WifiSM_Ctx_t wifi_ctx = {0};
 
 void sendMqttData(float pressure, float light) {
 	snprintf((char*)wifi_ctx.payload, PAYLOAD_BUF_LEN,
-	         "{\"pressure\":%.1f,\"light\":%.1f}", pressure, light);
+	         "{\"pressure\":%.1f,\"light\":%.3f}", pressure, light);
 	wifi_ctx.payload_len = strlen((char*)wifi_ctx.payload);
 
 	// Set the send flag
