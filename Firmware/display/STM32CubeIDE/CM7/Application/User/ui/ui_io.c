@@ -23,7 +23,6 @@ int32_t soil3_int;
 int32_t soil4_int;
 int32_t soil5_int;
 int32_t soil6_int;
-int32_t garage_int;
 
 // Fixed EEZ Studio functions
 const char *get_var_time_str() { return time_str; }
@@ -42,7 +41,6 @@ int32_t get_var_soil3_int() { return soil3_int; }
 int32_t get_var_soil4_int() { return soil4_int; }
 int32_t get_var_soil5_int() { return soil5_int; }
 int32_t get_var_soil6_int() { return soil6_int; }
-int32_t get_var_garage_int() { return garage_int; }
 
 void set_var_time_str(const char *value) {
     strncpy(time_str, value, sizeof(time_str) / sizeof(char));
@@ -116,10 +114,6 @@ void set_var_soil5_int(int32_t value) {
 
 void set_var_soil6_int(int32_t value) {
 	soil6_int = value;
-}
-
-void set_var_garage_int(int32_t value) {
-	garage_int = value;
 }
 
 // Functions to create formatted text for the labels
@@ -219,3 +213,14 @@ void set_wifi_colour(lv_color_t new_colour) {
     // Optional: force refresh if needed
     lv_obj_refresh_style(obj, LV_PART_MAIN, LV_STYLE_PROP_ANY);
 }
+
+void set_garage_state(int32_t value) {
+	lv_obj_t *obj = objects.garage_door;
+
+	 // Open/Closed
+	if (value)
+		lv_obj_set_style_opa(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
+	else
+		lv_obj_set_style_opa(obj, 255, LV_PART_MAIN | LV_STATE_DEFAULT);
+}
+

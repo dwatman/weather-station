@@ -233,7 +233,7 @@ void handle_UWSSTAT(NinaMessage_t *msg) {
 	}
 	else if ((msg->field_count == 2) && (id == 6)) {
 		int value = atoi(msg->fields[1]);
-		printf("RSSI %i\n", value);
+		//printf("RSSI %i\n", value);
 		sharedMem->rssi = value;
 	}
 	else
