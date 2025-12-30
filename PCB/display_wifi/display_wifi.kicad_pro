@@ -467,8 +467,12 @@
     }
   },
   "libraries": {
-    "pinned_footprint_libs": [],
-    "pinned_symbol_libs": []
+    "pinned_footprint_libs": [
+      "DWlib"
+    ],
+    "pinned_symbol_libs": [
+      "DWlib"
+    ]
   },
   "meta": {
     "filename": "display_wifi.kicad_pro",
@@ -510,7 +514,7 @@
       "plot": "",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "display_wifi.step",
       "svg": "",
       "vrml": ""
     },
