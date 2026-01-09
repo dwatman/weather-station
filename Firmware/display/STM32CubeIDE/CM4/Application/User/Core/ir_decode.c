@@ -229,6 +229,7 @@ bool IR_CheckAndDecode(IR_Decoder_t *ir) {
 		case 0x0B: printf("  -> Volume Down\n"); break;
 		case 0x12: printf("  -> Channel Up\n"); break;
 		case 0x10: printf("  -> Channel Down\n"); break;
+		case 0x46: printf("  -> Stop\n"); break;
 		default:   printf("  -> Unknown command\n"); break;
 	}
 

@@ -73,10 +73,18 @@ extern volatile uint32_t opt4001_newdata;
 extern volatile uint32_t lps25hb_newdata;
 
 extern CircularBuffer_t tx1Buf;
+extern CircularBuffer_t rx1Buf;
 
 extern volatile uint32_t RxNewData;
 uint32_t newRx1Message = 0;
 //extern volatile uint32_t RxBurstEnd;
+
+extern uint8_t wifi_up;
+extern uint8_t network_up;
+extern uint8_t peer_up;
+
+uint8_t recv_timeout = 0;
+uint8_t timeouts = 0;
 
 NinaMessage_t NinaMessage;
 
@@ -309,6 +317,18 @@ int main(void)
 	if (flag_mqtt) {
 		flag_mqtt = 0;
 
+		printf("wifi %u, network %u, peer %u, inbuf %lu timeouts %u (%u)\n", wifi_up, network_up, peer_up, inCircBuf(&rx1Buf), timeouts, recv_timeout);
+
+		// Detect if we stopped getting MQTT messages
+		if (recv_timeout >= 3) {
+			printf("***MQTT receive timeout***\n");
+			printfCircBuf(&tx1Buf, "AT+UDATR=%i,2,%i\r\n", wifi_ctx.peer_handle, 0); // Request 0 data to get a buffer update
+			recv_timeout = 0;
+			timeouts++;
+		}
+		else
+			recv_timeout++;
+
 		if ((wifi_ctx.state == SM_OPERATIONAL) && (wifi_ctx.data_send_state == DATA_SEND_IDLE)) {
 			//printf("Sending MQTT data\n");
 			sendMqttData(sharedMem->pres, sharedMem->lux);
@@ -319,10 +339,16 @@ int main(void)
     if (ir_decode.new_data_available) {
 		ir_decode.new_data_available = false;
 
-		bool ok = IR_Decode_Frame(&ir_decode);
-		if (ok) {
+		bool frame_ok = IR_Decode_Frame(&ir_decode);
+		if (frame_ok) {
 			//printf("Decoded code: 0x%08lX\n", ir_decode.decoded_code);
-			IR_CheckAndDecode(&ir_decode);
+			bool code_ok = IR_CheckAndDecode(&ir_decode);
+			if (code_ok) {
+				if ((ir_decode.decoded_address == 0x707) && (ir_decode.decoded_command == 0x46)) {
+					// Reset wifi
+					wifi_sm_init();
+				}
+			}
 		}
 		else
 			printf("Decode error\n");

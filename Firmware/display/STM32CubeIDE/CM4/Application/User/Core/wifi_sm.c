@@ -29,6 +29,10 @@ const char light_config[] =
 extern CircularBuffer_t tx1Buf;
 extern volatile uint32_t wifi_timeout;
 
+extern uint8_t wifi_up;
+extern uint8_t network_up;
+extern uint8_t peer_up;
+
 WifiEvents_t wifi_events = {0};
 WifiSM_Ctx_t wifi_ctx = {0};
 
@@ -43,6 +47,9 @@ void sendMqttData(float pressure, float light) {
 
 // Initialize state machine
 void wifi_sm_init(void) {
+	wifi_up = 0;
+	network_up = 0;
+	peer_up = 0;
 	wifi_ctx.state = SM_IDLE;
 	wifi_ctx.waiting = 0;
 	wifi_ctx.retries = 0;
