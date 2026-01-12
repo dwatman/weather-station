@@ -203,6 +203,9 @@ int main(void)
   // Initialize IR decoder (starts DMA capture)
   IR_Decoder_Init(&ir_decode);
 
+  // Delay for WiFi to boot
+  HAL_Delay(10000);
+
   printfCircBuf(&tx1Buf, "\r\n");
   HAL_Delay(100);
 
@@ -322,7 +325,10 @@ int main(void)
 		// Detect if we stopped getting MQTT messages
 		if (recv_timeout >= 3) {
 			printf("***MQTT receive timeout***\n");
-			printfCircBuf(&tx1Buf, "AT+UDATR=%i,2,%i\r\n", wifi_ctx.peer_handle, 0); // Request 0 data to get a buffer update
+			if (wifi_up && network_up && peer_up)
+				printfCircBuf(&tx1Buf, "AT+UDATR=%i,2,%i\r\n", wifi_ctx.peer_handle, 0); // Request 0 data to get a buffer update
+			else
+				wifi_sm_init(); // Something wrong, reset Wifi
 			recv_timeout = 0;
 			timeouts++;
 		}
