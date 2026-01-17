@@ -2,3 +2,6 @@
 	path = Firmware/display/Middlewares/Third_Party/LVGL/lvgl
 	url = https://github.com/lvgl/lvgl.git
 	branch = release/v9.4
+[submodule "PCB/DWlib"]
+	path = PCB/DWlib
+	url = git@github.com:dwatman/DWlib.git

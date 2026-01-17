@@ -17,7 +17,6 @@ int32_t get_var_soil3_int();
 int32_t get_var_soil4_int();
 int32_t get_var_soil5_int();
 int32_t get_var_soil6_int();
-int32_t get_var_garage_int();
 
 void set_var_time_str(const char *value);
 void set_var_ampm_str(const char *value);
@@ -35,7 +34,6 @@ void set_var_soil3_int(int32_t value);
 void set_var_soil4_int(int32_t value);
 void set_var_soil5_int(int32_t value);
 void set_var_soil6_int(int32_t value);
-void set_var_garage_int(int32_t value);
 
 void set_time(uint32_t val);
 void set_t1(float val);
@@ -48,5 +46,6 @@ void set_rssi(int val);
 void set_bl(int val);
 
 void set_wifi_colour(lv_color_t new_colour);
+void set_garage_state(int32_t value);
 
 #endif

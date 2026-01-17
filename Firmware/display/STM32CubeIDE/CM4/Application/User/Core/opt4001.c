@@ -78,8 +78,8 @@ float opt4001_Convert(void) {
 					((uint32_t)opt4001_data[1] << 8) |
 					opt4001_data[2];
 
-	// Calculate and round to 1 decimal place
-	float lux = roundf(0.004375 * (mantissa << exponent))*0.1;
+	// Calculate float value
+	float lux = 0.0004375 * (mantissa << exponent);
 
 	return lux;
 }

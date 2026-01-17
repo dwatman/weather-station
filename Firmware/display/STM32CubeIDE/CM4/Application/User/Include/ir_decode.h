@@ -35,6 +35,8 @@
 typedef struct {
 	uint16_t capture_buffer[IR_BUFFER_SIZE];  // DMA buffer for edge timestamps
 	uint32_t decoded_code;                    // 32-bit decoded IR code (LSB first)
+	uint16_t decoded_address;                 // Decoded address
+	uint8_t decoded_command;                  // Decoded command
 	volatile uint8_t overflow_count;          // TIM1 overflow counter
 	volatile bool new_data_available;         // True when valid frame captured
 	volatile bool decode_error;               // True on DMA or decode failure
@@ -50,3 +52,4 @@ void IR_Decoder_DMA_IRQHandler(IR_Decoder_t *ir);
 void IR_TIM1_CC_IRQHandler(IR_Decoder_t *ir);
 void IR_TIM1_UP_IRQHandler(IR_Decoder_t *ir);
 bool IR_Decode_Frame(IR_Decoder_t *ir);
+bool IR_CheckAndDecode(IR_Decoder_t *ir);

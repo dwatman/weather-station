@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "circbuf.h"
 
+#define LOW_RSSI_THRESH -75
 #define NINA_PAYLOAD_SIZE 256U
 
 #define NINA_MAX_FIELDS     8

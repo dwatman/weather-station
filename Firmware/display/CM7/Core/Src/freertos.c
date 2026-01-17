@@ -196,6 +196,8 @@ void EEZTick(void const * argument) {
 			// Invalidate DCache before reading shared data
 			SCB_InvalidateDCache_by_Addr((uint32_t*)sharedMem, sizeof(SharedData_t));
 
+			HAL_GPIO_TogglePin(GPIOJ, GPIO_PIN_10); // User LED
+
 			set_time(sharedMem->time);
 			set_t1(sharedMem->t1);
 			set_t2(sharedMem->t2);
@@ -213,10 +215,9 @@ void EEZTick(void const * argument) {
 			set_var_soil6_int(sharedMem->soil[5]);
 
 			if (sharedMem->status&STATUS_GARAGE)
-				set_var_garage_int(1);
+				set_garage_state(1); // Open
 			else
-				set_var_garage_int(0);
-			//HAL_GPIO_TogglePin(GPIOJ, GPIO_PIN_10); // User LED
+				set_garage_state(0); // Closed
 
 			if (sharedMem->status &0x01) {
 				wifi_colour.red = 0;
@@ -235,7 +236,6 @@ void EEZTick(void const * argument) {
         osMutexRelease(lvgl_mutex);
 
         osDelay(500);    // 2 Hz
-        //HAL_GPIO_TogglePin(GPIOJ, GPIO_PIN_10); // User LED
     }
 }
 /* USER CODE END Application */

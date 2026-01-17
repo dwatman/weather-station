@@ -15,6 +15,12 @@ extern CircularBuffer_t rx1Buf;
 
 extern SharedData_t *sharedMem;
 
+uint8_t wifi_up = 0;
+uint8_t network_up = 0;
+uint8_t peer_up = 0;
+uint8_t low_rssi = 0;
+extern uint8_t recv_timeout;
+
 // Enter critical section, return previous PRIMASK
 static inline uint32_t enterCritical(void) {
 	uint32_t primask = __get_PRIMASK();
@@ -233,7 +239,13 @@ void handle_UWSSTAT(NinaMessage_t *msg) {
 	}
 	else if ((msg->field_count == 2) && (id == 6)) {
 		int value = atoi(msg->fields[1]);
-		printf("RSSI %i\n", value);
+		//printf("RSSI %i\n", value);
+		// Check for long duration low RSSI
+		if ((value < LOW_RSSI_THRESH) && (low_rssi < 254))
+			low_rssi++;
+		else
+			low_rssi = 0;
+
 		sharedMem->rssi = value;
 	}
 	else
@@ -248,6 +260,7 @@ void handle_UUWLE(NinaMessage_t *msg) {
 	//printf("NINA UUWLE (%i)\n", id);
 	printf("WiFi connected (%i) SSID: <%s> on ch %i\n", id, ssid, ch);
 	wifi_events.EV_UUWLE = 1;
+	wifi_up = 1;
 }
 
 // Wi-Fi connection disconnected
@@ -257,6 +270,7 @@ void handle_UUWLD(NinaMessage_t *msg) {
 	//printf("NINA UUWLD (%i)\n", id);
 	printf("WiFi disconnected (%i) code: %i\n", id, cause);
 	wifi_events.EV_DISCONNECT = 1;
+	wifi_up = 0;
 }
 
 // Network up
@@ -265,6 +279,7 @@ void handle_UUNU(NinaMessage_t *msg) {
 	//printf("NINA UUNU (%i)\n", id);
 	printf("Network up (%i)\n", id);
 	wifi_events.EV_UUNU = 1;
+	network_up = 1;
 }
 
 // Network down
@@ -272,6 +287,7 @@ void handle_UUND(NinaMessage_t *msg) {
 	int id = atoi(msg->fields[0]);
 	//printf("NINA UUND (%i)\n", id);
 	printf("Network down (%i)\n", id);
+	network_up = 0;
 }
 
 // Connect peer response
@@ -288,6 +304,7 @@ void handle_UUDPC(NinaMessage_t *msg) {
 	//printf("NINA UUDPC (%i)\n", value);
 	printf("Connected to peer: %i\n", id);
 	wifi_events.EV_UUDPC = 1;
+	peer_up = 1;
 }
 
 // Peer disconnected
@@ -296,6 +313,7 @@ void handle_UUDPD(NinaMessage_t *msg) {
 	//printf("NINA UUDPD (%i)\n", value);
 	printf("Disconnected from peer: %i\n", id);
 	wifi_events.EV_PEER_CLOSED = 1;
+	peer_up = 0;
 }
 
 // Data from remote peer is available
@@ -303,7 +321,13 @@ void handle_UUDATA(NinaMessage_t *msg) {
 	int id = atoi(msg->fields[0]);
 	int length = atoi(msg->fields[1]);
 	//printf("NINA UUDATA (%i:%i)\n", id, length);
-	//printf("Data available from peer %i: %i bytes\n", id, length);
+	// Reset WiFi if the peer connection has become messed up
+	if (id != wifi_ctx.peer_handle) {
+		printf("Multiple peers, resetting WiFi");
+		wifi_sm_init();
+	}
+
+	printf("Data available from peer %i: %i bytes\n", id, length);
 	if (length > 0)
 		printfCircBuf(&tx1Buf, "AT+UDATR=%i,2,%i\r\n", id, length); // Request all data
 }
@@ -314,6 +338,7 @@ void handle_UDATR(NinaMessage_t *msg) {
 	//printf("NINA UDATR (%i): %li\n", length, msg->payload_length);
 	printf("Payload (%li): <%s>\n", msg->payload_length, msg->payload);
 
+	recv_timeout = 0;
 	// Process received data and put into shared memory
 	parseRxMessage(msg);
 }

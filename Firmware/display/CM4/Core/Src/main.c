@@ -73,10 +73,19 @@ extern volatile uint32_t opt4001_newdata;
 extern volatile uint32_t lps25hb_newdata;
 
 extern CircularBuffer_t tx1Buf;
+extern CircularBuffer_t rx1Buf;
 
 extern volatile uint32_t RxNewData;
 uint32_t newRx1Message = 0;
 //extern volatile uint32_t RxBurstEnd;
+
+extern uint8_t wifi_up;
+extern uint8_t network_up;
+extern uint8_t peer_up;
+extern uint8_t low_rssi;
+
+uint8_t recv_timeout = 0;
+uint8_t timeouts = 0;
 
 NinaMessage_t NinaMessage;
 
@@ -195,6 +204,9 @@ int main(void)
   // Initialize IR decoder (starts DMA capture)
   IR_Decoder_Init(&ir_decode);
 
+  // Delay for WiFi to boot
+  HAL_Delay(10000);
+
   printfCircBuf(&tx1Buf, "\r\n");
   HAL_Delay(100);
 
@@ -224,18 +236,21 @@ int main(void)
 		opt4001_newdata = 0;
 
 		float lux = opt4001_Convert();
-		//printf("lux: %.1f\n", lux);
-
-		sharedMem->lux = lux;
+		//printf("lux: %.3f\n", lux);
 
 		// Set backlight target brightness (filtered)
+		// Linear brightness up to 1000 lux
 		if (restarted)
-			backlight_tgt = lux;
+			backlight_tgt = lux*4;
 		else
-			backlight_tgt = 0.95f*backlight_tgt + 0.05f*lux;
+			backlight_tgt = 0.95f*backlight_tgt + 0.05f*lux*4;
 
-		if (backlight_tgt > 998.0f) backlight_tgt = 998.0f;
+		// Max PWM value is 3999
+		if (backlight_tgt > 3999.0f) backlight_tgt = 3999.0f;
 		//printf("BL tgt: %.3f\n", backlight_tgt);
+
+		// Round to 3 decimal places
+		sharedMem->lux = roundf(1000*lux)*0.001;
 	}
 
 	// New pressure data
@@ -269,7 +284,7 @@ int main(void)
 	// WiFi state machine
 	wifi_state_machine_step();
 
-	// Update data
+	// Update data (0.5 sec interval)
 	if (flag_update) {
 		flag_update = 0;
 
@@ -290,7 +305,7 @@ int main(void)
 		HAL_HSEM_Release(HSEM_ID_1, 0); // Release to interrupt to M7
 	}
 
-	// Check status
+	// Check status  (5 sec interval)
 	if (flag_status) {
 		flag_status = 0;
 
@@ -302,9 +317,30 @@ int main(void)
 			restarted = 1;
 	}
 
-	// Send MQTT message
+	// Send MQTT message (30 sec interval)
 	if (flag_mqtt) {
 		flag_mqtt = 0;
+
+		printf("wifi %u, network %u, peer %u, inbuf %lu timeouts %u (%u), low_rssi %u\n", wifi_up, network_up, peer_up, inCircBuf(&rx1Buf), timeouts, recv_timeout, low_rssi);
+
+		// Detect if we stopped getting MQTT messages
+		if (recv_timeout >= 3) {
+			printf("***MQTT receive timeout***\n");
+			if (wifi_up && network_up && peer_up)
+				printfCircBuf(&tx1Buf, "AT+UDATR=%i,2,%i\r\n", wifi_ctx.peer_handle, 0); // Request 0 data to get a buffer update
+			else
+				wifi_sm_init(); // Something wrong, reset Wifi
+			recv_timeout = 0;
+			timeouts++;
+		}
+		else
+			recv_timeout++;
+
+		// Detect if RSSI has been low for a long time (~1hr)
+		if (low_rssi > 128) {
+			printf("***LOW RSSI timeout***\n");
+			wifi_sm_init(); // Reset WiFi in case stronger AP is available
+		}
 
 		if ((wifi_ctx.state == SM_OPERATIONAL) && (wifi_ctx.data_send_state == DATA_SEND_IDLE)) {
 			//printf("Sending MQTT data\n");
@@ -316,9 +352,17 @@ int main(void)
     if (ir_decode.new_data_available) {
 		ir_decode.new_data_available = false;
 
-		bool ok = IR_Decode_Frame(&ir_decode);
-		if (ok)
-			printf("Decoded code: 0x%08lX\n", ir_decode.decoded_code);
+		bool frame_ok = IR_Decode_Frame(&ir_decode);
+		if (frame_ok) {
+			//printf("Decoded code: 0x%08lX\n", ir_decode.decoded_code);
+			bool code_ok = IR_CheckAndDecode(&ir_decode);
+			if (code_ok) {
+				if ((ir_decode.decoded_address == 0x707) && (ir_decode.decoded_command == 0x46)) {
+					// Reset wifi
+					wifi_sm_init();
+				}
+			}
+		}
 		else
 			printf("Decode error\n");
 
