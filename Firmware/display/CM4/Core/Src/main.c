@@ -82,6 +82,7 @@ uint32_t newRx1Message = 0;
 extern uint8_t wifi_up;
 extern uint8_t network_up;
 extern uint8_t peer_up;
+extern uint8_t low_rssi;
 
 uint8_t recv_timeout = 0;
 uint8_t timeouts = 0;
@@ -283,7 +284,7 @@ int main(void)
 	// WiFi state machine
 	wifi_state_machine_step();
 
-	// Update data
+	// Update data (0.5 sec interval)
 	if (flag_update) {
 		flag_update = 0;
 
@@ -304,7 +305,7 @@ int main(void)
 		HAL_HSEM_Release(HSEM_ID_1, 0); // Release to interrupt to M7
 	}
 
-	// Check status
+	// Check status  (5 sec interval)
 	if (flag_status) {
 		flag_status = 0;
 
@@ -316,11 +317,11 @@ int main(void)
 			restarted = 1;
 	}
 
-	// Send MQTT message
+	// Send MQTT message (30 sec interval)
 	if (flag_mqtt) {
 		flag_mqtt = 0;
 
-		printf("wifi %u, network %u, peer %u, inbuf %lu timeouts %u (%u)\n", wifi_up, network_up, peer_up, inCircBuf(&rx1Buf), timeouts, recv_timeout);
+		printf("wifi %u, network %u, peer %u, inbuf %lu timeouts %u (%u), low_rssi %u\n", wifi_up, network_up, peer_up, inCircBuf(&rx1Buf), timeouts, recv_timeout, low_rssi);
 
 		// Detect if we stopped getting MQTT messages
 		if (recv_timeout >= 3) {
@@ -334,6 +335,12 @@ int main(void)
 		}
 		else
 			recv_timeout++;
+
+		// Detect if RSSI has been low for a long time (~1hr)
+		if (low_rssi > 128) {
+			printf("***LOW RSSI timeout***\n");
+			wifi_sm_init(); // Reset WiFi in case stronger AP is available
+		}
 
 		if ((wifi_ctx.state == SM_OPERATIONAL) && (wifi_ctx.data_send_state == DATA_SEND_IDLE)) {
 			//printf("Sending MQTT data\n");

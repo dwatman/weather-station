@@ -18,6 +18,7 @@ extern SharedData_t *sharedMem;
 uint8_t wifi_up = 0;
 uint8_t network_up = 0;
 uint8_t peer_up = 0;
+uint8_t low_rssi = 0;
 extern uint8_t recv_timeout;
 
 // Enter critical section, return previous PRIMASK
@@ -239,6 +240,12 @@ void handle_UWSSTAT(NinaMessage_t *msg) {
 	else if ((msg->field_count == 2) && (id == 6)) {
 		int value = atoi(msg->fields[1]);
 		//printf("RSSI %i\n", value);
+		// Check for long duration low RSSI
+		if ((value < LOW_RSSI_THRESH) && (low_rssi < 254))
+			low_rssi++;
+		else
+			low_rssi = 0;
+
 		sharedMem->rssi = value;
 	}
 	else
