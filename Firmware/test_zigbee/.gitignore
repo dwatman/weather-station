@@ -1,0 +1,16 @@
+# Build outputs
+**/Debug/
+**/Release/
+
+# VSCode
+**/.vscode/*
+# Include the portable files
+!**/.vscode/c_cpp_properties.json
+!**/.vscode/tasks.json
+# Optionally share debug config
+#!**/.vscode/launch.json
+
+# STM32 plugin / bundle settings
+**/.settings/*
+# Include the device/ide store
+!**/.settings/ide.store.json

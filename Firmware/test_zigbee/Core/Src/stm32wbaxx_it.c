@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2025 STMicroelectronics.
+  * Copyright (c) 2026 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -65,9 +65,6 @@ extern void (*low_isr_callback)(void);
 /* External variables --------------------------------------------------------*/
 extern volatile uint8_t radio_sw_low_isr_is_running_high_prio;
 extern RTC_HandleTypeDef hrtc;
-extern DMA_HandleTypeDef handle_GPDMA1_Channel1;
-extern DMA_HandleTypeDef handle_GPDMA1_Channel0;
-extern UART_HandleTypeDef huart1;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -256,48 +253,6 @@ void RCC_IRQHandler(void)
 }
 
 /**
-  * @brief This function handles GPDMA1 Channel 0 global interrupt.
-  */
-void GPDMA1_Channel0_IRQHandler(void)
-{
-  /* USER CODE BEGIN GPDMA1_Channel0_IRQn 0 */
-
-  /* USER CODE END GPDMA1_Channel0_IRQn 0 */
-  HAL_DMA_IRQHandler(&handle_GPDMA1_Channel0);
-  /* USER CODE BEGIN GPDMA1_Channel0_IRQn 1 */
-
-  /* USER CODE END GPDMA1_Channel0_IRQn 1 */
-}
-
-/**
-  * @brief This function handles GPDMA1 Channel 1 global interrupt.
-  */
-void GPDMA1_Channel1_IRQHandler(void)
-{
-  /* USER CODE BEGIN GPDMA1_Channel1_IRQn 0 */
-
-  /* USER CODE END GPDMA1_Channel1_IRQn 0 */
-  HAL_DMA_IRQHandler(&handle_GPDMA1_Channel1);
-  /* USER CODE BEGIN GPDMA1_Channel1_IRQn 1 */
-
-  /* USER CODE END GPDMA1_Channel1_IRQn 1 */
-}
-
-/**
-  * @brief This function handles USART1 global interrupt.
-  */
-void USART1_IRQHandler(void)
-{
-  /* USER CODE BEGIN USART1_IRQn 0 */
-
-  /* USER CODE END USART1_IRQn 0 */
-  HAL_UART_IRQHandler(&huart1);
-  /* USER CODE BEGIN USART1_IRQn 1 */
-
-  /* USER CODE END USART1_IRQn 1 */
-}
-
-/**
   * @brief This function handles TIM16 global interrupt.
   */
 void TIM16_IRQHandler(void)
@@ -321,19 +276,6 @@ void TIM16_IRQHandler(void)
   /* USER CODE BEGIN TIM16_IRQn 1 */
 
   /* USER CODE END TIM16_IRQn 1 */
-}
-
-/**
-  * @brief This function handles RNG global interrupt.
-  */
-void RNG_IRQHandler(void)
-{
-  /* USER CODE BEGIN RNG_IRQn 0 */
-
-  /* USER CODE END RNG_IRQn 0 */
-  /* USER CODE BEGIN RNG_IRQn 1 */
-
-  /* USER CODE END RNG_IRQn 1 */
 }
 
 /**

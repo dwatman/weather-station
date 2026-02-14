@@ -69,31 +69,31 @@ typedef enum {
 /** @brief TX status
  */
 typedef enum {
-  TX_SUCCESS = 0,
-  TX_ACK_TIMEOUT,
-  TX_FAILED,
-  TX_CHANNEL_ACCESS_FAILURE,
+  ST_TX_SUCCESS = 0,
+  ST_TX_ACK_TIMEOUT,
+  ST_TX_FAILED,
+  ST_TX_CHANNEL_ACCESS_FAILURE,
 } MAC_RAW_TX_Status_t;
 
 /** @brief TX status
  */
 typedef enum {
-  RX_SUCCESS = 0,
-  RX_NO_PAYLOAD,
-  RX_REJECTED,
-  RX_FILTERED,
-  RX_INVALID_FCS,
+  ST_RX_SUCCESS = 0,
+  ST_RX_NO_PAYLOAD,
+  ST_RX_REJECTED,
+  ST_RX_FILTERED,
+  ST_RX_INVALID_FCS,
 } MAC_RAW_RX_Status_t;
 
 /** @brief Initialisation config 
  */
 typedef enum {
   /*! 802.15.4 PHY ONLY */
-  RAW_CONFIG = 0,
+  ST_RAW_CONFIG = 0,
   /*! 802.15.4 custom/proprietary */
-  EXT_CONFIG, // NOT YET AVAILABLE
+  ST_EXT_CONFIG, // NOT YET AVAILABLE
   /*! 802.15.4 PHY + BLE */
-  CR_CONFIG
+  ST_CR_CONFIG
 } ST_MAC_Config_Mode;
 
 /* Raw MAC requests */
@@ -211,10 +211,10 @@ typedef struct {
 /* Exported functions ------------------------------------------------------- */
 
 /**
- * @brief ST_MAC_raw_init allow you to initilize the raw layer. there are 3 modes available. 
+ * @brief ST_MAC_raw_init allow you to initialize the raw layer. there are 3 modes available.
  * RAW_CONFIG allows you to send and received frame in 802.15.4 only. 
  * EXT_CONFIG not yet implemented. if used always return MAC_INVALID_PARAMETER.
- * CR_CONFIG allows you to send and received frame in 802.15.4 and have BLE in concurrente.
+ * CR_CONFIG allows you to send and received frame in 802.15.4 and have BLE in concurrent.
  *
  * @param *p_callback : [in] callback for TX done, RX received, state notify.
  *        *config : [in] config selected.
@@ -223,7 +223,7 @@ typedef struct {
 MAC_Status_t ST_MAC_raw_init(ST_MAC_Raw_event_callbacks_t *p_callback, ST_MAC_Config_Mode config);
 
 /**
- * @brief ST_MAC_raw_get_caps allows you to get infomation: min_cca_threshold, max_cca_threshold, min_tx_power and max_tx_power.
+ * @brief ST_MAC_raw_get_caps allows you to get information: min_cca_threshold, max_cca_threshold, min_tx_power and max_tx_power.
  *
  * @param *MAC_handle : [in] MAC instance
  *        *ST_MAC_raw_caps_t : [in] raw_caps structure allow you to get CCA and TxPower information.
@@ -236,13 +236,13 @@ MAC_Status_t ST_MAC_raw_get_caps(MAC_handle * st_mac_hndl , ST_MAC_raw_caps_t *p
  * Depending on initialization mode, can also generate noise on a selected channel.
  *
  * @param *MAC_handle : [in] MAC instance
- *        *pRawTXStartReq : [in] TxFrame to send. Check the structure to have more infomation.
+ *        *pRawTXStartReq : [in] TxFrame to send. Check the structure to have more information.
  * @retval MAC_Status_t 
  */
 MAC_Status_t ST_MAC_raw_start_TX( MAC_handle * st_mac_hndl,  const ST_MAC_raw_TX_start_t * pRawTXStartReq );
 
 /**
- * @brief ST_MAC_raw_stop_TX allow you to abort frame transmition in 802.15.4.
+ * @brief ST_MAC_raw_stop_TX allow you to abort frame transmission in 802.15.4.
  *
  * @param None
  * @retval MAC_Status_t 
@@ -253,7 +253,7 @@ MAC_Status_t ST_MAC_raw_stop_TX(void);
  * @brief ST_MAC_raw_start_RX allows you to received frame in 802.15.4.
  *
  * @param *MAC_handle : [in] MAC instance
- *        *pRawTXStartReq : [in] Enable the radio to receive frames. Check the structure to have more infomation.
+ *        *pRawTXStartReq : [in] Enable the radio to receive frames. Check the structure to have more information.
  * @retval MAC_Status_t 
  */
 MAC_Status_t ST_MAC_raw_start_RX(MAC_handle * st_mac_hndl, const ST_MAC_raw_RX_start_t * pRawRXStartReq );
@@ -271,7 +271,7 @@ MAC_Status_t ST_MAC_raw_stop_RX(void);
  * This feature lets you know whether the channel is noisy or not.
  *
  * @param *MAC_handle : [in] MAC instance
- *        *pRawTXStartReq : [in] Channel and threshold. Check the structure to have more infomation.
+ *        *pRawTXStartReq : [in] Channel and threshold. Check the structure to have more information.
  * @retval MAC_Status_t 
  */
 MAC_Status_t ST_MAC_raw_start_CCA(MAC_handle * st_mac_hndl, ST_MAC_raw_CCA_t * pRawCCAStartReq );

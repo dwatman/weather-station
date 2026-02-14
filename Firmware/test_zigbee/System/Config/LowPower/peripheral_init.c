@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2025 STMicroelectronics.
+  * Copyright (c) 2026 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -20,7 +20,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "app_conf.h"
 #include "peripheral_init.h"
-#include "main.h"
+#include "usart.h"
+#include "icache.h"
+#include "ramcfg.h"
+#include "rng.h"
 #if (CFG_LPM_WAKEUP_TIME_PROFILING == 1)
 #include "stm32_lpm_if.h"
 #endif /* CFG_LPM_WAKEUP_TIME_PROFILING */
@@ -39,6 +42,7 @@ extern UART_HandleTypeDef huart1;
 
 /* Functions Definition ------------------------------------------------------*/
 
+#if (CFG_LPM_STANDBY_SUPPORTED == 1)
 /**
   * @brief  Configure the SoC peripherals at Standby mode exit.
   * @param  None
@@ -51,7 +55,7 @@ void MX_StandbyExit_PeripheralInit(void)
   /* USER CODE END MX_STANDBY_EXIT_PERIPHERAL_INIT_1 */
 
 #if (CFG_LPM_WAKEUP_TIME_PROFILING == 1)
-#if (CFG_LPM_STDBY_SUPPORTED == 1)
+#if (CFG_LPM_STANDBY_SUPPORTED == 1)
   /* Do not configure sysTick if currently used by wakeup time profiling mechanism */
   if(LPM_is_wakeup_time_profiling_done() != 0)
   {
@@ -64,7 +68,7 @@ void MX_StandbyExit_PeripheralInit(void)
       assert_param(0);
     }
   }
-#endif /* CFG_LPM_STDBY_SUPPORTED */
+#endif /* CFG_LPM_STANDBY_SUPPORTED */
 #else
   /* Select SysTick source clock */
   HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_LSE);
@@ -77,17 +81,17 @@ void MX_StandbyExit_PeripheralInit(void)
 #endif /* CFG_LPM_WAKEUP_TIME_PROFILING */
 
 #if (CFG_DEBUGGER_LEVEL == 0)
-    /* Setup GPIOA 13, 14, 15 in Analog no pull */
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-    GPIOA->PUPDR &= ~0xFC000000;
-    GPIOA->MODER |= 0xFC000000;
-    __HAL_RCC_GPIOA_CLK_DISABLE();
+  /* Setup GPIOA 13, 14, 15 in Analog no pull */
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+  GPIOA->PUPDR &= ~0xFC000000;
+  GPIOA->MODER |= 0xFC000000;
+  __HAL_RCC_GPIOA_CLK_DISABLE();
 
-    /* Setup GPIOB 3, 4 in Analog no pull */
-    __HAL_RCC_GPIOB_CLK_ENABLE();
-    GPIOB->PUPDR &= ~0x3C0;
-    GPIOB->MODER |= 0x3C0;
-    __HAL_RCC_GPIOB_CLK_DISABLE();
+  /* Setup GPIOB 3, 4 in Analog no pull */
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+  GPIOB->PUPDR &= ~0x3C0;
+  GPIOB->MODER |= 0x3C0;
+  __HAL_RCC_GPIOB_CLK_DISABLE();
 #endif /* CFG_DEBUGGER_LEVEL */
 
   memset(&hramcfg_SRAM1, 0, sizeof(hramcfg_SRAM1));
@@ -95,14 +99,14 @@ void MX_StandbyExit_PeripheralInit(void)
   memset(&huart1, 0, sizeof(huart1));
 #endif
 
-  MX_GPIO_Init();
   MX_ICACHE_Init();
   MX_RAMCFG_Init();
 #if (CFG_LOG_SUPPORTED == 1)
   MX_USART1_UART_Init();
 #endif
+
   /* USER CODE BEGIN MX_STANDBY_EXIT_PERIPHERAL_INIT_2 */
 
   /* USER CODE END MX_STANDBY_EXIT_PERIPHERAL_INIT_2 */
 }
-
+#endif /* (CFG_LPM_STANDBY_SUPPORTED == 1) */
