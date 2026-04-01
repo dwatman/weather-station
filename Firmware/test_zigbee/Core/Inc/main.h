@@ -34,19 +34,6 @@ extern "C" {
 #include "app_common.h"
 #include "app_debug.h"
 
-#include "stm32wbaxx_ll_icache.h"
-#include "stm32wbaxx_ll_pwr.h"
-#include "stm32wbaxx_ll_rcc.h"
-#include "stm32wbaxx_ll_bus.h"
-#include "stm32wbaxx_ll_system.h"
-#include "stm32wbaxx_ll_exti.h"
-#include "stm32wbaxx_ll_cortex.h"
-#include "stm32wbaxx_ll_utils.h"
-#include "stm32wbaxx_ll_dma.h"
-#include "stm32wbaxx_ll_rng.h"
-#include "stm32wbaxx_ll_tim.h"
-#include "stm32wbaxx_ll_gpio.h"
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -75,17 +62,17 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define USART1_TX_Pin LL_GPIO_PIN_12
+#define USART1_TX_Pin GPIO_PIN_12
 #define USART1_TX_GPIO_Port GPIOB
-#define USART1_RX_Pin LL_GPIO_PIN_8
+#define USART1_RX_Pin GPIO_PIN_8
 #define USART1_RX_GPIO_Port GPIOA
-#define RCC_OSC32_OUT_Pin LL_GPIO_PIN_15
+#define RCC_OSC32_OUT_Pin GPIO_PIN_15
 #define RCC_OSC32_OUT_GPIO_Port GPIOC
-#define RCC_OSC32_IN_Pin LL_GPIO_PIN_14
+#define RCC_OSC32_IN_Pin GPIO_PIN_14
 #define RCC_OSC32_IN_GPIO_Port GPIOC
-#define DEBUG_JTCK_SWCLK_Pin LL_GPIO_PIN_14
+#define DEBUG_JTCK_SWCLK_Pin GPIO_PIN_14
 #define DEBUG_JTCK_SWCLK_GPIO_Port GPIOA
-#define DEBUG_JTMS_SWDIO_Pin LL_GPIO_PIN_13
+#define DEBUG_JTMS_SWDIO_Pin GPIO_PIN_13
 #define DEBUG_JTMS_SWDIO_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */

@@ -23,8 +23,8 @@ set(MX_Include_Dirs
     ${CMAKE_CURRENT_SOURCE_DIR}/../../System/Config/Debug_GPIO
     ${CMAKE_CURRENT_SOURCE_DIR}/../../STM32_WPAN/Target
     ${CMAKE_CURRENT_SOURCE_DIR}/../../STM32_WPAN/App
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Inc
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Utilities/trace/adv_trace
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Inc
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Inc/Legacy
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Projects/Common/WPAN/Interfaces
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Projects/Common/WPAN/Modules
@@ -59,19 +59,19 @@ set(MX_Include_Dirs
 
 # STM32CubeMX generated application sources
 set(MX_Application_Src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../STM32_WPAN/App/app_zigbee_endpoint.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../STM32_WPAN/App/app_zigbee.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../STM32_WPAN/App/app_zigbee_utility.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../STM32_WPAN/Target/power_table.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../STM32_WPAN/Target/linklayer_plat.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../STM32_WPAN/Target/ll_sys_if.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../STM32_WPAN/Target/mac_sys_if.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../STM32_WPAN/Target/zigbee_plat.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../STM32_WPAN/Target/zigbee_sys_if.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../STM32_WPAN/App/app_zigbee_endpoint.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../STM32_WPAN/App/app_zigbee.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../STM32_WPAN/App/app_zigbee_utility.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../System/Interfaces/stm32_lpm_if.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../System/Config/Debug_GPIO/app_debug.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../System/Config/LowPower/user_low_power_config.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../System/Config/LowPower/peripheral_init.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../System/Interfaces/stm32_lpm_if.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/main.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/gpio.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/icache.c
@@ -91,8 +91,6 @@ set(MX_Application_Src
 set(STM32_Drivers_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/system_stm32wbaxx.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_ll_pka.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_ll_gpio.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_ll_exti.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_rcc.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_rcc_ex.c
@@ -105,16 +103,17 @@ set(STM32_Drivers_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_exti.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_pwr.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_pwr_ex.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_ll_icache.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_ll_pwr.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_icache.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_ramcfg.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_ll_rng.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_rng.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_rng_ex.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_rtc.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_rtc_ex.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_ll_tim.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_ll_dma.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_tim.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_tim_ex.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_uart.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_uart_ex.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_ll_tim.c
 )
 
 # Drivers Midllewares
@@ -172,7 +171,7 @@ set(MX_LINK_DIRS
 set(MX_LINK_LIBS  
 	:WBA5_LinkLayer15_4.a 
 	:wba_mac_lib.a 
-	:ZigBeeProR23_FFD.a 
+	:ZigBeeProR23_RFD.a 
 	:ZigBeeClusters.a
     STM32_Drivers
     ${TOOLCHAIN_LINK_LIBRARIES}

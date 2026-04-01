@@ -32,20 +32,21 @@
 
 /* USER CODE END 1 */
 
-/** Configure pins as
-        * Analog
-        * Input
-        * Output
-        * EVENT_OUT
-        * EXTI
+/** Configure pins
+     PC15-OSC32_OUT   ------> RCC_OSC32_OUT
+     PC14-OSC32_IN   ------> RCC_OSC32_IN
+     PA14 (JTCK/SWCLK)   ------> DEBUG_JTCK-SWCLK
+     PA13 (JTMS/SWDIO)   ------> DEBUG_JTMS-SWDIO
+     OSC_OUT   ------> RCC_OSC_OUT
+     OSC_IN   ------> RCC_OSC_IN
 */
 void MX_GPIO_Init(void)
 {
 
   /* GPIO Ports Clock Enable */
-  LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOB);
-  LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOA);
-  LL_AHB2_GRP1_EnableClock(LL_AHB2_GRP1_PERIPH_GPIOC);
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOC_CLK_ENABLE();
 
 }
 

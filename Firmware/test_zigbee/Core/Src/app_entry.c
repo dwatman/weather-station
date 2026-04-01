@@ -48,7 +48,7 @@
 /* Private includes -----------------------------------------------------------*/
 extern void ll_sys_mac_cntrl_init( void );
 /* USER CODE BEGIN Includes */
-
+#include "usart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

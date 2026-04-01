@@ -48,7 +48,7 @@
 #include "zcl/general/zcl.illum.meas.h"
 
 /* USER CODE BEGIN PI */
-
+#include "sensor_data.h"
 /* USER CODE END PI */
 
 /* Private defines -----------------------------------------------------------*/
@@ -102,6 +102,25 @@
 
 /* USER CODE BEGIN PD */
 
+// Manufacturer code for custom clusters
+#define APP_ZIGBEE_MFR_CODE               0x1002  // STMicroelectronics
+
+// Custom cluster IDs (manufacturer-specific range)
+#define APP_ZIGBEE_CLUSTER_CO2            0xFC00
+#define APP_ZIGBEE_CLUSTER_CO             0xFC01
+#define APP_ZIGBEE_CLUSTER_AQI            0xFC02
+#define APP_ZIGBEE_CLUSTER_PM             0xFC03
+#define APP_ZIGBEE_CLUSTER_SOUND          0xFC04
+
+// Attribute IDs for custom clusters
+#define CUSTOM_ATTR_MEAS_VAL              0x0000
+#define CUSTOM_ATTR_MEAS_VAL_2            0x0001
+#define CUSTOM_ATTR_MEAS_VAL_3            0x0002
+#define CUSTOM_ATTR_MEAS_VAL_4            0x0003
+
+// Sensor update period
+#define SENSOR_UPDATE_PERIOD_MS           30000  // 30 seconds
+
 /* USER CODE END PD */
 
 // -- Redefine Clusters to better code read --
@@ -119,17 +138,125 @@
 /* Private constants ---------------------------------------------------------*/
 /* USER CODE BEGIN PC */
 
+// CO2 cluster: 1 attribute (ppm, uint16)
+static const struct ZbZclAttrT co2_attr_list[] = {
+  {
+    .attributeId = CUSTOM_ATTR_MEAS_VAL,
+    .dataType = ZCL_DATATYPE_UNSIGNED_16BIT,
+    .flags = ZCL_ATTR_FLAG_REPORTABLE,
+    .customValSz = 0,
+    .callback = NULL,
+    .range = { .min = 0, .max = 10000 },
+    .reporting = { .interval_min = 10, .interval_max = 300 },
+  },
+};
+
+// CO cluster: 1 attribute (ppm, uint16)
+static const struct ZbZclAttrT co_attr_list[] = {
+  {
+    .attributeId = CUSTOM_ATTR_MEAS_VAL,
+    .dataType = ZCL_DATATYPE_UNSIGNED_16BIT,
+    .flags = ZCL_ATTR_FLAG_REPORTABLE,
+    .customValSz = 0,
+    .callback = NULL,
+    .range = { .min = 0, .max = 1000 },
+    .reporting = { .interval_min = 10, .interval_max = 300 },
+  },
+};
+
+// AQI cluster: 2 attributes (VOC Index + NOx Index, uint16)
+static const struct ZbZclAttrT aqi_attr_list[] = {
+  {
+    .attributeId = CUSTOM_ATTR_MEAS_VAL,
+    .dataType = ZCL_DATATYPE_UNSIGNED_16BIT,
+    .flags = ZCL_ATTR_FLAG_REPORTABLE,
+    .customValSz = 0,
+    .callback = NULL,
+    .range = { .min = 1, .max = 500 },
+    .reporting = { .interval_min = 10, .interval_max = 300 },
+  },
+  {
+    .attributeId = CUSTOM_ATTR_MEAS_VAL_2,
+    .dataType = ZCL_DATATYPE_UNSIGNED_16BIT,
+    .flags = ZCL_ATTR_FLAG_REPORTABLE,
+    .customValSz = 0,
+    .callback = NULL,
+    .range = { .min = 1, .max = 500 },
+    .reporting = { .interval_min = 10, .interval_max = 300 },
+  },
+};
+
+// PM cluster: 4 attributes (PM1, PM2.5, PM4, PM10 in ug/m3, uint16)
+static const struct ZbZclAttrT pm_attr_list[] = {
+  {
+    .attributeId = CUSTOM_ATTR_MEAS_VAL,
+    .dataType = ZCL_DATATYPE_UNSIGNED_16BIT,
+    .flags = ZCL_ATTR_FLAG_REPORTABLE,
+    .customValSz = 0,
+    .callback = NULL,
+    .range = { .min = 0, .max = 1000 },
+    .reporting = { .interval_min = 10, .interval_max = 300 },
+  },
+  {
+    .attributeId = CUSTOM_ATTR_MEAS_VAL_2,
+    .dataType = ZCL_DATATYPE_UNSIGNED_16BIT,
+    .flags = ZCL_ATTR_FLAG_REPORTABLE,
+    .customValSz = 0,
+    .callback = NULL,
+    .range = { .min = 0, .max = 1000 },
+    .reporting = { .interval_min = 10, .interval_max = 300 },
+  },
+  {
+    .attributeId = CUSTOM_ATTR_MEAS_VAL_3,
+    .dataType = ZCL_DATATYPE_UNSIGNED_16BIT,
+    .flags = ZCL_ATTR_FLAG_REPORTABLE,
+    .customValSz = 0,
+    .callback = NULL,
+    .range = { .min = 0, .max = 1000 },
+    .reporting = { .interval_min = 10, .interval_max = 300 },
+  },
+  {
+    .attributeId = CUSTOM_ATTR_MEAS_VAL_4,
+    .dataType = ZCL_DATATYPE_UNSIGNED_16BIT,
+    .flags = ZCL_ATTR_FLAG_REPORTABLE,
+    .customValSz = 0,
+    .callback = NULL,
+    .range = { .min = 0, .max = 1000 },
+    .reporting = { .interval_min = 10, .interval_max = 300 },
+  },
+};
+
+// Sound cluster: 1 attribute (0.01 dB, uint16)
+static const struct ZbZclAttrT sound_attr_list[] = {
+  {
+    .attributeId = CUSTOM_ATTR_MEAS_VAL,
+    .dataType = ZCL_DATATYPE_UNSIGNED_16BIT,
+    .flags = ZCL_ATTR_FLAG_REPORTABLE,
+    .customValSz = 0,
+    .callback = NULL,
+    .range = { .min = 0, .max = 15000 },
+    .reporting = { .interval_min = 10, .interval_max = 300 },
+  },
+};
+
 /* USER CODE END PC */
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
+static struct ZbZclClusterT *pstCo2Cluster;
+static struct ZbZclClusterT *pstCoCluster;
+static struct ZbZclClusterT *pstAqiCluster;
+static struct ZbZclClusterT *pstPmCluster;
+static struct ZbZclClusterT *pstSoundCluster;
 
+static UTIL_TIMER_Object_t stSensorUpdateTimer;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 
 /* USER CODE BEGIN PFP */
-
+static void APP_ZIGBEE_SensorUpdateTask(void);
+static void APP_ZIGBEE_SensorUpdateTimerCallback(void *arg);
 /* USER CODE END PFP */
 
 /* Functions Definition ------------------------------------------------------*/
@@ -167,7 +294,11 @@ void APP_ZIGBEE_ApplicationInit(void)
 void APP_ZIGBEE_ApplicationStart( void )
 {
   /* USER CODE BEGIN APP_ZIGBEE_ApplicationStart */
-
+  UTIL_SEQ_RegTask(1U << CFG_TASK_ZIGBEE_APP1, UTIL_SEQ_RFU, APP_ZIGBEE_SensorUpdateTask);
+  UTIL_TIMER_Create(&stSensorUpdateTimer, SENSOR_UPDATE_PERIOD_MS,
+      UTIL_TIMER_PERIODIC, &APP_ZIGBEE_SensorUpdateTimerCallback, NULL);
+  UTIL_TIMER_Start(&stSensorUpdateTimer);
+  LOG_INFO_APP("Sensor update timer started (%d ms).", SENSOR_UPDATE_PERIOD_MS);
   /* USER CODE END APP_ZIGBEE_ApplicationStart */
 
 #if ( CFG_LPM_LEVEL != 0)
@@ -243,6 +374,68 @@ void APP_ZIGBEE_ConfigEndpoints(void)
   }
 
   /* USER CODE BEGIN APP_ZIGBEE_ConfigEndpoints2 */
+
+  // CO2 Measurement cluster (0xFC00)
+  pstCo2Cluster = ZbZclClusterAlloc(stZigbeeAppInfo.pstZigbee,
+      sizeof(struct ZbZclClusterT), (enum ZbZclClusterIdT)APP_ZIGBEE_CLUSTER_CO2,
+      APP_ZIGBEE_ENDPOINT, ZCL_DIRECTION_TO_SERVER);
+  assert(pstCo2Cluster != NULL);
+  ZbZclClusterSetMfrCode(pstCo2Cluster, APP_ZIGBEE_MFR_CODE);
+  ZbZclAttrAppendList(pstCo2Cluster, co2_attr_list, ZCL_ATTR_LIST_LEN(co2_attr_list));
+  ZbZclClusterAttach(pstCo2Cluster);
+  if (!ZbZclClusterEndpointRegister(pstCo2Cluster)) {
+    LOG_ERROR_APP("Error registering CO2 cluster.");
+  }
+
+  // CO Measurement cluster (0xFC01)
+  pstCoCluster = ZbZclClusterAlloc(stZigbeeAppInfo.pstZigbee,
+      sizeof(struct ZbZclClusterT), (enum ZbZclClusterIdT)APP_ZIGBEE_CLUSTER_CO,
+      APP_ZIGBEE_ENDPOINT, ZCL_DIRECTION_TO_SERVER);
+  assert(pstCoCluster != NULL);
+  ZbZclClusterSetMfrCode(pstCoCluster, APP_ZIGBEE_MFR_CODE);
+  ZbZclAttrAppendList(pstCoCluster, co_attr_list, ZCL_ATTR_LIST_LEN(co_attr_list));
+  ZbZclClusterAttach(pstCoCluster);
+  if (!ZbZclClusterEndpointRegister(pstCoCluster)) {
+    LOG_ERROR_APP("Error registering CO cluster.");
+  }
+
+  // Air Quality Index cluster (0xFC02) — VOC Index + NOx Index
+  pstAqiCluster = ZbZclClusterAlloc(stZigbeeAppInfo.pstZigbee,
+      sizeof(struct ZbZclClusterT), (enum ZbZclClusterIdT)APP_ZIGBEE_CLUSTER_AQI,
+      APP_ZIGBEE_ENDPOINT, ZCL_DIRECTION_TO_SERVER);
+  assert(pstAqiCluster != NULL);
+  ZbZclClusterSetMfrCode(pstAqiCluster, APP_ZIGBEE_MFR_CODE);
+  ZbZclAttrAppendList(pstAqiCluster, aqi_attr_list, ZCL_ATTR_LIST_LEN(aqi_attr_list));
+  ZbZclClusterAttach(pstAqiCluster);
+  if (!ZbZclClusterEndpointRegister(pstAqiCluster)) {
+    LOG_ERROR_APP("Error registering AQI cluster.");
+  }
+
+  // Particulate Matter cluster (0xFC03) — PM1, PM2.5, PM4, PM10
+  pstPmCluster = ZbZclClusterAlloc(stZigbeeAppInfo.pstZigbee,
+      sizeof(struct ZbZclClusterT), (enum ZbZclClusterIdT)APP_ZIGBEE_CLUSTER_PM,
+      APP_ZIGBEE_ENDPOINT, ZCL_DIRECTION_TO_SERVER);
+  assert(pstPmCluster != NULL);
+  ZbZclClusterSetMfrCode(pstPmCluster, APP_ZIGBEE_MFR_CODE);
+  ZbZclAttrAppendList(pstPmCluster, pm_attr_list, ZCL_ATTR_LIST_LEN(pm_attr_list));
+  ZbZclClusterAttach(pstPmCluster);
+  if (!ZbZclClusterEndpointRegister(pstPmCluster)) {
+    LOG_ERROR_APP("Error registering PM cluster.");
+  }
+
+  // Sound Level cluster (0xFC04)
+  pstSoundCluster = ZbZclClusterAlloc(stZigbeeAppInfo.pstZigbee,
+      sizeof(struct ZbZclClusterT), (enum ZbZclClusterIdT)APP_ZIGBEE_CLUSTER_SOUND,
+      APP_ZIGBEE_ENDPOINT, ZCL_DIRECTION_TO_SERVER);
+  assert(pstSoundCluster != NULL);
+  ZbZclClusterSetMfrCode(pstSoundCluster, APP_ZIGBEE_MFR_CODE);
+  ZbZclAttrAppendList(pstSoundCluster, sound_attr_list, ZCL_ATTR_LIST_LEN(sound_attr_list));
+  ZbZclClusterAttach(pstSoundCluster);
+  if (!ZbZclClusterEndpointRegister(pstSoundCluster)) {
+    LOG_ERROR_APP("Error registering Sound cluster.");
+  }
+
+  LOG_INFO_APP("Custom clusters registered (CO2, CO, AQI, PM, Sound).");
 
   /* USER CODE END APP_ZIGBEE_ConfigEndpoints2 */
 }
@@ -331,12 +524,46 @@ void APP_ZIGBEE_PrintApplicationInfo(void)
   LOG_INFO_APP( "  %s on Endpoint %d.", APP_ZIGBEE_CLUSTER5_NAME, APP_ZIGBEE_ENDPOINT );
 
   /* USER CODE BEGIN APP_ZIGBEE_PrintApplicationInfo2 */
-
+  LOG_INFO_APP( "  CO2 Measurement (0x%04X) on Endpoint %d.", APP_ZIGBEE_CLUSTER_CO2, APP_ZIGBEE_ENDPOINT );
+  LOG_INFO_APP( "  CO Measurement (0x%04X) on Endpoint %d.", APP_ZIGBEE_CLUSTER_CO, APP_ZIGBEE_ENDPOINT );
+  LOG_INFO_APP( "  Air Quality Index (0x%04X) on Endpoint %d.", APP_ZIGBEE_CLUSTER_AQI, APP_ZIGBEE_ENDPOINT );
+  LOG_INFO_APP( "  Particulate Matter (0x%04X) on Endpoint %d.", APP_ZIGBEE_CLUSTER_PM, APP_ZIGBEE_ENDPOINT );
+  LOG_INFO_APP( "  Sound Level (0x%04X) on Endpoint %d.", APP_ZIGBEE_CLUSTER_SOUND, APP_ZIGBEE_ENDPOINT );
   /* USER CODE END APP_ZIGBEE_PrintApplicationInfo2 */
 
   LOG_INFO_APP( "**********************************************************" );
 }
 
 /* USER CODE BEGIN FD_LOCAL_FUNCTIONS */
+
+static void APP_ZIGBEE_SensorUpdateTimerCallback(void *arg) {
+  UNUSED(arg);
+  UTIL_SEQ_SetTask(1U << CFG_TASK_ZIGBEE_APP1, CFG_SEQ_PRIO_1);
+}
+
+static void APP_ZIGBEE_SensorUpdateTask(void) {
+  // Standard clusters
+  ZbZclAttrIntegerWrite(stZigbeeAppInfo.TempMeasServer,
+      ZCL_TEMP_MEAS_ATTR_MEAS_VAL, sensor_get_temperature());
+  ZbZclAttrIntegerWrite(stZigbeeAppInfo.PressMeasServer,
+      ZCL_PRESS_MEAS_ATTR_MEAS_VAL, sensor_get_pressure());
+  ZbZclAttrIntegerWrite(stZigbeeAppInfo.WaterContentServer,
+      ZCL_WC_MEAS_ATTR_MEAS_VAL, sensor_get_humidity());
+  ZbZclAttrIntegerWrite(stZigbeeAppInfo.Illuminance_measServer,
+      ZCL_ILLUM_MEAS_ATTR_MEAS_VAL, sensor_get_illuminance());
+
+  // Custom clusters
+  ZbZclAttrIntegerWrite(pstCo2Cluster, CUSTOM_ATTR_MEAS_VAL, sensor_get_co2());
+  ZbZclAttrIntegerWrite(pstCoCluster, CUSTOM_ATTR_MEAS_VAL, sensor_get_co());
+  ZbZclAttrIntegerWrite(pstAqiCluster, CUSTOM_ATTR_MEAS_VAL, sensor_get_voc_index());
+  ZbZclAttrIntegerWrite(pstAqiCluster, CUSTOM_ATTR_MEAS_VAL_2, sensor_get_nox_index());
+  ZbZclAttrIntegerWrite(pstPmCluster, CUSTOM_ATTR_MEAS_VAL, sensor_get_pm1());
+  ZbZclAttrIntegerWrite(pstPmCluster, CUSTOM_ATTR_MEAS_VAL_2, sensor_get_pm25());
+  ZbZclAttrIntegerWrite(pstPmCluster, CUSTOM_ATTR_MEAS_VAL_3, sensor_get_pm4());
+  ZbZclAttrIntegerWrite(pstPmCluster, CUSTOM_ATTR_MEAS_VAL_4, sensor_get_pm10());
+  ZbZclAttrIntegerWrite(pstSoundCluster, CUSTOM_ATTR_MEAS_VAL, sensor_get_sound());
+
+  LOG_INFO_APP("Sensor update complete.");
+}
 
 /* USER CODE END FD_LOCAL_FUNCTIONS */

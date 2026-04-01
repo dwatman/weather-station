@@ -22,6 +22,7 @@
 #include "ramcfg.h"
 #include "rng.h"
 #include "rtc.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -77,10 +78,6 @@ int main(void)
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-
-  /* Enable PWR clock interface */
-
-  LL_AHB4_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_PWR);
   /* Config code for STM32_WPAN (HSE Tuning must be done before system clock configuration) */
   MX_APPE_Config();
 
@@ -104,6 +101,7 @@ int main(void)
   MX_RAMCFG_Init();
   MX_RNG_Init();
   MX_RTC_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -129,74 +127,73 @@ int main(void)
   */
 void SystemClock_Config(void)
 {
-  LL_FLASH_SetLatency(LL_FLASH_LATENCY_3);
-  while(LL_FLASH_GetLatency()!= LL_FLASH_LATENCY_3)
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+
+  /** Supply configuration update enable
+  */
+  HAL_PWREx_ConfigSupply(PWR_SMPS_SUPPLY);
+
+  /** Configure the main internal regulator output voltage
+  */
+  if (HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1) != HAL_OK)
   {
+    Error_Handler();
   }
 
-  LL_PWR_SetRegulVoltageScaling(LL_PWR_REGU_VOLTAGE_SCALE1);
-  LL_RCC_HSE_Enable();
+  /** Configure LSE Drive Capability
+  */
+  HAL_PWR_EnableBkUpAccess();
+  __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_MEDIUMLOW);
 
-   /* Wait till HSE is ready */
-  while(LL_RCC_HSE_IsReady() != 1)
+  /** Initializes the CPU, AHB and APB busses clocks
+  */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_HSE
+                              |RCC_OSCILLATORTYPE_LSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.HSEDiv = RCC_HSE_DIV1;
+  RCC_OscInitStruct.LSEState = RCC_LSE_ON;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.PLL1.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL1.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL1.PLLM = 2;
+  RCC_OscInitStruct.PLL1.PLLN = 12;
+  RCC_OscInitStruct.PLL1.PLLP = 2;
+  RCC_OscInitStruct.PLL1.PLLQ = 2;
+  RCC_OscInitStruct.PLL1.PLLR = 2;
+  RCC_OscInitStruct.PLL1.PLLFractional = 4096;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
+    Error_Handler();
   }
 
-  LL_RCC_HSI_Enable();
+  /** Initializes the CPU, AHB and APB busses clocks
+  */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2
+                              |RCC_CLOCKTYPE_PCLK7|RCC_CLOCKTYPE_HCLK5;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB7CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.AHB5_PLL1_CLKDivider = RCC_SYSCLK_PLL1_DIV4;
+  RCC_ClkInitStruct.AHB5_HSEHSI_CLKDivider = RCC_SYSCLK_HSEHSI_DIV1;
 
-   /* Wait till HSI is ready */
-  while(LL_RCC_HSI_IsReady() != 1)
-  {
-  }
-
-  LL_RCC_HSI_SetCalibTrimming(16);
-
-   /* Enable Backup domain write access */
-  LL_PWR_EnableBkUpAccess();
-  LL_RCC_LSE_SetDriveCapability(LL_RCC_LSEDRIVE_MEDIUMLOW);
-  LL_RCC_LSE_EnablePropagation();
-  LL_RCC_LSE_Enable();
-
-   /* Wait till LSE is ready */
-  while(LL_RCC_LSE_IsReady() != 1)
-  {
-  }
-
-  LL_RCC_PLL1_ConfigDomain_SYS(LL_RCC_PLL1SOURCE_HSE, 2, 12, 2);
-  LL_RCC_PLL1_EnableDomain_PLL1R();
-  LL_RCC_PLL1_SetVCOInputRange(LL_RCC_PLLINPUTRANGE_8_16);
-  LL_RCC_PLL1_Enable();
-
-   /* Wait till PLL is ready */
-  while(LL_RCC_PLL1_IsReady() != 1)
-  {
-  }
-
-  LL_RCC_PLL1FRACN_Enable();
-  LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_PLL1R);
-
-   /* Wait till System clock is ready */
-  while(LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_PLL1R)
-  {
-  }
-
-  LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
-  LL_RCC_SetAHB5Prescaler(LL_RCC_AHB5_DIV_4);
-  LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_1);
-  LL_RCC_SetAPB2Prescaler(LL_RCC_APB2_DIV_1);
-  LL_RCC_SetAPB7Prescaler(LL_RCC_APB7_DIV_1);
-  LL_SetSystemCoreClock(100000000);
-
-   /* Update the time base */
-  if (HAL_InitTick (TICK_INT_PRIORITY) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
   {
     Error_Handler();
   }
 
    /* Select SysTick source clock */
-  LL_SYSTICK_SetClkSource(LL_SYSTICK_CLKSOURCE_EXTERNAL);
-  LL_RCC_SetSystickClockSource(LL_RCC_SYSTICK_CLKSOURCE_LSE);
-  LL_Init1msTick_LSE();
+  HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_LSE);
+
+   /* Re-Initialize Tick with new clock source */
+  if (HAL_InitTick(TICK_INT_PRIORITY) != HAL_OK)
+  {
+    Error_Handler();
+  }
 }
 
 /**
@@ -205,7 +202,17 @@ void SystemClock_Config(void)
   */
 void PeriphCommonClock_Config(void)
 {
-  LL_RCC_RADIO_SetSleepTimerClockSource(LL_RCC_RADIOSLEEPSOURCE_LSE);
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+
+  /** Initializes the peripherals clock
+  */
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RADIOST;
+  PeriphClkInit.RadioSlpTimClockSelection = RCC_RADIOSTCLKSOURCE_LSE;
+
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+  {
+    Error_Handler();
+  }
 }
 
 /* USER CODE BEGIN 4 */

@@ -34,6 +34,7 @@
 
 /* External variables --------------------------------------------------------*/
 extern RAMCFG_HandleTypeDef hramcfg_SRAM1;
+extern RNG_HandleTypeDef hrng;
 extern UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN EV */

@@ -45,6 +45,7 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
+    Core/Src/sensor_data.c
 )
 
 # Add include paths
@@ -60,9 +61,17 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
 # Remove wrong libob.a library dependency when using cpp files
 list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES ob)
 
+# Wrap all libraries in a linker group to resolve circular dependencies
+# between ST precompiled static libraries (e.g. zigbee stack <-> mac layer).
+target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
+    -Wl,--start-group
+    -Wl,--no-warn-execstack  # suppress warning from ST toolchain's crtn.o
+)
+
 # Add linked libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}
     stm32cubemx
 
     # Add user defined libraries
+    -Wl,--end-group
 )
