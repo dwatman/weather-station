@@ -69,7 +69,8 @@ ZigbeeAppInfo_t                                     stZigbeeAppInfo;
 #define APP_ZIGBEE_STACK_VERSION                    ( ( 26u << 2u ) | 1u )  // Stack Version 2026.1
 
 /* USER CODE BEGIN PD */
-
+#undef  APP_ZIGBEE_BOARD_POWER
+#define APP_ZIGBEE_BOARD_POWER  0x01  // Mains power
 /* USER CODE END PD */
 
 /* Private constants ---------------------------------------------------------*/
