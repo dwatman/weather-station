@@ -1,9 +1,9 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    icache.c
+  * @file    gpdma.c
   * @brief   This file provides code for the configuration
-  *          of the ICACHE instances.
+  *          of the GPDMA instances.
   ******************************************************************************
   * @attention
   *
@@ -18,35 +18,33 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include "icache.h"
+#include "gpdma.h"
 
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
 
-/* ICACHE init function */
-void MX_ICACHE_Init(void)
+/* GPDMA1 init function */
+void MX_GPDMA1_Init(void)
 {
 
-  /* USER CODE BEGIN ICACHE_Init 0 */
+  /* USER CODE BEGIN GPDMA1_Init 0 */
 
-  /* USER CODE END ICACHE_Init 0 */
+  /* USER CODE END GPDMA1_Init 0 */
 
-  /* USER CODE BEGIN ICACHE_Init 1 */
+  /* Peripheral clock enable */
+  __HAL_RCC_GPDMA1_CLK_ENABLE();
 
-  /* USER CODE END ICACHE_Init 1 */
+  /* GPDMA1 interrupt Init */
+    HAL_NVIC_SetPriority(GPDMA1_Channel0_IRQn, 2, 0);
+    HAL_NVIC_EnableIRQ(GPDMA1_Channel0_IRQn);
 
-  /** Full retention for ICACHE in stop mode
-  */
-  LL_PWR_SetICacheRAMStopRetention(LL_PWR_ICACHERAM_STOP_FULL_RETENTION);
+  /* USER CODE BEGIN GPDMA1_Init 1 */
 
-  /** Enable instruction cache in 1-way (direct mapped cache)
-  */
-  LL_ICACHE_SetMode(LL_ICACHE_1WAY);
-  LL_ICACHE_Enable();
-  /* USER CODE BEGIN ICACHE_Init 2 */
+  /* USER CODE END GPDMA1_Init 1 */
+  /* USER CODE BEGIN GPDMA1_Init 2 */
 
-  /* USER CODE END ICACHE_Init 2 */
+  /* USER CODE END GPDMA1_Init 2 */
 
 }
 

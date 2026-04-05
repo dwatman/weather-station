@@ -74,6 +74,7 @@ set(MX_Application_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../System/Config/LowPower/peripheral_init.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/main.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/gpio.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/gpdma.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/icache.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/ramcfg.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Core/Src/rng.c
@@ -103,17 +104,18 @@ set(STM32_Drivers_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_exti.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_pwr.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_pwr_ex.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_icache.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_ll_exti.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_ll_icache.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_ll_gpio.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_ramcfg.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_rng.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_rng_ex.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_rtc.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_rtc_ex.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_tim.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_tim_ex.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_ll_tim.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_ll_dma.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_uart.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_hal_uart_ex.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/STM32WBAxx_HAL_Driver/Src/stm32wbaxx_ll_tim.c
 )
 
 # Drivers Midllewares

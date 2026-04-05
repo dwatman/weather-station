@@ -34,6 +34,7 @@
 
 /* External variables --------------------------------------------------------*/
 extern RAMCFG_HandleTypeDef hramcfg_SRAM1;
+extern RAMCFG_HandleTypeDef hramcfg_SRAM2;
 extern RNG_HandleTypeDef hrng;
 extern UART_HandleTypeDef huart1;
 
@@ -96,6 +97,7 @@ void MX_StandbyExit_PeripheralInit(void)
 #endif /* CFG_DEBUGGER_LEVEL */
 
   memset(&hramcfg_SRAM1, 0, sizeof(hramcfg_SRAM1));
+  memset(&hramcfg_SRAM2, 0, sizeof(hramcfg_SRAM2));
 #if (CFG_LOG_SUPPORTED == 1)
   memset(&huart1, 0, sizeof(huart1));
 #endif

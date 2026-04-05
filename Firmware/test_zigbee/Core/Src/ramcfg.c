@@ -25,6 +25,7 @@
 /* USER CODE END 0 */
 
 RAMCFG_HandleTypeDef hramcfg_SRAM1;
+RAMCFG_HandleTypeDef hramcfg_SRAM2;
 
 /* RAMCFG init function */
 void MX_RAMCFG_Init(void)
@@ -46,6 +47,18 @@ void MX_RAMCFG_Init(void)
     Error_Handler();
   }
   if (HAL_RAMCFG_ConfigWaitState(&hramcfg_SRAM1, RAMCFG_WAITSTATE_0) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Initialize RAMCFG SRAM2
+  */
+  hramcfg_SRAM2.Instance = RAMCFG_SRAM2;
+  if (HAL_RAMCFG_Init(&hramcfg_SRAM2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_RAMCFG_ConfigWaitState(&hramcfg_SRAM2, RAMCFG_WAITSTATE_0) != HAL_OK)
   {
     Error_Handler();
   }
