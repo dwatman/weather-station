@@ -19,6 +19,5 @@ uint16_t sensor_get_pm1(void);           // ug/m3      (midpoint ~8)
 uint16_t sensor_get_pm25(void);          // ug/m3      (midpoint ~12)
 uint16_t sensor_get_pm4(void);           // ug/m3      (midpoint ~15)
 uint16_t sensor_get_pm10(void);          // ug/m3      (midpoint ~20)
-uint16_t sensor_get_sound(void);         // 0.01 dB    (midpoint ~4500 = 45.00 dB)
 
 #endif // SENSOR_DATA_H

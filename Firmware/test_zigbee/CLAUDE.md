@@ -22,7 +22,6 @@ Zigbee End Device firmware for NUCLEO-WBA55CG that transmits environmental senso
 | CO (ppm) | Mfr-specific 0xFC01 (mfr 0x1002) | Implemented (synthetic data) |
 | VOC Index / NOx Index | Mfr-specific 0xFC02 (mfr 0x1002) | Implemented (synthetic data) |
 | PM1/PM2.5/PM4/PM10 (µg/m³) | Mfr-specific 0xFC03 (mfr 0x1002) | Implemented (synthetic data) |
-| Sound (dB) | Mfr-specific 0xFC04 (mfr 0x1002) | Implemented (synthetic data) |
 
 All sensor clusters are on **Endpoint 1** (Device ID: Environmental Sensor).
 
@@ -36,8 +35,8 @@ All sensor clusters are on **Endpoint 1** (Device ID: Environmental Sensor).
 
 ## Completed Customizations
 1. **Basic Server identity** (`app_zigbee.c`): MFR_NAME="DW", CHIP_NAME="EnvSensor", BOARD_POWER=0x01 (mains).
-2. **Custom clusters** (`app_zigbee_endpoint.c`): 5 manufacturer-specific clusters (0xFC00-0xFC04) with mfr code 0x1002, allocated in `APP_ZIGBEE_ConfigEndpoints2` USER CODE block.
-3. **Attribute updates**: Periodic sensor update task (30s interval) using UTIL_TIMER + UTIL_SEQ (CFG_TASK_ZIGBEE_APP1). Writes all 13 sensor values via `ZbZclAttrIntegerWrite()`.
+2. **Custom clusters** (`app_zigbee_endpoint.c`): 4 manufacturer-specific clusters (0xFC00-0xFC03) with mfr code 0x1002, allocated in `APP_ZIGBEE_ConfigEndpoints2` USER CODE block.
+3. **Attribute updates**: Periodic sensor update task (30s interval) using UTIL_TIMER + UTIL_SEQ (CFG_TASK_ZIGBEE_APP1). Writes all 12 sensor values via `ZbZclAttrIntegerWrite()`.
 4. **Reporting**: Default reporting configured on all custom attributes (min=10s, max=300s).
 5. **Synthetic data**: `sensor_data.c` provides slowly-varying placeholder values. Replace with real sensor drivers when hardware is available.
 
@@ -100,4 +99,4 @@ UART logging is enabled via USART1 (ST-LINK VCP, 115200 baud). Log level: INFO. 
 Use `LOG_INFO_APP()`, `LOG_ERROR_APP()`, `LOG_WARNING_APP()` macros.
 
 ## Broader Project Context
-This firmware is part of a weather-station project (`/home/daniel/git/weather-station/`) that includes indoor and outdoor sensor units (Zigbee) and a display unit (WiFi). The production hardware uses an STM32WBA5MMG module (not the NUCLEO dev board). Real sensors include SHT45, LPS22DF, SCD41, SGP41, SPS30, OPT4001, ICS-43434 — all currently represented by synthetic data in `sensor_data.c`.
+This firmware is part of a weather-station project (`/home/daniel/git/weather-station/`) that includes indoor and outdoor sensor units (Zigbee) and a display unit (WiFi). The production hardware uses an STM32WBA5MMG module (not the NUCLEO dev board). Real sensors include SHT45, LPS22DF, SCD41, SGP41, SPS30, OPT4001 — all currently represented by synthetic data in `sensor_data.c`.

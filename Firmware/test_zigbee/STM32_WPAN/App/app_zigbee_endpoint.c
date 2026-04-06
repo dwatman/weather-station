@@ -110,7 +110,6 @@
 #define APP_ZIGBEE_CLUSTER_CO             0xFC01
 #define APP_ZIGBEE_CLUSTER_AQI            0xFC02
 #define APP_ZIGBEE_CLUSTER_PM             0xFC03
-#define APP_ZIGBEE_CLUSTER_SOUND          0xFC04
 
 // Attribute IDs for custom clusters
 #define CUSTOM_ATTR_MEAS_VAL              0x0000
@@ -226,19 +225,6 @@ static const struct ZbZclAttrT pm_attr_list[] = {
   },
 };
 
-// Sound cluster: 1 attribute (0.01 dB, uint16)
-static const struct ZbZclAttrT sound_attr_list[] = {
-  {
-    .attributeId = CUSTOM_ATTR_MEAS_VAL,
-    .dataType = ZCL_DATATYPE_UNSIGNED_16BIT,
-    .flags = ZCL_ATTR_FLAG_REPORTABLE,
-    .customValSz = 0,
-    .callback = NULL,
-    .range = { .min = 0, .max = 15000 },
-    .reporting = { .interval_min = 10, .interval_max = 300 },
-  },
-};
-
 /* USER CODE END PC */
 
 /* Private variables ---------------------------------------------------------*/
@@ -247,7 +233,6 @@ static struct ZbZclClusterT *pstCo2Cluster;
 static struct ZbZclClusterT *pstCoCluster;
 static struct ZbZclClusterT *pstAqiCluster;
 static struct ZbZclClusterT *pstPmCluster;
-static struct ZbZclClusterT *pstSoundCluster;
 
 static UTIL_TIMER_Object_t stSensorUpdateTimer;
 /* USER CODE END PV */
@@ -423,19 +408,7 @@ void APP_ZIGBEE_ConfigEndpoints(void)
     LOG_ERROR_APP("Error registering PM cluster.");
   }
 
-  // Sound Level cluster (0xFC04)
-  pstSoundCluster = ZbZclClusterAlloc(stZigbeeAppInfo.pstZigbee,
-      sizeof(struct ZbZclClusterT), (enum ZbZclClusterIdT)APP_ZIGBEE_CLUSTER_SOUND,
-      APP_ZIGBEE_ENDPOINT, ZCL_DIRECTION_TO_SERVER);
-  assert(pstSoundCluster != NULL);
-  ZbZclClusterSetMfrCode(pstSoundCluster, APP_ZIGBEE_MFR_CODE);
-  ZbZclAttrAppendList(pstSoundCluster, sound_attr_list, ZCL_ATTR_LIST_LEN(sound_attr_list));
-  ZbZclClusterAttach(pstSoundCluster);
-  if (!ZbZclClusterEndpointRegister(pstSoundCluster)) {
-    LOG_ERROR_APP("Error registering Sound cluster.");
-  }
-
-  LOG_INFO_APP("Custom clusters registered (CO2, CO, AQI, PM, Sound).");
+  LOG_INFO_APP("Custom clusters registered (CO2, CO, AQI, PM).");
 
   /* USER CODE END APP_ZIGBEE_ConfigEndpoints2 */
 }
@@ -528,7 +501,6 @@ void APP_ZIGBEE_PrintApplicationInfo(void)
   LOG_INFO_APP( "  CO Measurement (0x%04X) on Endpoint %d.", APP_ZIGBEE_CLUSTER_CO, APP_ZIGBEE_ENDPOINT );
   LOG_INFO_APP( "  Air Quality Index (0x%04X) on Endpoint %d.", APP_ZIGBEE_CLUSTER_AQI, APP_ZIGBEE_ENDPOINT );
   LOG_INFO_APP( "  Particulate Matter (0x%04X) on Endpoint %d.", APP_ZIGBEE_CLUSTER_PM, APP_ZIGBEE_ENDPOINT );
-  LOG_INFO_APP( "  Sound Level (0x%04X) on Endpoint %d.", APP_ZIGBEE_CLUSTER_SOUND, APP_ZIGBEE_ENDPOINT );
   /* USER CODE END APP_ZIGBEE_PrintApplicationInfo2 */
 
   LOG_INFO_APP( "**********************************************************" );
@@ -561,7 +533,6 @@ static void APP_ZIGBEE_SensorUpdateTask(void) {
   ZbZclAttrIntegerWrite(pstPmCluster, CUSTOM_ATTR_MEAS_VAL_2, sensor_get_pm25());
   ZbZclAttrIntegerWrite(pstPmCluster, CUSTOM_ATTR_MEAS_VAL_3, sensor_get_pm4());
   ZbZclAttrIntegerWrite(pstPmCluster, CUSTOM_ATTR_MEAS_VAL_4, sensor_get_pm10());
-  ZbZclAttrIntegerWrite(pstSoundCluster, CUSTOM_ATTR_MEAS_VAL, sensor_get_sound());
 
   LOG_INFO_APP("Sensor update complete.");
 }

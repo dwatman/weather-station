@@ -66,7 +66,3 @@ uint16_t sensor_get_pm4(void) {
 uint16_t sensor_get_pm10(void) {
 	return (uint16_t)(20 + sine_wave(10, 8, 2));  // 10 - 30 ug/m3
 }
-
-uint16_t sensor_get_sound(void) {
-	return (uint16_t)(4500 + sine_wave(500, 10, 1));  // 40 - 50 dB
-}
