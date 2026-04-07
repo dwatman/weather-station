@@ -32,9 +32,10 @@ All sensor clusters are on **Endpoint 1** (Device ID: Environmental Sensor).
 - `Core/Src/main.c` — Peripheral init, main loop
 - `Core/Src/sensor_data.c` / `Core/Inc/sensor_data.h` — Synthetic sensor data placeholders (replace with real drivers later)
 - `test_zigbee.ioc` — CubeMX project file (re-generate with CubeMX if middleware config changes)
+- `dw_envsensor.js` — Zigbee2MQTT external converter. Deploy to `/config/zigbee2mqtt/external_converters/dw_envsensor.js` on the HA host. **Keep in sync with `app_zigbee_endpoint.c`**: if custom cluster IDs (0xFC00–0xFC03), attribute IDs, data types, or the Basic cluster identity strings (`APP_ZIGBEE_MFR_NAME`/`APP_ZIGBEE_CHIP_NAME`) change, update the converter to match.
 
 ## Completed Customizations
-1. **Basic Server identity** (`app_zigbee.c`): MFR_NAME="DW", CHIP_NAME="EnvSensor", BOARD_POWER=0x01 (mains).
+1. **Basic Server identity** (`app_zigbee.c`): MFR_NAME="STMicroelectronics", CHIP_NAME="STM32WBA", BOARD_POWER=0x01 (mains). Note: only BOARD_POWER is overridden in a USER CODE block; the name strings are still the CubeMX defaults.
 2. **Custom clusters** (`app_zigbee_endpoint.c`): 4 manufacturer-specific clusters (0xFC00-0xFC03) with mfr code 0x1002, allocated in `APP_ZIGBEE_ConfigEndpoints2` USER CODE block.
 3. **Attribute updates**: Periodic sensor update task (30s interval) using UTIL_TIMER + UTIL_SEQ (CFG_TASK_ZIGBEE_APP1). Writes all 12 sensor values via `ZbZclAttrIntegerWrite()`.
 4. **Reporting**: Default reporting configured on all custom attributes (min=10s, max=300s).
@@ -47,7 +48,7 @@ All sensor clusters are on **Endpoint 1** (Device ID: Environmental Sensor).
 - **Precompiled libraries**: The Zigbee stack and MAC layer are ST-provided `.a` files under `Middlewares/`, not source code. They have circular link dependencies (handled by `--start-group`/`--end-group` in CMakeLists.txt).
 
 ## Remaining Work
-1. **Zigbee2MQTT external converter**: Required for the coordinator to understand custom clusters and expose all sensors to Home Assistant.
+1. **Zigbee2MQTT external converter**: Written (`dw_envsensor.js`) — needs to be deployed to the HA host and `configuration.yaml` updated.
 2. **Real sensor drivers**: Replace `sensor_data.c` placeholder functions with actual I2C/SPI/UART sensor communication.
 
 ## Coding Style
