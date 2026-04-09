@@ -69,7 +69,7 @@ const definition = {
             ID: 0xFC00,
             manufacturerCode,
             attributes: {
-                measuredValue: {ID: 0x0000, type: 0x21},
+                measuredValue: {ID: 0x0000, type: 0x21, name: 'measuredValue'},
             },
             commands: {},
             commandsResponse: {},
@@ -80,7 +80,7 @@ const definition = {
             attribute: 'measuredValue',
             description: 'CO2 concentration',
             unit: 'ppm',
-            access: 'STATE_GET',
+            access: 'STATE',
             zigbeeCommandOptions: {manufacturerCode},
         }),
 
@@ -89,7 +89,7 @@ const definition = {
             ID: 0xFC01,
             manufacturerCode,
             attributes: {
-                measuredValue: {ID: 0x0000, type: 0x21},
+                measuredValue: {ID: 0x0000, type: 0x21, name: 'measuredValue'},
             },
             commands: {},
             commandsResponse: {},
@@ -100,7 +100,7 @@ const definition = {
             attribute: 'measuredValue',
             description: 'CO concentration',
             unit: 'ppm',
-            access: 'STATE_GET',
+            access: 'STATE',
             zigbeeCommandOptions: {manufacturerCode},
         }),
 
@@ -109,8 +109,8 @@ const definition = {
             ID: 0xFC02,
             manufacturerCode,
             attributes: {
-                vocIndex: {ID: 0x0000, type: 0x21},
-                noxIndex: {ID: 0x0001, type: 0x21},
+                vocIndex: {ID: 0x0000, type: 0x21, name: 'vocIndex'},
+                noxIndex: {ID: 0x0001, type: 0x21, name: 'noxIndex'},
             },
             commands: {},
             commandsResponse: {},
@@ -121,7 +121,7 @@ const definition = {
             attribute: 'vocIndex',
             description: 'VOC index (1–500)',
             unit: 'idx',
-            access: 'STATE_GET',
+            access: 'STATE',
             zigbeeCommandOptions: {manufacturerCode},
         }),
         numeric({
@@ -130,7 +130,7 @@ const definition = {
             attribute: 'noxIndex',
             description: 'NOx index (1–500)',
             unit: 'idx',
-            access: 'STATE_GET',
+            access: 'STATE',
             zigbeeCommandOptions: {manufacturerCode},
         }),
 
@@ -139,10 +139,10 @@ const definition = {
             ID: 0xFC03,
             manufacturerCode,
             attributes: {
-                pm1:  {ID: 0x0000, type: 0x21},
-                pm25: {ID: 0x0001, type: 0x21},
-                pm4:  {ID: 0x0002, type: 0x21},
-                pm10: {ID: 0x0003, type: 0x21},
+                pm1:  {ID: 0x0000, type: 0x21, name: 'pm1'},
+                pm25: {ID: 0x0001, type: 0x21, name: 'pm25'},
+                pm4:  {ID: 0x0002, type: 0x21, name: 'pm4'},
+                pm10: {ID: 0x0003, type: 0x21, name: 'pm10'},
             },
             commands: {},
             commandsResponse: {},
@@ -153,7 +153,7 @@ const definition = {
             attribute: 'pm1',
             description: 'PM1 concentration',
             unit: 'µg/m³',
-            access: 'STATE_GET',
+            access: 'STATE',
             zigbeeCommandOptions: {manufacturerCode},
         }),
         numeric({
@@ -162,7 +162,7 @@ const definition = {
             attribute: 'pm25',
             description: 'PM2.5 concentration',
             unit: 'µg/m³',
-            access: 'STATE_GET',
+            access: 'STATE',
             zigbeeCommandOptions: {manufacturerCode},
         }),
         numeric({
@@ -171,7 +171,7 @@ const definition = {
             attribute: 'pm4',
             description: 'PM4 concentration',
             unit: 'µg/m³',
-            access: 'STATE_GET',
+            access: 'STATE',
             zigbeeCommandOptions: {manufacturerCode},
         }),
         numeric({
@@ -180,7 +180,7 @@ const definition = {
             attribute: 'pm10',
             description: 'PM10 concentration',
             unit: 'µg/m³',
-            access: 'STATE_GET',
+            access: 'STATE',
             zigbeeCommandOptions: {manufacturerCode},
         }),
     ],

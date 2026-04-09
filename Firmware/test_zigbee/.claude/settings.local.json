@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(cmake --preset Debug)",
-      "Bash(cmake --build build/Debug)"
+      "Bash(cmake --build build/Debug)",
+      "WebSearch",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:github.com)"
     ]
   }
 }
