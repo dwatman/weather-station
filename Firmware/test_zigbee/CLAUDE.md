@@ -40,6 +40,8 @@ All sensor clusters are on **Endpoint 1** (Device ID: Environmental Sensor).
 3. **Attribute updates**: Periodic sensor update task (30s interval) using UTIL_TIMER + UTIL_SEQ (CFG_TASK_ZIGBEE_APP1). Writes all 12 sensor values via `ZbZclAttrIntegerWrite()`.
 4. **Reporting**: Default reporting configured on all custom attributes (min=10s, max=300s).
 5. **Synthetic data**: `sensor_data.c` provides slowly-varying placeholder values. Replace with real sensor drivers when hardware is available.
+6. **Zigbee2MQTT external converter**: `dw_envsensor.js` deployed and confirmed working. All 13 sensor values appear in Z2M and Home Assistant.
+7. **Illuminance ZCL encoding**: `sensor_data.c` applies the ZCL log formula (`measuredValue = 10000 * log10(lux) + 1`). `libm` is linked in `CMakeLists.txt` for `log10()`.
 
 ## Architecture Notes
 - **CubeMX-generated code** lives in `Core/`, `Drivers/`, `Middlewares/`, `System/`, `STM32_WPAN/`, and `cmake/stm32cubemx/`. These are regenerated from `test_zigbee.ioc` — only modify code within `USER CODE` blocks.
@@ -48,8 +50,8 @@ All sensor clusters are on **Endpoint 1** (Device ID: Environmental Sensor).
 - **Precompiled libraries**: The Zigbee stack and MAC layer are ST-provided `.a` files under `Middlewares/`, not source code. They have circular link dependencies (handled by `--start-group`/`--end-group` in CMakeLists.txt).
 
 ## Remaining Work
-1. **Zigbee2MQTT external converter**: Written (`dw_envsensor.js`) — needs to be deployed to the HA host and `configuration.yaml` updated.
-2. **Real sensor drivers**: Replace `sensor_data.c` placeholder functions with actual I2C/SPI/UART sensor communication.
+1. **Real sensor drivers**: Replace `sensor_data.c` placeholder functions with actual I2C/SPI/UART sensor communication (SHT45, LPS22DF, SCD41, SGP41, SPS30, OPT4001).
+2. **Production hardware**: Port from NUCLEO-WBA55CG dev board to the STM32WBA5MMG module used in production hardware.
 
 ## Coding Style
 
