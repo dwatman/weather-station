@@ -1,4 +1,5 @@
 #include "sensor_data.h"
+#include <math.h>
 
 // 32-entry sine lookup table, amplitude 100, offset 0.
 // Values represent sin(i * 2*pi/32) * 100, rounded to int.
@@ -32,7 +33,9 @@ uint16_t sensor_get_pressure(void) {
 }
 
 uint16_t sensor_get_illuminance(void) {
-	return (uint16_t)(300 + sine_wave(200, 12, 1));  // 100 - 500 lux
+	// ZCL Illuminance Measurement: measuredValue = 10000 * log10(lux) + 1
+	double lux = 300.0 + sine_wave(200, 12, 1);  // 100 - 500 lux
+	return (uint16_t)(10000.0 * log10(lux) + 1.0);
 }
 
 uint16_t sensor_get_co2(void) {
